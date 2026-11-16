@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK-Lernauftrag 04: Java & Eclipse IDE – Modul Programmierung</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Einheitliche Tailwind Config + Neues Java-Theme (Orange) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ihk: { 50: '#f0f7ff', 100: '#e0effe', 200: '#bae0fd', 500: '#0284c7', 600: '#0369a1', 700: '#075985', 800: '#0c4a6e', 900: '#0f294a' },
+                        java: { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Einbindung der zentralen CSS-Datei -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    
+    <!-- Fallback-Styles für Standalone-Nutzung -->
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: auto !important; overflow-x: hidden; background-color: #f1f5f9; color: #0f172a; }
+        p, li, td { font-size: 0.875rem; line-height: 1.625; }
+        @media (min-width: 640px) { p, li, td { font-size: 1rem; } }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 14mm 12mm; }
+            html, body { background-color: #ffffff !important; color: #000000 !important; font-size: 9.5pt !important; line-height: 1.4 !important; height: auto !important; overflow: visible !important; }
+            p, li, td { font-size: 9.5pt !important; line-height: 1.4 !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            main, section, article, div { overflow: visible !important; max-width: 100% !important; }
+            .avoid-break, tr, blockquote, figure, .glossary-card { break-inside: avoid !important; page-break-inside: avoid !important; }
+            .print-page-start { break-before: page; page-break-before: always; }
+            h1, h2, h3, h4 { break-after: avoid !important; page-break-after: avoid !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; }
+            .glossary-card { display: block !important; }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-java-500 selection:text-white">
+
+    <!-- ==================== WIKI-NAVIGATION (TOP BAR) ==================== -->
+    <div class="bg-slate-950 text-slate-400 text-xs py-2 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-slate-800 no-print">
+        <a href="../index.html" class="font-bold text-java-400 hover:text-white transition flex items-center gap-1">🏠 Dashboard</a>
+        <span class="text-slate-600">|</span>
+        <span class="font-bold text-java-400">Programmierung:</span>
+        <a href="java_04_eclipse_ide.html" class="hover:text-white transition text-white font-medium">LA 04</a>
+        <a href="java_05_aufbau.html" class="hover:text-white transition">LA 05</a>
+        <a href="java_06_grundlagen.html" class="hover:text-white transition">LA 06_1</a>
+        <a href="java_06_2_aufgaben.html" class="hover:text-white transition">LA 06_2</a>
+        <a href="java_07_kontrollstrukturen.html" class="hover:text-white transition">LA 07</a>
+    </div>
+
+    <!-- ==================== STICKY TOP NAVIGATION ==================== -->
+    <header class="no-print sticky top-0 z-50 bg-ihk-900/95 backdrop-blur-md text-white border-b border-java-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-4">
+
+                <!-- Branding -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-java-400 to-red-600 flex items-center justify-center font-extrabold text-lg shadow-inner font-mono">
+                        { }
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-java-500/20 text-java-300 border border-java-400/30">Modul: Programmierung</span>
+                            <span class="text-xs text-slate-300 hidden sm:inline">Lernauftrag 04</span>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base text-white leading-tight">Installation &amp; Grundlagen der Eclipse-IDE</p>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Links -->
+                <nav class="hidden xl:flex flex-1 justify-center items-center gap-1 text-xs font-medium whitespace-nowrap">
+                    <a href="#ausgangssituation" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1. Setup</a>
+                    <a href="#eclipse-basics" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">2. Eclipse-Konzepte</a>
+                    <a href="#project-structure" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">3. Projektstruktur</a>
+                    <a href="#java-basics" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">4. Java &amp; Main</a>
+                    <a href="#glossar" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-emerald-300">Glossar</a>
+                    <a href="#quellen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">Quellen</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-java-500 hover:bg-java-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow-md cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-12 0h12v4H6v-4z" />
+                        </svg>
+                        <span>🖨️ Als PDF drucken / speichern</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile / Tablet Sub-Navbar -->
+            <div class="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-700/80 text-xs font-medium">
+                <a href="#ausgangssituation" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1. Setup</a>
+                <a href="#eclipse-basics" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">2. Eclipse-Konzepte</a>
+                <a href="#project-structure" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">3. Projektstruktur</a>
+                <a href="#java-basics" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">4. Java &amp; Main</a>
+                <a href="#glossar" class="shrink-0 px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-200">Glossar</a>
+                <a href="#quellen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">Quellen</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HAUPTINHALT ==================== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- HERO / DOKUMENTKOPF -->
+        <section class="bg-ihk-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl border-l-8 border-java-500 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-java-300 mb-3">
+                <span>IT-Berufe • Ausbildung zum Fachinformatiker Anwendungsentwicklung</span>
+                <span>Lernauftrag 04: Java-Programmierung</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                Einstieg in Java: Installation &amp; Bedienung der Eclipse IDE
+            </h1>
+            <p class="text-slate-200 leading-relaxed mb-6">
+                Ein einfaches Textdokument reicht zum Programmieren professioneller Anwendungen schon lange nicht mehr aus. Um effizient in <strong>Java</strong> zu programmieren, nutzen wir eine <strong>IDE (Integrated Development Environment)</strong> – in diesem Fall <em>Eclipse</em>. Sie nimmt uns viel Arbeit ab: Sie organisiert unsere Dateien, hebt Syntax farblich hervor, findet Fehler schon während des Tippens und kompiliert unseren Quellcode im Hintergrund vollautomatisch in ausführbare Programme.
+            </p>
+
+            <!-- Info-Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700/80 text-xs sm:text-sm">
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-java-300 block mb-1">🛠️ Das Handwerkszeug</span>
+                    Eine IDE ist der wichtigste Arbeitsplatz eines Softwareentwicklers. Wir klären die Unterschiede zwischen Workspace, Projekt und Perspektiven.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-emerald-300 block mb-1">💡 Ganz simpel erklärt</span>
+                    Alle Konzepte (wie Packages und die ominöse <code>main</code>-Methode) werden anfängerfreundlich und ohne unnötigen Fachjargon aufgeschlüsselt.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-amber-300 block mb-1">☕ Java-Basics inklusive</span>
+                    Dein erstes „Hello World“-Programm: Mit ausführlich kommentiertem Beispielcode direkt in dieser Dokumentation.
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 1: VORBEREITUNG & SETUP
+             ===================================================================== -->
+        <section id="ausgangssituation" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Kapitel 1 (Unterkapitel 1.4 &amp; 1.5)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1. Installation &amp; Einrichtung (Setup)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Vorbereitung</span>
+            </div>
+
+            <div class="space-y-4">
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">1.4 Installation von Eclipse</h3>
+                    <p class="text-slate-700 leading-relaxed">
+                        Damit Eclipse auf unserem Rechner funktioniert, benötigen wir zwei Komponenten:
+                        <br><br>
+                        <strong>1. Das Java Development Kit (JDK):</strong> Das ist quasi der Motor. Das JDK enthält den Java-Compiler (der unseren geschriebenen Code für den Computer übersetzt) und die Java-Laufzeitumgebung (JRE), damit das Programm ausgeführt werden kann. Das JDK muss zwingend vor Eclipse installiert werden.
+                        <br>
+                        <strong>2. Die Eclipse IDE:</strong> Das ist unsere Benutzeroberfläche. <em>Hinweis zur Aufgabe:</em> Für aktuelle Eclipse-Versionen (z. B. „Eclipse IDE for Java Developers“) gibt es einen komfortablen Windows-Installer (`eclipse-inst-jre-win64.exe`), der das Herunterladen von ZIP-Archiven und manuelles Entpacken (wie es früher üblich war) überflüssig macht.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">1.5 Hallo Eclipse (Erster Start)</h3>
+                    <p class="text-slate-700 leading-relaxed">
+                        Beim allerersten Start begrüßt uns Eclipse mit einem „Welcome“-Bildschirm (den man mit dem X-Tab oben links schließen kann) und stellt direkt die wichtigste organisatorische Frage: <em>„Select a directory as workspace“</em>. Was das genau bedeutet, klären wir direkt im nächsten Aufgabenblock.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 2: ECLIPSE KONZEPTE (Sichten, Editoren, Workspace)
+             ===================================================================== -->
+        <section id="eclipse-basics" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgabenblock (Fragen 1, 2 &amp; 6)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">2. Die zentralen Eclipse-Konzepte verstehen</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Die Oberfläche</span>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Workspace -->
+                <div class="rounded-xl border-l-4 border-l-java-500 bg-java-50/30 p-5 avoid-break shadow-sm">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-java-100 flex items-center justify-center text-sm">F2</span>
+                        Was ist ein Workspace? (Und warum stellen wir ihn ein?)
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed">
+                        Ein <strong>Workspace (Arbeitsbereich)</strong> ist schlichtweg ein physischer Hauptordner auf deiner Festplatte (z. B. <code>C:\Users\DeinName\JavaProjekte</code>). Er ist das Herzstück deiner Arbeit. <br><br>
+                        <strong>Warum brauchen wir ihn?</strong>
+                        In diesem Ordner speichert Eclipse nicht nur alle deine zukünftigen Programmierprojekte ab, sondern auch deine persönlichen Einstellungen (wie Schriftgröße, Farbschemata oder Fenster-Layouts) in einem unsichtbaren Ordner namens <code>.metadata</code>. Wenn du einen neuen Workspace anlegst, sieht Eclipse wieder aus wie frisch installiert, weil die alten Einstellungen im alten Ordner bleiben.
+                    </p>
+                </div>
+
+                <!-- GUI Konzepte (Sichten, Editoren, Perspektiven) -->
+                <div class="space-y-3 avoid-break">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F1</span>
+                        Was sind Editoren, Sichten (Views) und Perspektiven?
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed mb-4">
+                        Die Oberfläche von Eclipse besteht nicht aus einem starren Fenster, sondern aus kleinen Bauklötzen, die man frei verschieben kann. Man unterteilt sie in drei Konzepte (Frage 1 &amp; 6):
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                            <strong class="text-sky-700 block mb-1 text-lg">📝 Editoren</strong>
+                            <p class="text-xs sm:text-sm text-slate-600">
+                                Der Editor ist deine Haupt-Arbeitsfläche (meist in der Mitte). Hier öffnest du deine Dateien und <strong>tippst den eigentlichen Java-Code</strong>. Jeder Editor hat oben einen kleinen Reiter (Tab) mit dem Dateinamen (z.B. <code>Main.java</code>).
+                            </p>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                            <strong class="text-emerald-700 block mb-1 text-lg">🔍 Sichten (Views)</strong>
+                            <p class="text-xs sm:text-sm text-slate-600">
+                                Views sind kleine Informationsfenster rund um den Editor herum. Sie helfen dir bei der Organisation. Beispiele sind der <em>Package Explorer</em> (zeigt deine Ordner), die <em>Console</em> (zeigt Programmausgaben) oder die <em>Problems-View</em> (zeigt rote Fehlermeldungen).
+                            </p>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+                            <strong class="text-java-700 block mb-1 text-lg">🖼️ Perspektiven</strong>
+                            <p class="text-xs sm:text-sm text-slate-600">
+                                Eine Perspektive ist ein <strong>gespeichertes Layout</strong>. Die Perspektive „Java“ ordnet alle Views so an, dass sie perfekt zum Programmieren sind. Wechselst du auf die Perspektive „Debug“ (Fehlersuche), baut Eclipse den Bildschirm komplett um und zeigt dir plötzlich Sichten für Variablen und Speicherstände.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 3: PROJEKTSTRUKTUR & PACKAGE-EXPLORER
+             ===================================================================== -->
+        <section id="project-structure" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock (Fragen 3 &amp; 5)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">3. Projekte &amp; der Package-Explorer</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-sky-900 text-white text-xs font-bold">Datei-Organisation</span>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Was ist ein Projekt? -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F3</span>
+                        Was ist ein Projekt in Eclipse und wie ist es aufgebaut?
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed mb-4">
+                        Ein Projekt in Eclipse ist ein übergeordneter Container (ein Hauptordner in deinem Workspace) für eine bestimmte Softwareanwendung (z. B. ein Taschenrechner-Programm). Es bündelt deinen gesamten Quellcode, externe Bibliotheken und Konfigurationsdateien, damit der Compiler weiß, wie er alles zusammensetzen muss.
+                    </p>
+
+                    <strong class="text-sm text-slate-800 block mb-2">Die typischen Verzeichnisse in einem Eclipse-Projekt:</strong>
+                    <ul class="space-y-2 text-sm text-slate-700">
+                        <li class="flex items-start gap-2">
+                            <span class="text-sky-600 font-bold font-mono">/src</span>
+                            <span>(Source) – Hier liegen all deine selbstgeschriebenen, menschenlesbaren Java-Dateien (<code>.java</code>).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-600 font-bold font-mono">/bin</span>
+                            <span>(Binaries) – Ein von Eclipse meist versteckter Ordner. Hier speichert die IDE die vom Compiler übersetzten, maschinenlesbaren Dateien (<code>.class</code> Bytecode), die der Computer ausführt.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-slate-500 font-bold font-mono">.settings / .classpath</span>
+                            <span>(Unsichtbar) – Spezielle Eclipse-Dateien, die merken, welche Java-Version dein Projekt nutzt und welche externen Bibliotheken eingebunden sind.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Der Package Explorer -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-white avoid-break">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F5</span>
+                        Was ist der Package-Explorer?
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed">
+                        Der <strong>Package-Explorer</strong> ist die allerwichtigste Sicht (View) in Eclipse, meist fest am linken Bildschirmrand angedockt. Er funktioniert wie der Windows-Explorer, ist aber speziell für Java optimiert. Er zeigt dir deinen Workspace als Baumstruktur an: Du siehst all deine Projekte, kannst sie aufklappen, siehst die darin liegenden Packages und Dateien und kannst per Doppelklick eine <code>.java</code>-Datei direkt in den Editor in der Mitte laden.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 4: JAVA BASICS (PACKAGES & MAIN METHODE)
+             ===================================================================== -->
+        <section id="java-basics" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgabenblock (Fragen 4 &amp; 7)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">4. Java-Grundlagen: Packages &amp; „Hello World“</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-java-600 text-white text-xs font-bold">Programmieren lernen</span>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Packages -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F4</span>
+                        Was ist in Java ein „Package“ (Paket)?
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed">
+                        Ein <strong>Package</strong> ist im Grunde nichts anderes als ein <strong>Ordner auf deiner Festplatte</strong>, der dabei hilft, deinen Code logisch zu strukturieren.
+                        Stell dir vor, du schreibst ein riesiges Programm mit 500 Dateien. Wenn alle Dateien in einem Ordner liegen, verlierst du den Überblick und Dateinamen könnten doppelt vorkommen (Namenskonflikt).
+                    </p>
+                    <p class="text-slate-700 leading-relaxed mt-2">
+                        In Java bündelt man thematisch zusammenpassende Dateien in Packages (z.B. ein Package <code>grafik</code> für alle Design-Dateien und ein Package <code>datenbank</code> für das Speichern). Eclipse legt dafür automatisch Unterordner in deinem <code>/src</code>-Verzeichnis an. In der ersten Zeile deines Codes steht dann immer: <code>package name_des_pakets;</code>
+                    </p>
+                </div>
+
+                <!-- Hello World & Main-Methode -->
+                <div class="avoid-break space-y-4">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F7</span>
+                        Das „Hello World“-Projekt &amp; die Main-Methode
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed">
+                        Jeder Programmierer beginnt eine neue Sprache traditionell mit einem Programm, das einfach nur „Hallo Welt“ auf den Bildschirm schreibt. In Eclipse nutzen wir dafür <em>File → New → Java Project</em>.
+                        <br>Aber woher weiß der Computer eigentlich, an welcher Zeile er anfangen soll, dein Programm zu lesen? Genau dafür gibt es die <strong>Main-Methode</strong>.
+                    </p>
+
+                    <!-- Code Block -->
+                    <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                        <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                            <span>HelloWorld.java</span>
+                            <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Java</span>
+                        </div>
+                        <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-purple-400">package</span> erste_schritte;
+
+<span class="text-purple-400">public class</span> <span class="text-amber-300">HelloWorld</span> {
+    
+                        <span class="text-slate-500">/**
+     * Die Main-Methode ist der absolute Startpunkt (Eingangstür)
+     * für JEDES auszuführende Java-Programm. Ohne sie geht nichts.
+     */</span>
+                        <span class="text-purple-400">public static void</span> <span class="text-sky-300">main</span>(String[] args) {
+        
+                        <span class="text-slate-500">// Dieser Befehl druckt Text in die Eclipse-Console aus</span>
+        System.out.println(<span class="text-emerald-300">"Hallo Welt, Eclipse funktioniert!"</span>);
+        
+    }
+}</code></pre>
+                    </div>
+
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-4">
+                        <strong class="text-sky-900 block mb-1">Fazit zur Main-Methode:</strong>
+                        <p class="text-sm text-slate-700">
+                            Die Zeile <code>public static void main(String[] args)</code> ist der <strong>Einstiegspunkt (Entry Point)</strong> deines Programms. Wenn du in Eclipse auf den grünen „Play“-Button klickst, sucht die Java-Laufzeitumgebung zwingend nach genau dieser Methode und führt den Codeblock (zwischen den geschweiften Klammern <code>{ }</code>) von oben nach unten aus.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             QUELLENVERZEICHNIS
+             ===================================================================== -->
+        <section id="quellen" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Lernmaterialien &amp; Referenzen</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">5. Literatur- &amp; Quellenverzeichnis (Java)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">Quellenangaben</span>
+            </div>
+
+            <p class="text-sm sm:text-base text-slate-700">
+                Die Inhalte dieses Lernauftrags (Modul Programmierung) stützen sich auf die von der Diakonie vorgegebenen Materialien sowie auf die offizielle Java-Dokumentation:
+            </p>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3.5 font-bold w-1/4">Thema / Format</th>
+                            <th class="p-3.5 font-bold w-1/4">Literatur / Autor</th>
+                            <th class="p-3.5 font-bold w-1/2">Bezug zur Ausbildung</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <!-- Interne Wiki-Referenz -->
+                        <tr class="bg-java-500/10 border-l-4 border-java-500">
+                            <td class="p-3.5 font-bold text-ihk-900">🔗 IHK-Wiki: Software-Prozesse</td>
+                            <td class="p-3.5 text-slate-700">Eigenes Dokument (Lernauftrag 03)</td>
+                            <td class="p-3.5 text-slate-700">Damit unser Code professionell verwaltet wird, nutzen wir später im Java-Projekt Konzepte aus dem <a href="../software_engineering/se_03_vorgehensmodelle.html" class="text-java-700 font-bold hover:underline">SE Lernauftrag 03 (Versionsverwaltung & DevOps)</a>.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Online-Tutorials</td>
+                            <td class="p-3.5 text-slate-700">Java Tutorial (Text &amp; YouTube)</td>
+                            <td class="p-3.5 text-slate-700">Visuelle Einführung in die Navigation und Bedienung der Eclipse-Sichten (Views &amp; Perspectives) für Einsteiger.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">Buch Rheinwerk</td>
+                            <td class="p-3.5 text-slate-700">Programmieren lernen mit Java<br><span class="text-xs text-slate-500">(Zudem: Openbook "Java ist auch eine Insel")</span></td>
+                            <td class="p-3.5 text-slate-700">Das Standard-Referenzwerk für Java im deutschsprachigen Raum. Erklärt Konzepte wie Packages, Klassen und die Main-Methode im Detail.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Skript FU-Hagen</td>
+                            <td class="p-3.5 text-slate-700">Java – Konzepte, Techniken, Programmierung</td>
+                            <td class="p-3.5 text-slate-700">Akademisches Basismaterial für ein tiefergehendes Verständnis der Java-Laufzeitumgebung (JRE vs. JDK).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             GLOSSAR (JAVA & IDE)
+             ===================================================================== -->
+        <section id="glossar" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Fachbegriffe der Programmierung übersetzt</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">6. Fremdwörter- &amp; Fachbegriffs-Lexikon (Java)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Azubi-Nachschlagewerk</span>
+            </div>
+
+            <!-- Interaktiver Suchfilter -->
+            <div class="no-print bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm text-slate-700 font-medium">
+                    🔎 <strong>Schnellfilter:</strong> Tippe einen Fachbegriff ein (z. B. <em>IDE</em>, <em>JDK</em>, <em>Compiler</em>), um das Lexikon live zu durchsuchen:
+                </div>
+                <input type="text" id="glossarySearch" oninput="filterGlossary()" placeholder="Begriff suchen..."
+                       class="w-full sm:w-72 px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-java-500">
+            </div>
+
+            <!-- Glossar Grid -->
+            <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <!-- Dynamically populated by glossarData.js -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-200">
+        <p class="font-semibold text-slate-700">Ausarbeitung zum IHK-Lernauftrag 04 (Modul: Programmierung) • Fachinformatiker/-in Anwendungsentwicklung</p>
+        <p class="mt-1">Thema: Java & Eclipse IDE • Optimiert für Bildschirmansicht und vollständigen A4-Druck (Strg+P / 🖨️ Button oben).</p>
+    </footer>
+
+    
+    <!-- ==================== JAVASCRIPT GLOBAL GLOSSAR ==================== -->
+    <script src="../assets/js/glossarData.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glossaryGrid = document.getElementById('glossaryGrid');
+            if (!glossaryGrid) return;
+            
+            // Initiales Rendern aller Begriffe
+            renderGlossary('');
+            
+            // Event Listener für die Suche
+            const searchInput = document.getElementById('glossarySearch');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    renderGlossary(e.target.value);
+                });
+            }
+        });
+
+        function renderGlossary(filterText) {
+            const grid = document.getElementById('glossaryGrid');
+            grid.innerHTML = ''; // Leeren
+            
+            const query = filterText.toLowerCase().trim();
+            
+            const filtered = globalesGlossar.filter(item => {
+                return item.titel.toLowerCase().includes(query) || 
+                       item.beschreibung.toLowerCase().includes(query);
+            });
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500">Keine passenden Begriffe gefunden.</div>';
+                return;
+            }
+            
+            filtered.forEach(item => {
+                // Farb-Mapping für die Badges
+                let badgeClass = "bg-slate-100 text-slate-700";
+                if(item.farbe === 'sky') badgeClass = "bg-sky-100 text-sky-800";
+                if(item.farbe === 'linux') badgeClass = "bg-linux-100 text-linux-800";
+                if(item.farbe === 'java') badgeClass = "bg-java-100 text-java-800";
+                
+                const cardHTML = `
+                    <div class="glossary-card rounded-xl border border-slate-200 p-4 bg-slate-50/60 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <h4 class="font-extrabold text-ihk-900 leading-tight">${item.titel}</h4>
+                        </div>
+                        <p class="text-slate-700 text-xs sm:text-sm flex-1">${item.beschreibung}</p>
+                        <div class="mt-3 pt-3 border-t border-slate-200">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                                ${item.modul}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+    </script>
+
+</body>
+</html>

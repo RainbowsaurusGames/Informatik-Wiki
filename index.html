@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK-Wiki | Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ihk: { 50: '#f0f7ff', 100: '#e0effe', 200: '#bae0fd', 500: '#0284c7', 600: '#0369a1', 700: '#075985', 800: '#0c4a6e', 900: '#0f294a' },
+                        pixel: { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95' },
+                        java: { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' },
+                        linux: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857', 800: '#065f46', 900: '#064e3b' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-sky-600 selection:text-white">
+
+    <header class="bg-ihk-900 border-b border-sky-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-400 to-pixel-600 flex items-center justify-center font-extrabold text-white text-lg shadow-inner">
+                    Wiki
+                </div>
+                <div class="text-white font-bold tracking-wide">
+                    Knowledge Base
+                </div>
+            </div>
+            <div class="text-sky-300 text-xs font-mono font-medium">
+                Version 1.3.0
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 w-full">
+        
+        <!-- Hero Section -->
+        <section class="relative bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-slate-200 overflow-hidden">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-sky-100 to-transparent rounded-full opacity-50 -translate-y-24 translate-x-24 pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-pixel-100 to-transparent rounded-full opacity-50 translate-y-24 -translate-x-12 pointer-events-none"></div>
+            
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="max-w-xl">
+                    <span class="inline-block px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-extrabold uppercase tracking-wider mb-4 border border-sky-200">
+                        Fachinformatiker für Anwendungsentwicklung
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
+                        Hallo <span id="userNameDisplay" class="cursor-pointer hover:text-sky-600 transition-colors border-b-2 border-transparent hover:border-sky-300" onclick="changeName()" title="Klicken, um Namen zu ändern">Entwickler</span>, bereit für dein<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 to-pixel-600">nächstes Level-Up? 🚀</span>
+                    </h1>
+                    <p class="text-base sm:text-lg text-slate-600 leading-relaxed">
+                        Willkommen im interaktiven IHK-Wiki. Hier strukturierst du dein gesamtes Fachwissen. Wähle ein Lernfeld aus, um direkt in die Ausarbeitungen einzusteigen.
+                    </p>
+                </div>
+                
+                <!-- Maskottchen: Pixel-Saurus (Pokemon-Vibe / Rainbowsaurus) -->
+                <div class="hidden md:block relative w-48 h-48 flex-shrink-0">
+                    <!-- Schwebende Animation -->
+                    <div class="absolute inset-0 animate-[bounce_4s_ease-in-out_infinite] flex flex-col items-center justify-center">
+                        <!-- Sprechblase -->
+                        <div class="absolute -top-6 -left-8 bg-white px-4 py-2.5 rounded-2xl shadow-lg border border-slate-200 text-xs font-bold text-slate-700 w-36 text-center transform -rotate-2 z-20 transition-all duration-200 select-none">
+                            Klick mich, klick mich! 😀
+                            <div class="absolute -bottom-2 right-12 w-4 h-4 bg-white border-r border-b border-slate-200 transform rotate-45"></div>
+                        </div>
+                        <!-- Regenbogen-Aura hinter dem Maskottchen -->
+                        <div class="absolute w-24 h-24 bg-gradient-to-tr from-pink-400 via-yellow-300 to-sky-400 rounded-full blur-2xl opacity-40 animate-pulse z-0"></div>
+                        <!-- Das Maskottchen selbst (Dino Emoji) -->
+                        <div class="text-8xl drop-shadow-2xl saturate-150 transform hover:scale-110 transition-transform cursor-pointer z-10 select-none" onclick="pokeMascot(this)" title="Ein wildes Rainbowsaurus erscheint!">
+                            🦖
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kachel-Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Modul 1: Software Engineering -->
+            <div class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-sky-300">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                        📐
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-extrabold text-slate-900">Software Engineering</h2>
+                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wider mt-0.5">Lernfeld 5 &amp; Prozesse</p>
+                    </div>
+                </div>
+                <div class="space-y-2.5">
+                    <a href="software_engineering/se_02_anforderungsanalyse.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-sky-50 hover:border-sky-200 transition-colors">
+                        <strong class="text-sm text-sky-900 block mb-0.5">LA 02: Anforderungsanalyse</strong>
+                        <span class="text-xs text-slate-600">Projektidee, Lastenheft, ISO 25010 &amp; SMART-Regel.</span>
+                    </a>
+                    <a href="software_engineering/se_03_vorgehensmodelle.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-sky-50 hover:border-sky-200 transition-colors">
+                        <strong class="text-sm text-sky-900 block mb-0.5">LA 03: Vorgehensmodelle</strong>
+                        <span class="text-xs text-slate-600">Wasserfall, Scrum, Kanban &amp; DevOps Pipelines (CI/CD).</span>
+                    </a>
+                    <a href="software_engineering/se_04_saas.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-sky-50 hover:border-sky-200 transition-colors">
+                        <strong class="text-sm text-sky-900 block mb-0.5">LA 04: Software-as-a-Service</strong>
+                        <span class="text-xs text-slate-600">Cloud-Infrastruktur, MVP-Definition &amp; SaaS One-Pager.</span>
+                    </a>
+                    <a href="software_engineering/se_05_linux_systeme.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-emerald-50 hover:border-emerald-200 transition-colors">
+                        <strong class="text-sm text-emerald-900 block mb-0.5">LA 05: Linux-Systeme (Debian 12)</strong>
+                        <span class="text-xs text-slate-600">Hyper-V Setup, FHS, Dateirechte (chmod) &amp; APT.</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Modul 2: Programmierung (Java) -->
+            <div class="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-200 hover:border-java-300">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-java-100 text-java-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                        ☕
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-extrabold text-slate-900">Programmierung</h2>
+                        <p class="text-xs text-slate-500 font-medium uppercase tracking-wider mt-0.5">Java Grundlagen &amp; IDE</p>
+                    </div>
+                </div>
+                <div class="space-y-2.5">
+                    <a href="programmierung/java_04_eclipse_ide.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-java-50 hover:border-java-200 transition-colors">
+                        <strong class="text-sm text-java-900 block mb-0.5">LA 04: Eclipse IDE</strong>
+                        <span class="text-xs text-slate-600">Installation, Workspace, Packages &amp; Hello World.</span>
+                    </a>
+                    <a href="programmierung/java_05_aufbau.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-java-50 hover:border-java-200 transition-colors">
+                        <strong class="text-sm text-java-900 block mb-0.5">LA 05: Aufbau von Java Programmen</strong>
+                        <span class="text-xs text-slate-600">Bezeichner, Code-Formatierung, Klassen &amp; Schaltjahr-Algorithmus.</span>
+                    </a>
+                    <a href="programmierung/java_06_grundlagen.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-java-50 hover:border-java-200 transition-colors">
+                        <strong class="text-sm text-java-900 block mb-0.5">LA 06: Grundlagen der Programmiersprache</strong>
+                        <span class="text-xs text-slate-600">Variablen, Datentypen, Typumwandlung &amp; Operatoren.</span>
+                    </a>
+                    <a href="programmierung/java_06_2_aufgaben.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-java-50 hover:border-java-200 transition-colors">
+                        <strong class="text-sm text-java-900 block mb-0.5">LA 06 (Aufgaben): Übungen zu Datentypen &amp; Operatoren</strong>
+                        <span class="text-xs text-slate-600">12 Praxis-Übungen: Überlauf, Casting-Fallen, Unicode („BFW“) &amp; Präfix/Postfix.</span>
+                    </a>
+                    <a href="programmierung/java_07_kontrollstrukturen.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-java-50 hover:border-java-200 transition-colors">
+                        <strong class="text-sm text-java-900 block mb-0.5">LA 07: Kontrollstrukturen in Java</strong>
+                        <span class="text-xs text-slate-600">Sequenz, Selektion (if/switch), Iteration (Schleifen) &amp; Struktogramm-Umsetzung.</span>
+                    </a>
+                    <a href="programmierung/java_09_klassen_methoden.html" class="block p-3 rounded-lg border border-slate-100 bg-slate-50 hover:bg-java-50 hover:border-java-200 transition-colors">
+                        <strong class="text-sm text-java-900 block mb-0.5">LA 09: Klassen, Eigenschaften &amp; Methoden</strong>
+                        <span class="text-xs text-slate-600">Methodenaufbau, Zugriffsmodifier, static/final, Getter &amp; Setter, Scope &amp; Overloading.</span>
+                    </a>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-8 mt-auto border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© 2026 IHK-Wiki • Fachinformatiker für Anwendungsentwicklung</p>
+            <p class="font-mono opacity-60">Code. Compile. Create.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nameDisplay = document.getElementById('userNameDisplay');
+            let userName = localStorage.getItem('wikiUserName');
+
+            if (!userName) {
+                setTimeout(() => {
+                    userName = prompt("👋 Willkommen im IHK-Wiki! Wie lautet dein Name? (Du kannst ihn später mit einem Klick auf den Namen auch ändern, ist alles browserbasiert! ;D");
+                    if (userName && userName.trim() !== "") {
+                        localStorage.setItem('wikiUserName', userName.trim());
+                        nameDisplay.textContent = userName.trim();
+                    } else {
+                        nameDisplay.textContent = "Entwickler";
+                    }
+                }, 500);
+            } else {
+                nameDisplay.textContent = userName;
+            }
+        });
+
+        function changeName() {
+            let currentName = localStorage.getItem('wikiUserName') || "";
+            let newName = prompt("Möchtest du deinen Namen ändern?", currentName);
+            
+            if (newName && newName.trim() !== "") {
+                localStorage.setItem('wikiUserName', newName.trim());
+                document.getElementById('userNameDisplay').textContent = newName.trim();
+            }
+        }
+
+        // Maskottchen Interaktion (Rainbowsaurus / Pokemon-Vibe)
+        const dialogs = [
+            "Klick mich, klick mich! 😀",
+            "Roar! Lass uns was in Java coden! ✨",
+            "Hast du deine Klammern geschlossen? 🔍",
+            "Ein wilder Bug erscheint! 🐛",
+            "Speichern nicht vergessen! 💾",
+            "Zeit für eine Pixel-Art Pause? 🎨",
+            "Ich bin der Wiki-Saurus! 🦖",
+            "It's super effective! ⚡",
+            "Haben wir noch HTML-Kabel? 🔌",
+            "schuelerID int auto_increment primary key",
+            "Viel Spaß beim Lernen!🫶",
+            "Fehler / Ergänzungen bitte an Yu weitergeben! 🫶",
+            "Bist du schon Teil von Lukas' Piratennetzwerk? 🏴‍☠️",
+            "Ich habe meine Eier vor Isi versteckt! 🥚",
+            "Heute gibt es Schwarzwälder-Kirsch-Brötchen!"
+        ];
+        function pokeMascot(el) {
+            const bubble = el.previousElementSibling.previousElementSibling;
+            bubble.innerHTML = dialogs[Math.floor(Math.random() * dialogs.length)] + '<div class="absolute -bottom-2 right-12 w-4 h-4 bg-white border-r border-b border-slate-200 transform rotate-45"></div>';
+            
+            // Animation reset trick
+            el.classList.remove('scale-110');
+            el.classList.add('scale-125');
+            setTimeout(() => el.classList.remove('scale-125'), 200);
+        }
+    </script>
+</body>
+</html>

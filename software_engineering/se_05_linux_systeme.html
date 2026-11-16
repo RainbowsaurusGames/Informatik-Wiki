@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK-Lernauftrag 05: Linux-Systeme – Praxisdokumentation Debian 12 (Hyper-V)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ihk: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#0c4a6e',
+                            900: '#0f294a',
+                        },
+                        pixel: {
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        },
+                        linux: {
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fallback-Styles + Kompatibilität zur zentralen style.css -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: auto !important;
+            overflow-x: hidden;
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Einheitliche Schriftgrößen */
+        p, li, td {
+            font-size: 0.875rem;
+            line-height: 1.625;
+        }
+        @media (min-width: 640px) {
+            p, li, td {
+                font-size: 1rem;
+            }
+        }
+
+        /* Spezielle Druck-Optimierung (@media print) gegen jegliches Abschneiden */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 14mm 12mm 14mm 12mm;
+            }
+            html, body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                font-size: 9.5pt !important;
+                line-height: 1.4 !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            p, li, td {
+                font-size: 9.5pt !important;
+                line-height: 1.4 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            main, section, article, div {
+                overflow: visible !important;
+                max-width: 100% !important;
+            }
+            .avoid-break, tr, blockquote, figure, .glossary-card, .terminal-box {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            .print-page-start {
+                break-before: page;
+                page-break-before: always;
+            }
+            h1, h2, h3, h4 {
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                box-shadow: none !important;
+            }
+            .glossary-card {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-linux-600 selection:text-white">
+    <!-- ==================== WIKI-NAVIGATION (TOP BAR) ==================== -->
+    <div class="bg-slate-950 text-slate-400 text-xs py-2 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-slate-800 no-print">
+        <a href="../index.html" class="font-bold text-linux-400 hover:text-white transition flex items-center gap-1">🏠 Dashboard</a>
+        <span class="text-slate-600">|</span>
+        <span class="font-bold text-linux-400">Software Engineering:</span>
+        <a href="se_02_anforderungsanalyse.html" class="hover:text-white transition">LA 02</a>
+        <a href="se_03_vorgehensmodelle.html" class="hover:text-white transition">LA 03</a>
+        <a href="se_04_saas.html" class="hover:text-white transition">LA 04</a>
+        <a href="se_05_linux_systeme.html" class="hover:text-white transition text-white font-medium">LA 05</a>
+    </div>
+
+    <!-- ==================== STICKY TOP NAVIGATION (NUR BILDSCHIRM) ==================== -->
+    <header class="no-print sticky top-0 z-50 bg-ihk-900/95 backdrop-blur-md text-white border-b border-linux-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-4">
+
+                <!-- Branding -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-linux-400 to-teal-700 flex items-center justify-center font-extrabold text-lg shadow-inner font-mono">
+                        &gt;_
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-linux-500/20 text-linux-300 border border-linux-400/30">IHK FIAE</span>
+                            <span class="text-xs text-slate-300 hidden sm:inline">Lernauftrag 05: Linux-Systeme</span>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base text-white leading-tight">Debian 12 Systemadministration &amp; CLI</p>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Links (Zentriert & Einzeilig) -->
+                <nav class="hidden xl:flex flex-1 justify-center items-center gap-1 text-xs font-medium whitespace-nowrap">
+                    <a href="#aufgabe-1" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1. Hyper-V &amp; Setup</a>
+                    <a href="#aufgabe-2" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">2. Orientierung &amp; FHS</a>
+                    <a href="#aufgabe-3" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">3. Rechte &amp; APT</a>
+                    <a href="#aufgabe-4" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">4. Reflexion</a>
+                    <a href="#normen-standards" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-amber-300">Standards</a>
+                    <a href="#glossar" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-emerald-300">Glossar</a>
+                    <a href="#quellen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">Quellen</a>
+                </nav>
+
+                <!-- Action Buttons (Einheitlich!) -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-linux-400 hover:bg-linux-300 text-slate-950 font-bold text-xs sm:text-sm transition shadow-md cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-12 0h12v4H6v-4z" />
+                        </svg>
+                        <span>🖨️ Als PDF drucken / speichern</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile / Tablet Sub-Navbar -->
+            <div class="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-700/80 text-xs font-medium">
+                <a href="#aufgabe-1" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1. Installation</a>
+                <a href="#aufgabe-2" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">2. Orientierung</a>
+                <a href="#aufgabe-3" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">3. Rechte &amp; APT</a>
+                <a href="#aufgabe-4" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">4. Reflexion</a>
+                <a href="#normen-standards" class="shrink-0 px-2.5 py-1 rounded bg-amber-900/60 text-amber-200">Standards</a>
+                <a href="#glossar" class="shrink-0 px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-200">Fremdwörter</a>
+                <a href="#quellen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">Quellen</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HAUPTINHALT ==================== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- HERO / DOKUMENTKOPF -->
+        <section class="bg-ihk-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl border-l-8 border-linux-500 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-linux-300 mb-3">
+                <span>Deutsche IHK-Ausbildung • Fachinformatiker/-in für Anwendungsentwicklung (FIAE)</span>
+                <span>Lernauftrag 05: Linux-Systeme &amp; Systemadministration</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                Installation &amp; Administration eines Debian-Linux-Systems
+            </h1>
+            <p class="text-slate-200 leading-relaxed mb-6">
+                Nahezu alle modernen Cloud-Umgebungen, Docker-Container, CI/CD-Pipelines und Webserver laufen heute unter Linux. In dieser Dokumentation richten wir eine virtuelle Maschine mit <strong class="text-linux-300">Debian 12 („Bookworm“)</strong> unter Microsoft Hyper-V ein. Das System dient als lokale Entwicklungs- und Serverumgebung (<code class="text-linux-300 font-mono">debian-dev-vm</code>) für unsere Web- und SaaS-Projekte (wie <em>CanvasFlow</em> und <em>PixelSync</em>). Wir untersuchen Systeminformationen, navigieren durch den Verzeichnisbaum nach FHS-Standard und verwalten Benutzer, Dateirechte (<code>chmod</code>) sowie Softwarepakete über die Kommandozeile (Bash).
+            </p>
+
+            <!-- Info-Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700/80 text-xs sm:text-sm">
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-linux-300 block mb-1">🐧 Praxis-Umgebung Debian 12</span>
+                    Dokumentation der Hyper-V-Konfiguration, Partitionierung, Netzwerkanbindung und ersten Konsolenbefehle.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-emerald-300 block mb-1">💻 Echte Terminal-Outputs</span>
+                    Alle durchgeführten Befehle (<code>uname</code>, <code>ls -la</code>, <code>chmod</code>, <code>apt</code>) sind mit ihren exakten Konsolenausgaben protokolliert.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-amber-300 block mb-1">⚖️ Offizielle Linux-Standards</span>
+                    Inklusive Erklärungen zum <strong>FHS 3.0</strong> (Filesystem Hierarchy Standard), <strong>POSIX</strong>-Rechten und dem <strong>LPIC-1</strong> Prüfungsstandard.
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         AUFGABE 1: VORBEREITUNG UND INSTALLATION (HYPER-V & DEBIAN)
+         ===================================================================== -->
+        <section id="aufgabe-1" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-linux-700">Aufgabenblock 1 (Teilaufgaben 1a bis 1d)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1. Vorbereitung &amp; Installation in Hyper-V</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Virtualisierung &amp; Setup</span>
+            </div>
+
+            <p class="text-slate-700">
+                Für eine saubere, vom Host-System (Windows 11 Pro) isolierte Testumgebung wurde im <strong>Hyper-V-Manager</strong> eine neue virtuelle Maschine angelegt und mit dem offiziellen Installationsmedium von <strong>Debian GNU/Linux 12.7 („Bookworm“)</strong> bestückt.
+            </p>
+
+            <!-- Technische Eckdaten Tabelle (1a bis 1d) -->
+            <div class="overflow-x-auto rounded-xl border border-slate-200 avoid-break shadow-sm">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3.5 font-bold w-1/4 border-r border-ihk-700">Aufgabenpunkt</th>
+                            <th class="p-3.5 font-bold w-1/4 border-r border-ihk-700">Gewählte Einstellung</th>
+                            <th class="p-3.5 font-bold w-1/2">Technische Begründung &amp; Durchführung</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900 bg-slate-50 border-r border-slate-200">1a) Virtualisierung (Hyper-V)</td>
+                            <td class="p-3.5 font-mono text-xs text-linux-800 border-r border-slate-200">Generation 2 VM<br>4 GB RAM (4096 MB)<br>2 vCPUs, 32 GB VHDX</td>
+                            <td class="p-3.5 text-slate-700">
+                                Auswahl einer <strong>Generation-2-VM</strong> für modernen UEFI-Boot. Wichtig bei Linux unter Hyper-V: In den Firmware-Einstellungen wurde unter <em>Sicherheit → Secure Boot</em> die Vorlage auf <strong>„Zertifizierungsstelle für Microsoft UEFI“</strong> umgestellt, damit der signierte Debian-Bootloader (GRUB) fehlerfrei startet.
+                            </td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900 bg-slate-100 border-r border-slate-200">1b) Installationsquelle (ISO)</td>
+                            <td class="p-3.5 font-mono text-xs text-linux-800 border-r border-slate-200">debian-12.7.0-amd64-netinst.iso</td>
+                            <td class="p-3.5 text-slate-700">
+                                Einbindung des schlanken <strong>Netinst-ISO-Abbilds</strong> (~630 MB) als virtuelles DVD-Laufwerk. Der Vorteil des Netinstallers: Das Basissystem wird von der ISO geladen, während alle weiteren Pakete direkt in der allerneuesten Version aus den offiziellen Debian-Spiegelservern (Mirrors) bezogen werden.
+                            </td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900 bg-slate-50 border-r border-slate-200">1c) Benutzerkonfiguration</td>
+                            <td class="p-3.5 font-mono text-xs text-linux-800 border-r border-slate-200">Root-Konto: deaktiviert<br>Standarduser: <code>fiae</code> (inkl. <code>sudo</code>)</td>
+                            <td class="p-3.5 text-slate-700">
+                                Im Debian-Installer wurde das Feld für das <code>root</code>-Passwort bewusst leer gelassen. Dadurch deaktiviert Debian den direkten Root-Login (Sicherheits-Best-Practice) und nimmt den angelegten Standardbenutzer <strong><code>fiae</code></strong> automatisch in die Gruppe <strong><code>sudo</code></strong> auf, um administrative Aufgaben bei Bedarf legitimieren zu können.
+                            </td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900 bg-slate-100 border-r border-slate-200">1d) Netzwerk &amp; GUI</td>
+                            <td class="p-3.5 font-mono text-xs text-linux-800 border-r border-slate-200">Switch: Default Switch (NAT)<br>GUI: GNOME / Xfce Desktop</td>
+                            <td class="p-3.5 text-slate-700">
+                                Über den Hyper-V <em>Default Switch</em> erhielt die VM per DHCP sofort die IP <code>172.24.112.45/20</code> samt Internetzugang. Im Schritt <em>Softwareauswahl (tasksel)</em> wurden die <strong>grafische Desktop-Umgebung</strong>, der <strong>SSH-Server</strong> sowie die <strong>Standard-Systemwerkzeuge</strong> installiert.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Verifikation der Netzwerkanbindung im Terminal -->
+            <div class="terminal-box rounded-xl overflow-hidden border border-slate-700 shadow-lg avoid-break">
+                <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                        <span class="ml-2 text-slate-400">fiae@debian-dev-vm: ~ (Funktionstest Netzwerk nach erstem Login)</span>
+                    </div>
+                    <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-linux-300">Bash</span>
+                </div>
+                <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs overflow-x-auto leading-relaxed"><code><span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ ip -brief address show
+lo               UNKNOWN        127.0.0.1/8 ::1/128
+eth0             UP             172.24.112.45/20 fe80::215:5dff:fe01:a40b/64
+
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ ping -c 2 deb.debian.org
+PING debian.map.fastlydns.net (151.101.130.132) 56(84) bytes of data.
+64 bytes from 151.101.130.132: icmp_seq=1 ttl=57 time=11.4 ms
+64 bytes from 151.101.130.132: icmp_seq=2 ttl=57 time=11.1 ms
+--- debian.map.fastlydns.net ping statistics ---
+2 packets transmitted, 2 received, <span class="text-linux-400 font-bold">0% packet loss</span>, time 1002ms</code></pre>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         AUFGABE 2: ERSTE ORIENTIERUNG IN LINUX
+         ===================================================================== -->
+        <section id="aufgabe-2" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-linux-700">Aufgabenblock 2 (Teilaufgaben 2a bis 2c)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">2. Erste Orientierung im Linux-System</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Systeminfos &amp; Dateisystem</span>
+            </div>
+
+            <!-- 2a: Systeminformationen ermitteln -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-lg font-bold text-linux-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-linux-500/20 text-linux-900 flex items-center justify-center text-sm font-extrabold">2a</span>
+                    Grundlegende Systeminformationen abfragen (Kernel, Hostname, Benutzer, Prozesse)
+                </h3>
+                <p class="text-slate-700">
+                    Um einen Server oder eine Entwicklungsumgebung kennenzulernen, fragt man über die Shell die wichtigsten Systemparameter ab. Anders als unter Windows (wo man sich durch Systemsteuerungs-Fenster klickt) liefert Linux diese Daten sofort in Textform:
+                </p>
+
+                <div class="terminal-box rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>fiae@debian-dev-vm: ~ (Aufgabe 2a: Systemanalyse)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-linux-300">Bash</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs overflow-x-auto leading-relaxed"><code><span class="text-slate-500"># 1. Kernelversion, Systemarchitektur und Distribution abfragen:</span>
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ uname -a
+Linux debian-dev-vm 6.1.0-26-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.112-1 (2024-09-30) x86_64 GNU/Linux
+
+<span class="text-slate-500"># 2. Detaillierte System- &amp; Virtualisierungsinformationen via systemd:</span>
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ hostnamectl
+ Static hostname: debian-dev-vm
+       Icon name: computer-vm
+         Chassis: vm 🖴
+  Virtualization: microsoft
+Operating System: Debian GNU/Linux 12 (bookworm)
+          Kernel: Linux 6.1.0-26-amd64
+    Architecture: x86-64
+
+<span class="text-slate-500"># 3. Aktueller Benutzer, User-ID (UID) und Gruppenzugehörigkeiten:</span>
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ whoami &amp;&amp; id
+fiae
+uid=1000(fiae) gid=1000(fiae) Gruppen=1000(fiae),24(cdrom),25(floppy),27(<span class="text-amber-300 font-bold">sudo</span>),29(audio),44(video)
+
+<span class="text-slate-500"># 4. Laufende Prozesse (Auszug) und Arbeitsspeicherauslastung prüfen:</span>
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ ps aux --sort=-%mem | head -n 5
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.3 168940 13120 ?        Ss   08:15   0:01 /sbin/init
+fiae        1244  1.2  3.8 894512 154200 ?       Sl   08:16   0:04 /usr/bin/gnome-shell
+root         682  0.0  0.2  15420  9120 ?        Ss   08:15   0:00 sshd: /usr/sbin/sshd -D
+fiae        1610  0.0  0.1   8640  5240 pts/0    Ss   08:18   0:00 -bash</code></pre>
+                </div>
+            </div>
+
+            <!-- 2b: Dateisystem erkunden (FHS) -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-lg font-bold text-linux-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-linux-500/20 text-linux-900 flex items-center justify-center text-sm font-extrabold">2b</span>
+                    Navigation im Dateisystem &amp; Bedeutung der Verzeichnisse nach FHS-Standard
+                </h3>
+                <p class="text-slate-700">
+                    Unter Linux gibt es keine Laufwerksbuchstaben wie <code>C:\</code> oder <code>D:\</code>. Stattdessen beginnt das gesamte System am <strong>Wurzelverzeichnis <code>/</code> (Root Directory)</strong>. Alle Festplatten, USB-Sticks und Netzwerkfreigaben werden als Unterordner in diesen einen Baum eingehängt (<em>gemountet</em>). Die Struktur folgt dem international normierten <strong>Filesystem Hierarchy Standard (FHS)</strong>:
+                </p>
+
+                <!-- SVG Verzeichnisbaum -->
+                <figure class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <svg role="img" viewBox="0 0 800 205" class="w-full h-auto block">
+                        <title>Der Linux-Verzeichnisbaum nach Filesystem Hierarchy Standard (FHS)</title>
+                        <!-- Root Node -->
+                        <rect x="345" y="10" width="110" height="36" rx="6" fill="#0f294a" stroke="#059669" stroke-width="2" />
+                        <text x="400" y="33" font-size="13" font-weight="bold" font-family="monospace" fill="#ffffff" text-anchor="middle">/ (Root)</text>
+
+                        <!-- Connecting Lines -->
+                        <line x1="400" y1="46" x2="400" y2="68" stroke="#64748b" stroke-width="2" />
+                        <line x1="90" y1="68" x2="710" y2="68" stroke="#64748b" stroke-width="2" />
+                        <line x1="90" y1="68" x2="90" y2="90" stroke="#64748b" stroke-width="2" />
+                        <line x1="245" y1="68" x2="245" y2="90" stroke="#64748b" stroke-width="2" />
+                        <line x1="400" y1="68" x2="400" y2="90" stroke="#64748b" stroke-width="2" />
+                        <line x1="555" y1="68" x2="555" y2="90" stroke="#64748b" stroke-width="2" />
+                        <line x1="710" y1="68" x2="710" y2="90" stroke="#64748b" stroke-width="2" />
+
+                        <!-- Folder 1: /home -->
+                        <rect x="20" y="90" width="140" height="98" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="2" />
+                        <text x="90" y="112" font-size="12" font-weight="bold" font-family="monospace" fill="#065f46" text-anchor="middle">/home</text>
+                        <text x="90" y="130" font-size="9" font-weight="bold" fill="#047857" text-anchor="middle">Benutzerdaten</text>
+                        <text x="90" y="146" font-size="8.5" fill="#334155" text-anchor="middle">Eigene Ordner jedes</text>
+                        <text x="90" y="160" font-size="8.5" fill="#334155" text-anchor="middle">Users (z. B. /home/fiae)</text>
+                        <text x="90" y="176" font-size="8" font-family="monospace" fill="#059669" text-anchor="middle">Kurzform: ~ (Tilde)</text>
+
+                        <!-- Folder 2: /etc -->
+                        <rect x="175" y="90" width="140" height="98" rx="8" fill="#eff6ff" stroke="#0284c7" stroke-width="2" />
+                        <text x="245" y="112" font-size="12" font-weight="bold" font-family="monospace" fill="#075985" text-anchor="middle">/etc</text>
+                        <text x="245" y="130" font-size="9" font-weight="bold" fill="#0369a1" text-anchor="middle">Systemkonfiguration</text>
+                        <text x="245" y="146" font-size="8.5" fill="#334155" text-anchor="middle">Alle Einstellungsdateien</text>
+                        <text x="245" y="160" font-size="8.5" fill="#334155" text-anchor="middle">des Systems &amp; Dienste</text>
+                        <text x="245" y="176" font-size="8" font-family="monospace" fill="#0284c7" text-anchor="middle">z.B. /etc/passwd, /etc/apt</text>
+
+                        <!-- Folder 3: /var -->
+                        <rect x="330" y="90" width="140" height="98" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2" />
+                        <text x="400" y="112" font-size="12" font-weight="bold" font-family="monospace" fill="#92400e" text-anchor="middle">/var</text>
+                        <text x="400" y="130" font-size="9" font-weight="bold" fill="#b45309" text-anchor="middle">Variable Laufzeitdaten</text>
+                        <text x="400" y="146" font-size="8.5" fill="#334155" text-anchor="middle">Logdateien, Datenbanken,</text>
+                        <text x="400" y="160" font-size="8.5" fill="#334155" text-anchor="middle">Webserver-Daten, Caches</text>
+                        <text x="400" y="176" font-size="8" font-family="monospace" fill="#b45309" text-anchor="middle">z.B. /var/log, /var/www</text>
+
+                        <!-- Folder 4: /usr -->
+                        <rect x="485" y="90" width="140" height="98" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2" />
+                        <text x="555" y="112" font-size="12" font-weight="bold" font-family="monospace" fill="#5b21b6" text-anchor="middle">/usr</text>
+                        <text x="555" y="130" font-size="9" font-weight="bold" fill="#6d28d9" text-anchor="middle">Unix System Resources</text>
+                        <text x="555" y="146" font-size="8.5" fill="#334155" text-anchor="middle">Installierte Programme,</text>
+                        <text x="555" y="160" font-size="8.5" fill="#334155" text-anchor="middle">Bibliotheken &amp; Header</text>
+                        <text x="555" y="176" font-size="8" font-family="monospace" fill="#6d28d9" text-anchor="middle">z.B. /usr/bin, /usr/lib</text>
+
+                        <!-- Folder 5: /tmp & /root -->
+                        <rect x="640" y="90" width="140" height="98" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" />
+                        <text x="710" y="112" font-size="12" font-weight="bold" font-family="monospace" fill="#334155" text-anchor="middle">/bin, /root, /tmp</text>
+                        <text x="710" y="130" font-size="9" font-weight="bold" fill="#475569" text-anchor="middle">Weitere Kernordner</text>
+                        <text x="710" y="146" font-size="8.5" fill="#334155" text-anchor="middle">/bin: Basis-Befehle (ls, cp)</text>
+                        <text x="710" y="160" font-size="8.5" fill="#334155" text-anchor="middle">/root: Home des Admins</text>
+                        <text x="710" y="176" font-size="8.5" fill="#334155" text-anchor="middle">/tmp: Temporäre Dateien</text>
+                    </svg>
+                    <figcaption class="text-xs text-slate-500 text-center mt-2">
+                        <strong>Abb. 1: Die wichtigsten Verzeichnisse unterhalb von <code>/</code> (Root)</strong> gemäß Filesystem Hierarchy Standard (FHS 3.0).
+                    </figcaption>
+                </figure>
+            </div>
+
+            <!-- 2c: Eigenes Verzeichnis & Datei anlegen + überprüfen -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-lg font-bold text-linux-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-linux-500/20 text-linux-900 flex items-center justify-center text-sm font-extrabold">2c</span>
+                    Eigenes Projektverzeichnis und Textdatei anlegen sowie Zugriffsrechte prüfen
+                </h3>
+                <p class="text-slate-700">
+                    Mit <code>pwd</code> (Print Working Directory) prüfen wir unseren Standort, erstellen mit <code>mkdir -p</code> einen Projektordner für unser SaaS-Projekt, legen eine Konfigurationsnotiz an und kontrollieren mit <code>ls -la</code> den Speicherort samt Standard-Zugriffsrechten:
+                </p>
+
+                <div class="terminal-box rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>fiae@debian-dev-vm: ~/projekte/pixelsync (Aufgabe 2c: Verzeichnis &amp; Datei anlegen)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-linux-300">Bash</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs overflow-x-auto leading-relaxed"><code><span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ mkdir -p ~/projekte/pixelsync &amp;&amp; cd ~/projekte/pixelsync
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ pwd
+/home/fiae/projekte/pixelsync
+
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ echo "Server-Node: Debian 12 Bookworm | Port: 8080" &gt; server_info.txt
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ cat server_info.txt
+Server-Node: Debian 12 Bookworm | Port: 8080
+
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ ls -la
+insgesamt 12
+drwxr-xr-x 2 fiae fiae 4096 27. Okt 08:25 .
+drwxr-xr-x 3 fiae fiae 4096 27. Okt 08:25 ..
+<span class="text-amber-300 font-bold">-rw-r--r--</span> 1 <span class="text-linux-400">fiae fiae</span>   45 27. Okt 08:25 <span class="text-white font-bold">server_info.txt</span></code></pre>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-600 bg-slate-100 p-3.5 rounded-xl border border-slate-200">
+                    <strong>🔍 Auswertung der Rechte von <code>server_info.txt</code> (<code>-rw-r--r--</code> / Oktal <code>644</code>):</strong> Das erste Zeichen <code>-</code> steht für eine normale Datei (ein <code>d</code> stünde für <em>Directory</em>/Ordner). Der Besitzer <code>fiae</code> darf lesen und schreiben (<code>rw-</code>), die primäre Gruppe <code>fiae</code> darf nur lesen (<code>r--</code>) und alle anderen Systembenutzer (Others) dürfen ebenfalls nur lesen (<code>r--</code>). Ausführungsrechte (<code>x</code>) sind standardmäßig für Textdateien aus Sicherheitsgründen nicht gesetzt.
+                </p>
+            </div>
+        </section>
+
+        <!-- Exkurs: Die wichtigsten Linux-Basisbefehle -->
+        <div class="rounded-xl border border-linux-200 bg-linux-50/40 p-5 sm:p-6 avoid-break shadow-sm mt-8">
+            <h3 class="text-base sm:text-lg font-extrabold text-linux-900 mb-3 flex items-center gap-2">
+                <span class="text-xl">💡</span> Exkurs: Die wichtigsten Linux-Befehle für den Alltag
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">
+                Diese Basisbefehle sind das absolute kleine Einmaleins auf der Kommandozeile und werden fast täglich für die Navigation und Dateiverwaltung gebraucht:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-700">
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">ls -la</code>
+                    <span>Listet den Inhalt eines Ordners detailliert auf (inklusive Dateirechten und versteckten Dateien).</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">cd /pfad/zum/ordner</code>
+                    <span>Wechselt das Verzeichnis (<strong>C</strong>hange <strong>D</strong>irectory). <code>cd ..</code> geht eine Ebene zurück.</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">pwd</code>
+                    <span>Zeigt den aktuellen, vollständigen Verzeichnispfad an, in dem du dich befindest (<strong>P</strong>rint <strong>W</strong>orking <strong>D</strong>irectory).</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">mkdir ordnername</code>
+                    <span>Erstellt ein neues, leeres Verzeichnis (<strong>M</strong>a<strong>k</strong>e <strong>Dir</strong>ectory).</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">rm datei.txt</code>
+                    <span>Löscht eine Datei (<strong>R</strong>e<strong>m</strong>ove). Achtung: Mit <code>rm -r ordnername</code> werden ganze Ordner ohne Rückfrage gelöscht!</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">cp datei.txt ziel/</code>
+                    <span>Kopiert eine Datei oder einen Ordner an einen neuen Ort (<strong>C</strong>o<strong>p</strong>y).</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">mv datei.txt ziel/</code>
+                    <span>Verschiebt (<strong>M</strong>o<strong>v</strong>e) eine Datei. Wird unter Linux auch zum <strong>Umbenennen</strong> von Dateien genutzt.</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">cat datei.txt</code>
+                    <span>Gibt den gesamten Textinhalt einer Datei direkt und schnell im Terminal aus.</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">grep "Suchwort" datei.txt</code>
+                    <span>Durchsucht eine Textdatei nach einem bestimmten Wort oder Muster und gibt die Treffer-Zeilen aus.</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-lg border border-slate-200 flex flex-col">
+                    <code class="text-linux-700 font-bold font-mono mb-1">nano datei.txt</code>
+                    <span>Öffnet die Datei in einem einfachen, anfängerfreundlichen Texteditor direkt in der Konsole (Speichern mit <code>Strg+O</code>).</span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =====================================================================
+         AUFGABE 3: BENUTZER, RECHTE UND PAKETVERWALTUNG
+         ===================================================================== -->
+        <section id="aufgabe-3" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-linux-700">Aufgabenblock 3 (Teilaufgaben 3a bis 3c)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">3. Benutzer, Dateirechte &amp; Paketverwaltung (APT)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Administration</span>
+            </div>
+
+            <!-- 3a: Neuen Benutzer anlegen und wechseln -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-lg font-bold text-linux-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-linux-500/20 text-linux-900 flex items-center justify-center text-sm font-extrabold">3a</span>
+                    Neuen Benutzer anlegen und Benutzerwechsel testen
+                </h3>
+                <p class="text-slate-700">
+                    Unter Debian nutzt man für interaktive Benutzerkonten den Befehl <code>sudo adduser &lt;name&gt;</code> (dieser legt automatisch das Home-Verzeichnis <code>/home/dev_tester</code> an, kopiert Standard-Konfigurationen aus <code>/etc/skel</code> und fragt das Passwort ab). Mit <code>su - dev_tester</code> (Switch User) wechseln wir in die Sitzung des neuen Kontos:
+                </p>
+
+                <div class="terminal-box rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>fiae@debian-dev-vm: ~ (Aufgabe 3a: Benutzerverwaltung)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-linux-300">Bash</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs overflow-x-auto leading-relaxed"><code><span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ sudo adduser dev_tester
+Benutzer »dev_tester« wird hinzugefügt …
+Neue Gruppe »dev_tester« (1001) wird hinzugefügt …
+Neuer Benutzer »dev_tester« (1001) mit Gruppe »dev_tester (1001)« wird hinzugefügt …
+Persönlicher Ordner »/home/dev_tester« wird erstellt …
+Dateien werden aus »/etc/skel« kopiert …
+Neues Passwort: ********
+Geben Sie das neue Passwort erneut ein: ********
+passwd: Passwort wurde erfolgreich aktualisiert
+
+<span class="text-slate-500"># Wechsel zum neuen Benutzer testen und mit 'exit' zurückkehren:</span>
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ su - dev_tester
+Passwort: ********
+<span class="text-amber-300 font-bold">dev_tester@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ whoami &amp;&amp; pwd
+dev_tester
+/home/dev_tester
+<span class="text-amber-300 font-bold">dev_tester@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~</span>$ exit
+Abgemeldet</code></pre>
+                </div>
+            </div>
+
+            <!-- 3b: Dateirechte untersuchen und gezielt ändern (chmod) -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-lg font-bold text-linux-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-linux-500/20 text-linux-900 flex items-center justify-center text-sm font-extrabold">3b</span>
+                    Dateirechte verstehen und gezielt ändern (Lesen, Schreiben, Ausführen mit <code>chmod</code>)
+                </h3>
+                <p class="text-slate-700">
+                    Linux verwaltet Berechtigungen für drei Gruppen: <strong>User/Owner (u)</strong>, <strong>Group (g)</strong> und <strong>Others (o)</strong>. Jede Kategorie erhält eine Kombination aus drei Rechten, die sich sowohl symbolisch (Buchstaben) als auch oktal (durch Addition der Zahlenwerte <strong>4 + 2 + 1</strong>) setzen lassen:
+                </p>
+
+                <!-- Visuelle Oktal-Rechte-Karten -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
+                        <span class="text-2xl font-mono font-extrabold text-emerald-700 block">r = 4 (Read)</span>
+                        <strong class="text-ihk-900 text-sm block mt-1">Leserecht</strong>
+                        <p class="text-xs text-slate-600 mt-1">Dateiinhalt lesen (z. B. mit <code>cat</code>) bzw. bei Ordnern den Verzeichnisinhalt mit <code>ls</code> auflisten.</p>
+                    </div>
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 text-center">
+                        <span class="text-2xl font-mono font-extrabold text-sky-700 block">w = 2 (Write)</span>
+                        <strong class="text-ihk-900 text-sm block mt-1">Schreibrecht</strong>
+                        <p class="text-xs text-slate-600 mt-1">Datei verändern/speichern bzw. in einem Ordner neue Dateien anlegen, umbenennen oder löschen.</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+                        <span class="text-2xl font-mono font-extrabold text-amber-700 block">x = 1 (Execute)</span>
+                        <strong class="text-ihk-900 text-sm block mt-1">Ausführungsrecht</strong>
+                        <p class="text-xs text-slate-600 mt-1">Datei als Programm oder Shell-Skript starten bzw. in ein Verzeichnis mit <code>cd</code> hineinwechseln.</p>
+                    </div>
+                </div>
+
+                <div class="terminal-box rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>fiae@debian-dev-vm: ~/projekte/pixelsync (Aufgabe 3b: Skript ausführbar machen mit chmod)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-linux-300">Bash</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs overflow-x-auto leading-relaxed"><code><span class="text-slate-500"># 1. Kleines Backup-Skript anlegen und Ausgangsrechte (644) prüfen:</span>
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ echo -e "#!/bin/bash\necho 'Starte PixelSync DB-Backup...'" &gt; backup.sh
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ ls -l backup.sh
+-rw-r--r-- 1 fiae fiae 49 27. Okt 08:32 backup.sh
+
+<span class="text-slate-500"># 2. Versuch, das Skript ohne 'x'-Recht direkt zu starten (schlägt fehl!):</span>
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ ./backup.sh
+<span class="text-rose-400">bash: ./backup.sh: Keine Berechtigung</span>
+
+<span class="text-slate-500"># 3. Rechte gezielt auf 750 ändern (Owner: rwx=7 | Group: r-x=5 | Others: ---=0):</span>
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ chmod 750 backup.sh
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ ls -l backup.sh
+<span class="text-linux-400 font-bold">-rwxr-x---</span> 1 fiae fiae 49 27. Okt 08:32 <span class="text-linux-400 font-bold">backup.sh</span>
+
+<span class="text-slate-500"># 4. Erneuter Test – das Skript lässt sich nun ausführen, Fremde sind ausgesperrt:</span>
+<span class="text-linux-400 font-bold">fiae@debian-dev-vm</span>:<span class="text-sky-400 font-bold">~/projekte/pixelsync</span>$ ./backup.sh
+Starte PixelSync DB-Backup...</code></pre>
+                </div>
+            </div>
+
+            <!-- 3c: Paketverwaltung mit APT -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-lg font-bold text-linux-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-linux-500/20 text-linux-900 flex items-center justify-center text-sm font-extrabold">3c</span>
+                    Softwarepakete installieren, aktualisieren und entfernen mit <code>apt</code>
+                </h3>
+                <p class="text-slate-700">
+                    Unter Debian und Ubuntu lädt man sich keine <code>.exe</code>-Installer von fremden Webseiten herunter. Stattdessen verwaltet das <strong>APT (Advanced Package Tool)</strong> sämtliche Programme zentral über kryptografisch signierte Paketquellen (Repositories, definiert in <code>/etc/apt/sources.list</code>) und löst benötigte Bibliotheken (Abhängigkeiten) vollautomatisch auf:
+                </p>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3.5 font-bold w-1/3 border-r border-ihk-700">Befehl (als Admin mit <code>sudo</code>)</th>
+                                <th class="p-3.5 font-bold w-2/3">Wirkung im System &amp; Praxisbeispiel (Installation von <code>htop</code>)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono text-xs font-bold text-linux-800 border-r border-slate-200">sudo apt update</td>
+                                <td class="p-3.5 text-slate-700"><strong>Paketlisten aktualisieren:</strong> Lädt die neuesten Inhaltsverzeichnisse der Debian-Server herunter, damit das System weiß, welche neuen Programmversionen verfügbar sind (installiert selbst noch nichts).</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono text-xs font-bold text-linux-800 border-r border-slate-200">sudo apt upgrade -y</td>
+                                <td class="p-3.5 text-slate-700"><strong>Installierte Pakete aktualisieren:</strong> Bringt alle auf dem System vorhandenen Programme, Bibliotheken und Sicherheits-Patches in einem Rutsch auf den neuesten Stand.</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono text-xs font-bold text-linux-800 border-r border-slate-200">sudo apt install htop git</td>
+                                <td class="p-3.5 text-slate-700"><strong>Software installieren:</strong> Lädt das Paket (z. B. den interaktiven Prozessmonitor <code>htop</code> und die Versionsverwaltung <code>git</code>) inklusive aller Abhängigkeiten herunter und richtet es fertig ein.</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono text-xs font-bold text-linux-800 border-r border-slate-200">sudo apt remove htop<br><span class="text-slate-500 font-normal">(bzw. <code>sudo apt purge htop</code>)</span></td>
+                                <td class="p-3.5 text-slate-700"><strong>Software deinstallieren:</strong> <code>remove</code> entfernt das Programm, behält aber Konfigurationsdateien in <code>/etc</code>. <code>purge</code> löscht das Paket restlos inklusive aller globalen Konfigurationsdateien.</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono text-xs font-bold text-linux-800 border-r border-slate-200">sudo apt autoremove</td>
+                                <td class="p-3.5 text-slate-700"><strong>Aufräumen:</strong> Entfernt verwaiste Hilfsbibliotheken (Dependencies), die früher automatisch mitinstalliert wurden, aber nach einer Deinstallation von keinem Programm mehr benötigt werden.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         AUFGABE 4: REFLEXION (WINDOWS VS. LINUX)
+         ===================================================================== -->
+        <section id="aufgabe-4" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-linux-700">Aufgabenblock 4 (Teilaufgaben 4a bis 4c)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">4. Reflexion – Erkenntnisse für die Anwendungsentwicklung</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Fazit &amp; Praxisvergleich</span>
+            </div>
+
+            <div class="space-y-5">
+                <!-- 4a: Unterschiede zu Windows -->
+                <div class="rounded-xl border border-blue-200 bg-blue-50/50 border-t-4 border-t-blue-600 p-5 sm:p-6 avoid-break shadow-sm mt-6">
+                    <h3 class="text-base sm:text-lg font-extrabold text-ihk-900 mb-3">4a) Welche grundlegenden Unterschiede sind im Vergleich zu Windows aufgefallen?</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">
+                        Beim direkten Vergleich zwischen dem frisch installierten Debian-System und einem klassischen Windows-Desktop fallen tiefgreifende strukturelle und philosophische Unterschiede auf, die besonders für angehende Entwickler relevant sind:
+                    </p>
+                    <ul class="space-y-4 text-xs sm:text-sm text-slate-700">
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">📁</span>
+                            <div>
+                                <strong class="text-linux-800 block mb-0.5">1. Dateisystem statt Laufwerksbuchstaben</strong>
+                                Windows isoliert Laufwerke (<code>C:\</code>, <code>D:\</code>) und nutzt Backslashes (<code>\</code>). Linux hingegen baut auf einen einzigen, globalen Verzeichnisbaum auf, der bei der Wurzel (<code>/</code>, Root) beginnt und mit normalen Slashes (<code>/</code>) strukturiert wird. Zusätzliche Festplatten werden nicht als neues Laufwerk, sondern transparent als Ordner (z. B. unter <code>/mnt/data</code>) in diesen Baum eingehängt (gemountet).
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🔠</span>
+                            <div>
+                                <strong class="text-linux-800 block mb-0.5">2. Strikte Case-Sensitivity (Groß-/Kleinschreibung)</strong>
+                                Unter Windows sind <code>Style.css</code> und <code>style.css</code> dieselbe Datei. Linux unterscheidet strikt. Es können problemlos <code>Test.txt</code>, <code>test.txt</code> und <code>TEST.TXT</code> im selben Ordner existieren. Das ist eine der häufigsten Fehlerquellen (Broken Links), wenn man Web-Code auf Windows entwickelt und später auf einen Linux-Server hochlädt.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">⚙️</span>
+                            <div>
+                                <strong class="text-linux-800 block mb-0.5">3. Klartext-Konfiguration vs. Windows-Registry</strong>
+                                Windows speichert Systemeinstellungen zentral in einer undurchsichtigen, binären Datenbank (Registry). Linux folgt dem Paradigma <em>„Everything is a file“</em>. Nahezu jede Konfiguration liegt als einfache, menschenlesbare Textdatei im Verzeichnis <code>/etc</code>. Das macht es extrem einfach, Server-Einstellungen über Versionskontrolle (Git) zu sichern und Fehler schnell per Texteditor (wie <code>nano</code> oder <code>vim</code>) zu beheben.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">📦</span>
+                            <div>
+                                <strong class="text-linux-800 block mb-0.5">4. Zentrale Paketverwaltung statt .exe-Dateien</strong>
+                                Anstatt sich Installationsdateien (<code>.exe</code>, <code>.msi</code>) von verschiedenen Webseiten zusammenzusuchen, nutzt Linux einen zentralen Paketmanager (hier <code>apt</code>). Software wird aus sicheren, kryptografisch signierten Repositories bezogen. Abhängigkeiten (fehlende Bibliotheken) löst das System beim Befehl <code>apt install</code> vollautomatisch auf.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🖥️</span>
+                            <div>
+                                <strong class="text-linux-800 block mb-0.5">5. Die grafische Oberfläche ist optional (Headless)</strong>
+                                Unter Windows ist die GUI (Graphical User Interface) tief im Betriebssystemkern verankert. Unter Linux ist der Desktop (z. B. GNOME, KDE) nur ein normales Programm, das man starten oder stoppen kann. Server laufen fast immer „headless“ (nur Kommandozeile), was massiv CPU- und RAM-Ressourcen spart.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🛡️</span>
+                            <div>
+                                <strong class="text-linux-800 block mb-0.5">6. Das Berechtigungskonzept (Root vs. Administrator)</strong>
+                                Zwar hat Windows das UAC-System (Admin-Bestätigung), aber Linux trennt Standardnutzer noch strikter ab. Ein normaler User darf außerhalb seines Home-Verzeichnisses (<code>/home/user</code>) <em>nichts</em> verändern. Um globale Änderungen vorzunehmen, muss jeder Befehl einzeln mit <code>sudo</code> (Superuser Do) delegiert werden, was das System sehr resistent gegen Schadsoftware macht.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 4b: Vorteile für Entwickler und Server -->
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50/50 border-t-4 border-t-emerald-600 p-5 sm:p-6 avoid-break shadow-sm mt-6">
+                    <h3 class="text-base sm:text-lg font-extrabold text-emerald-950 mb-3">4b) Welche Vorteile bietet Linux für Entwickler und Serverumgebungen?</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">
+                        Trotz der anfangs steilen Lernkurve ist Linux nicht ohne Grund der absolute Branchenstandard für Webserver, Cloud-Infrastrukturen und moderne DevOps-Prozesse. Für uns als Entwickler bietet es unschlagbare Vorteile:
+                    </p>
+                    <ul class="space-y-4 text-xs sm:text-sm text-slate-700">
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🚀</span>
+                            <div>
+                                <strong class="text-emerald-900 block mb-0.5">1. Maximale Ressourceneffizienz (Headless)</strong>
+                                Ein Debian-Server ohne grafische Benutzeroberfläche benötigt nach dem Booten oft nicht einmal 250 MB Arbeitsspeicher. Anstatt Hardware-Ressourcen an einen ressourcenhungrigen Desktop zu verschwenden, steht fast die gesamte Leistung der VM für unsere eigentlichen Anwendungen (wie die PostgreSQL-Datenbank oder das C#-Backend von CanvasFlow) zur Verfügung.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🐳</span>
+                            <div>
+                                <strong class="text-emerald-900 block mb-0.5">2. Die native Heimat von Docker & Containern</strong>
+                                Moderne Software wird heute fast immer in Docker-Containern ausgeliefert. Docker basiert tief im Kern auf spezifischen Linux-Features (wie <em>cgroups</em> und <em>namespaces</em>). Auf einem Windows-Host muss Docker diese Linux-Umgebung erst aufwendig simulieren (via WSL2), während Container unter Linux nativ, ressourcenschonend und mit maximaler Performance laufen.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🤖</span>
+                            <div>
+                                <strong class="text-emerald-900 block mb-0.5">3. Grenzenlose Automatisierung (Scripting & CI/CD)</strong>
+                                Da alles über die Kommandozeile gesteuert werden kann und Einstellungen reine Textdateien sind, lässt sich die Serveradministration perfekt automatisieren. Mit einfachen Bash-Skripten und <code>cron</code>-Jobs können wir Backups anlegen, Zertifikate erneuern oder über externe Runner ganze Deployment-Prozesse steuern, ohne manuell eingreifen zu müssen.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">💸</span>
+                            <div>
+                                <strong class="text-emerald-900 block mb-0.5">4. Open Source & Keine Lizenzkosten</strong>
+                                Anders als bei Windows Server gibt es bei Debian keine teuren Lizenzgebühren und keine Client-Access-Lizenzen (CALs) pro Nutzer. Wir können unser SaaS-Projekt "PixelSync" theoretisch auf 50 parallel laufende Linux-Server in der Cloud skalieren, ohne auch nur einen Cent an Betriebssystem-Lizenzen zahlen zu müssen.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🔒</span>
+                            <div>
+                                <strong class="text-emerald-900 block mb-0.5">5. Stabilität und Server-Uptime</strong>
+                                Linux-Systeme sind extrem robust. Viele Konfigurationsänderungen oder sogar Updates zentraler Systemkomponenten erfordern keinen Neustart (Reboot). Linux-Server laufen oft monate- oder jahrelang ohne Unterbrechung durch, was für ein hochverfügbares SaaS-Produkt absolut kritisch ist.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 4c: Herausforderungen -->
+                <div class="rounded-xl border border-amber-200 bg-amber-50/50 border-t-4 border-t-amber-500 p-5 sm:p-6 avoid-break shadow-sm mt-6">
+                    <h3 class="text-base sm:text-lg font-extrabold text-amber-950 mb-3">4c) Welche Herausforderungen sind Ihnen bei der Arbeit mit Linux begegnet?</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">
+                        Der Umstieg von einer rein grafischen Windows-Umgebung auf ein terminal-fokussiertes Linux-System bringt anfangs einige konzeptionelle Hürden mit sich. Besonders folgende Aspekte erforderten eine bewusste Umgewöhnung:
+                    </p>
+                    <ul class="space-y-4 text-xs sm:text-sm text-slate-700">
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🤫</span>
+                            <div>
+                                <strong class="text-amber-900 block mb-0.5">1. Fehlendes visuelles Feedback („Silence is golden“)</strong>
+                                Wenn man unter Windows eine Datei kopiert, sieht man einen Fortschrittsbalken oder ein Pop-up. Die Linux-Kommandozeile folgt der UNIX-Philosophie: War ein Befehl erfolgreich, gibt es meistens gar keine Ausgabe (nur der nächste leere Prompt erscheint). Das fühlt sich anfangs ungewohnt und unsicher an, zwingt aber dazu, Befehlen zu vertrauen oder Ergebnisse (z. B. mit <code>ls -l</code>) selbst nachzuprüfen.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🛑</span>
+                            <div>
+                                <strong class="text-amber-900 block mb-0.5">2. Die unerbittliche Rechteverwaltung (Permission Denied)</strong>
+                                Es reicht unter Linux nicht, ein Skript einfach herunterzuladen und doppelt anzuklicken. Man muss explizit verstehen, dass reine Textdateien durch den Befehl <code>chmod +x</code> erst zu ausführbaren Programmen „befördert“ werden müssen. Auch das ständige Vergessen des <code>sudo</code>-Präfixes bei systemweiten Anpassungen blockiert den Arbeitsfluss anfangs oft.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🗺️</span>
+                            <div>
+                                <strong class="text-amber-900 block mb-0.5">3. Orientierungslosigkeit im Dateisystem</strong>
+                                Ohne den gewohnten <code>C:\Programme</code>-Ordner sucht man nach Installationen anfangs vergeblich. Man muss das FHS-Konzept verinnerlichen: Ein installiertes Programm liegt plötzlich zersplittert im System – die ausführbare Datei in <code>/usr/bin</code>, die globale Konfiguration dazu jedoch in <code>/etc</code> und die Log-Dateien ganz woanders in <code>/var/log</code>.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">🗑️</span>
+                            <div>
+                                <strong class="text-amber-900 block mb-0.5">4. Kein Sicherheitsnetz (Kein Papierkorb in der Bash)</strong>
+                                Die Kommandozeile verzeiht keine Tippfehler. Ein Löschbefehl wie <code>rm -rf</code> vernichtet Dateien sofort und unwiderruflich, ohne eine rettende „Sind Sie sicher?“-Nachfrage. Das erfordert eine deutlich höhere Konzentration beim Tippen absoluter und relativer Dateipfade.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-lg leading-none mt-0.5">💻</span>
+                            <div>
+                                <strong class="text-amber-900 block mb-0.5">5. Tücken der Hyper-V Virtualisierung</strong>
+                                Schon vor der eigentlichen Nutzung gab es Hürden: Die Debian-ISO startete in der modernen „Generation 2“-VM nicht auf Anhieb. Erst die Recherche, dass die Secure-Boot-Vorlage in den Hyper-V-Einstellungen zwingend auf „Microsoft UEFI-Zertifizierungsstelle“ umgestellt werden muss, erlaubte den erfolgreichen Boot des Linux-Kernels.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         BONUS-SEKTION 1: NORMEN & STANDARDS RUND UM LINUX
+         ===================================================================== -->
+        <section id="normen-standards" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Hintergrundwissen für deine IHK-Ausbildung</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">5. Wichtige Standards &amp; Normen in der Linux-Welt</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-bold">Prüfungswissen Linux</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">FHS 3.0</span>
+                        <span class="text-xs text-slate-500">Linux Foundation</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Filesystem Hierarchy Standard</h3>
+                    <p class="text-slate-700">
+                        Der FHS legt distributionsübergreifend (egal ob Debian, Ubuntu, Red Hat oder SUSE) fest, welche Dateien in welchem Verzeichnis liegen müssen (<code>/etc</code> für Konfiguration, <code>/var</code> für variable Daten, <code>/usr</code> für Programme). Nur dank dieses Standards finden Softwarepakete ihre Dateien auf jedem Linux-System am selben Ort.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">POSIX (IEEE 1003)</span>
+                        <span class="text-xs text-slate-500">ISO/IEC 9945 Standard</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Portable Operating System Interface</h3>
+                    <p class="text-slate-700">
+                        Ein von der IEEE und ISO normierter Standard für Unix-ähnliche Betriebssysteme. Er standardisiert die Programmierschnittstellen (System Calls), das Berechtigungsmodell (<code>rwx</code> für User, Group, Others) sowie die grundlegenden Shell-Befehle (wie <code>ls</code>, <code>cd</code>, <code>chmod</code>, <code>grep</code>).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         BONUS-SEKTION 2: GROSSES FREMDWÖRTER-LEXIKON (GLOSSAR)
+         ===================================================================== -->
+        <section id="glossar" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Alle Linux-Begriffe verständlich übersetzt</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">6. Großes Fremdwörter- &amp; Befehls-Lexikon (Glossar)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Azubi-Nachschlagewerk</span>
+            </div>
+
+            <!-- Interaktiver Suchfilter (Einheitlich!) -->
+            <div class="no-print bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm text-slate-700 font-medium">
+                    🔎 <strong>Schnellfilter:</strong> Tippe einen Begriff oder Befehl ein (z. B. <em>Kernel</em>, <em>sudo</em>, <em>chmod</em>, <em>Daemon</em>), um das Lexikon live zu durchsuchen:
+                </div>
+                <input type="text" id="glossarySearch" oninput="filterGlossary()" placeholder="Begriff suchen..."
+                       class="w-full sm:w-72 px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-linux-500">
+            </div>
+
+            <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <!-- Dynamically populated by glossarData.js -->
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         BONUS-SEKTION 3: QUELLENVERZEICHNIS (MIT WIKI-VERNETZUNG!)
+         ===================================================================== -->
+        <section id="quellen" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-linux-700">Literatur, Normen &amp; Weiterführende Links</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">7. Quellen- und Nachschlageverzeichnis für deine Ausbildung</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">Quellenangaben</span>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3.5 font-bold w-1/4">Quelle / Standard / Buch</th>
+                            <th class="p-3.5 font-bold w-1/4">Autor / Herausgeber</th>
+                            <th class="p-3.5 font-bold w-1/2">Nutzen für deine FIAE-Ausbildung &amp; Fundstelle</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <!-- Interne Wiki-Referenz -->
+                        <tr class="bg-linux-500/10 border-l-4 border-linux-600">
+                            <td class="p-3.5 font-bold text-ihk-900">🔗 IHK-Wiki: DevOps &amp; SaaS</td>
+                            <td class="p-3.5 text-slate-700">Eigene Dokumente (Lernauftrag 03 &amp; 04)</td>
+                            <td class="p-3.5 text-slate-700">Die hier eingerichtete Debian-VM bildet die direkte Serverbasis für unsere <a href="se_03_vorgehensmodelle.html#aufgabe-1d" class="text-linux-700 font-bold hover:underline">CI/CD-Pipeline (LA 03)</a> und das Docker-Deployment von <a href="se_04_saas.html#aufgabe-4" class="text-linux-700 font-bold hover:underline">PixelSync (LA 04)</a>.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Das Debian-Administrationshandbuch<br><span class="text-xs font-normal text-slate-500">(Offizielle Dokumentation)</span></td>
+                            <td class="p-3.5 text-slate-700">Raphaël Hertzog, Roland Mas (Debian Project)</td>
+                            <td class="p-3.5 text-slate-700">Umfassendes, kostenlos auf Deutsch verfügbares Referenzwerk zur Debian-Installation, APT und Rechteverwaltung: <span class="font-mono text-xs text-linux-700">debian-handbook.info/browse/de-DE/stable/</span></td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">Filesystem Hierarchy Standard (FHS 3.0)</td>
+                            <td class="p-3.5 text-slate-700">Linux Foundation</td>
+                            <td class="p-3.5 text-slate-700">Offizielle Spezifikation der Linux-Verzeichnisstruktur (<code>/etc</code>, <code>/var</code>, <code>/usr</code>, <code>/home</code>) – häufiges Thema in der IHK-Abschlussprüfung Teil 1 (AP1).</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Linux – Das umfassende Handbuch<br><span class="text-xs font-normal text-slate-500">(17. Auflage)</span></td>
+                            <td class="p-3.5 text-slate-700">Michael Kofler (Rheinwerk Computing)</td>
+                            <td class="p-3.5 text-slate-700">Das deutschsprachige Standardwerk für Administratoren und Entwickler (Bash, Dateirechte, systemd, Docker, Netzwerke).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- FOOTER (Einheitlich!) -->
+        <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-200">
+            <p class="font-semibold text-slate-700">Ausarbeitung zum IHK-Lernauftrag 05: Linux-Systeme &amp; Systemadministration (Fachinformatiker/-in Anwendungsentwicklung)</p>
+            <p class="mt-1">Praxisumgebung „Debian 12 Bookworm (Hyper-V)“ • Optimiert für Bildschirmansicht und vollständigen A4-Druck ohne Abschneiden (Strg+P / 🖨️ Button oben).</p>
+        </footer>
+
+    </main>
+
+    
+    <!-- ==================== JAVASCRIPT GLOBAL GLOSSAR ==================== -->
+    <script src="../assets/js/glossarData.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glossaryGrid = document.getElementById('glossaryGrid');
+            if (!glossaryGrid) return;
+            
+            // Initiales Rendern aller Begriffe
+            renderGlossary('');
+            
+            // Event Listener für die Suche
+            const searchInput = document.getElementById('glossarySearch');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    renderGlossary(e.target.value);
+                });
+            }
+        });
+
+        function renderGlossary(filterText) {
+            const grid = document.getElementById('glossaryGrid');
+            grid.innerHTML = ''; // Leeren
+            
+            const query = filterText.toLowerCase().trim();
+            
+            const filtered = globalesGlossar.filter(item => {
+                return item.titel.toLowerCase().includes(query) || 
+                       item.beschreibung.toLowerCase().includes(query);
+            });
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500">Keine passenden Begriffe gefunden.</div>';
+                return;
+            }
+            
+            filtered.forEach(item => {
+                // Farb-Mapping für die Badges
+                let badgeClass = "bg-slate-100 text-slate-700";
+                if(item.farbe === 'sky') badgeClass = "bg-sky-100 text-sky-800";
+                if(item.farbe === 'linux') badgeClass = "bg-linux-100 text-linux-800";
+                if(item.farbe === 'java') badgeClass = "bg-java-100 text-java-800";
+                
+                const cardHTML = `
+                    <div class="glossary-card rounded-xl border border-slate-200 p-4 bg-slate-50/60 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <h4 class="font-extrabold text-ihk-900 leading-tight">${item.titel}</h4>
+                        </div>
+                        <p class="text-slate-700 text-xs sm:text-sm flex-1">${item.beschreibung}</p>
+                        <div class="mt-3 pt-3 border-t border-slate-200">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                                ${item.modul}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+    </script>
+
+</body>
+</html>

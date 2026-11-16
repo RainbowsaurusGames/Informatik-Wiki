@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK-Lernauftrag 03: Vorgehensmodelle im Software-Engineering – Beispielprojekt „CanvasFlow“</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ihk: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#0c4a6e',
+                            900: '#0f294a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Grundlegende Styles für optimale Lesbarkeit und kein Abschneiden */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: auto !important;
+            overflow-x: hidden;
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Spezielle Druck-Optimierung (@media print) gegen jegliches Abschneiden */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 14mm 12mm 14mm 12mm;
+            }
+            html, body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                font-size: 9.5pt !important;
+                line-height: 1.4 !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            main, section, article, div {
+                overflow: visible !important;
+                max-width: 100% !important;
+            }
+            .avoid-break, tr, blockquote, figure, .glossary-card {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            .print-page-start {
+                break-before: page;
+                page-break-before: always;
+            }
+            h1, h2, h3, h4 {
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                box-shadow: none !important;
+            }
+            .glossary-card {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-sky-600 selection:text-white">
+    <!-- ==================== WIKI-NAVIGATION (TOP BAR) ==================== -->
+    <div class="bg-slate-950 text-slate-400 text-xs py-2 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-slate-800 no-print">
+        <a href="../index.html" class="font-bold text-sky-400 hover:text-white transition flex items-center gap-1">🏠 Dashboard</a>
+        <span class="text-slate-600">|</span>
+        <span class="font-bold text-sky-400">Software Engineering:</span>
+        <a href="se_02_anforderungsanalyse.html" class="hover:text-white transition">LA 02</a>
+        <a href="se_03_vorgehensmodelle.html" class="hover:text-white transition text-white font-medium">LA 03</a>
+        <a href="se_04_saas.html" class="hover:text-white transition">LA 04</a>
+        <a href="se_05_linux_systeme.html" class="hover:text-white transition">LA 05</a>
+    </div>
+
+    <!-- ==================== STICKY TOP NAVIGATION (NUR BILDSCHIRM) ==================== -->
+    <header class="no-print sticky top-0 z-50 bg-ihk-900/95 backdrop-blur-md text-white border-b border-sky-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-4">
+
+                <!-- Branding -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center font-extrabold text-lg shadow-inner">
+                        CF
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/30">IHK FIAE</span>
+                            <span class="text-xs text-slate-300 hidden sm:inline">Lernauftrag 03: Vorgehensmodelle</span>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base text-white leading-tight">Vorgehensmodelle am Beispiel „CanvasFlow“</p>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Links (Zentriert & Einzeilig) -->
+                <nav class="hidden xl:flex flex-1 justify-center items-center gap-1 text-xs font-medium whitespace-nowrap">
+                    <a href="#aufgabe-1a" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1a. Grundlagen</a>
+                    <a href="#aufgabe-1b" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1b. Klassisch</a>
+                    <a href="#aufgabe-1c" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1c. Agil (Scrum)</a>
+                    <a href="#aufgabe-1d" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1d. DevOps</a>
+                    <a href="#aufgabe-2" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">2. Vergleich</a>
+                    <a href="#aufgabe-3" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">3. Praxistransfer</a>
+                    <a href="#normen-standards" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-amber-300">Normen</a>
+                    <a href="#glossar" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-emerald-300">Glossar</a>
+                    <a href="#quellen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">Quellen</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow-md cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-12 0h12v4H6v-4z" />
+                        </svg>
+                        <span>🖨️ Als PDF drucken / speichern</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile / Tablet Sub-Navbar -->
+            <div class="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-700/80 text-xs font-medium">
+                <a href="#aufgabe-1a" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1a. Grundlagen</a>
+                <a href="#aufgabe-1b" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1b. Klassisch</a>
+                <a href="#aufgabe-1c" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1c. Agil</a>
+                <a href="#aufgabe-1d" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1d. DevOps</a>
+                <a href="#aufgabe-2" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">2. Vergleich</a>
+                <a href="#aufgabe-3" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">3. Praxistransfer</a>
+                <a href="#normen-standards" class="shrink-0 px-2.5 py-1 rounded bg-amber-900/60 text-amber-200">Normen & ISO</a>
+                <a href="#glossar" class="shrink-0 px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-200">Fremdwörter</a>
+                <a href="#quellen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">Quellen</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HAUPTINHALT ==================== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- HERO / DOKUMENTKOPF -->
+        <section class="bg-ihk-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl border-l-8 border-sky-500 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-sky-300 mb-3">
+                <span>Deutsche IHK-Ausbildung • Fachinformatiker/-in für Anwendungsentwicklung (FIAE)</span>
+                <span>Lernauftrag 03: Vorgehensmodelle &amp; Prozesse</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                Vorgehensmodelle im Software-Engineering
+            </h1>
+            <p class="text-slate-200 text-sm sm:text-base leading-relaxed mb-6">
+                Ein Projekt wie unsere Multiformat-Kollaborationsplattform <strong class="text-sky-300">„CanvasFlow“</strong> programmiert sich nicht von selbst. Ohne klare Regeln, Rollen und Phasen versinkt jedes Entwicklerteam im Chaos. Vorgehensmodelle (Software Process Models) geben dem Softwarelebenszyklus eine Struktur. In diesem Dokument analysieren wir klassische (Wasserfall, V-Modell), agile (Scrum, Kanban) und moderne (DevOps) Ansätze und übertragen sie direkt in die Praxis unserer App-Entwicklung.
+            </p>
+
+            <!-- Info-Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700/80 text-xs sm:text-sm">
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-sky-300 block mb-1">🎯 Durchgehendes Praxisprojekt</span>
+                    Wir nutzen konsequent das aus dem letzten Auftrag bekannte Moodboard-Projekt <strong>„CanvasFlow“</strong> als Praxisbeispiel.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-emerald-300 block mb-1">📖 Fremdwörter direkt erklärt</span>
+                    Fachbegriffe wie <em>Tailoring</em>, <em>CI/CD</em>, <em>Inkrement</em> oder <em>WIP-Limit</em> werden im Text und im großen <a href="#glossar" class="underline hover:text-white">Glossar</a> erklärt.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-amber-300 block mb-1">⚖️ Offizielle IHK-Normen</span>
+                    Inklusive fundierter Erklärungen zum offiziellen <strong>Scrum Guide</strong> und der Lebenszyklus-Norm <strong>ISO/IEC/IEEE 12207</strong>.
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 1a: ALLGEMEINES (Grundlagen verstehen)
+             ===================================================================== -->
+        <section id="aufgabe-1a" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 1a (Teilaufgaben i bis iii)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1a. Recherchephase – Grundlagen verstehen</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Basiswissen Prozesse</span>
+            </div>
+
+            <div class="space-y-4">
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">i) Warum gibt es Vorgehensmodelle? Warum nicht „einfach drauflos entwickeln“?</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Das „Einfach-drauflos-Entwickeln“ (oft <em>Code &amp; Fix</em> genannt) funktioniert nur bei trivialen Hobby-Skripten. Bei echten Unternehmensprojekten wie „CanvasFlow“ führt dies unweigerlich zu Chaos, explodierenden Kosten und fehlerhafter Software (Spaghetti-Code). Vorgehensmodelle reduzieren das Risiko, indem sie den Entwicklungsprozess in überschaubare, kontrollierbare Phasen (Planung, Analyse, Design, Programmierung, Test, Betrieb) unterteilen. Sie definieren, <strong>wer (Rollen) was (Artefakte/Dokumente) wann (Phasen)</strong> zu tun hat, um planbare Qualität und Termintreue zu gewährleisten.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">ii) Worin unterscheiden sich allgemein klassische von agilen Vorgehensmodellen?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-700">
+                        <div class="bg-white p-4 rounded-lg border border-sky-200">
+                            <strong class="text-sky-800 block mb-1">Klassische Modelle (Plan-driven)</strong>
+                            Sie basieren auf dem Prinzip der <em>vollständigen Vorab-Planung</em>. Eine Phase (z. B. Design) darf erst beginnen, wenn die vorherige (z. B. Analyse) vollständig und dokumentiert abgeschlossen ist (Phasen-Meilensteine). Änderungen während der Programmierung sind unerwünscht und teuer (Change-Request-Verfahren).
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border border-emerald-200">
+                            <strong class="text-emerald-800 block mb-1">Agile Modelle (Value-driven)</strong>
+                            Sie gehen davon aus, dass Kunden oft erst wissen, was sie brauchen, wenn sie erste Versionen sehen. Die Entwicklung erfolgt iterativ (in kleinen Wiederholungen/Sprints) und inkrementell (die Software wächst schrittweise). Änderungen werden als natürlicher Teil des Prozesses begrüßt; lauffähige Software ist wichtiger als dicke Dokumente.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">iii) Müssen Vorgehensmodelle immer strikt eingehalten werden? (Stichwort: Tailoring)</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Nein. Vorgehensmodelle sind selten ein starres Gesetzbuch (außer in sicherheitskritischen Branchen wie der Luftfahrt oder Medizin). Sie dienen vielmehr als Orientierung. In der Praxis wendet man das Prinzip des <strong>Tailorings (Zuschneiden/Anpassen)</strong> an: Das Modell wird an die spezifische Projektgröße, die Teamkultur und die Firmenvorgaben angepasst. Über das Maß der Umsetzung entscheiden oft das <em>Project Management Office (PMO)</em>, der Projektleiter oder bei agilen Teams der <em>Scrum Master</em> gemeinsam mit dem Team.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 1b: KLASSISCHE MODELLE
+             ===================================================================== -->
+        <section id="aufgabe-1b" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 1b (Teilaufgaben i bis iii)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1b. Klassische Vorgehensmodelle (Plan-driven)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Wasserfall &amp; V-Modell</span>
+            </div>
+
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                        <h3 class="text-base font-extrabold text-ihk-900 mb-2">i) Reines Wasserfallmodell</h3>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-3">
+                            Das älteste Modell (Winston W. Royce, 1970). Die Phasen (<em>Analyse → Design → Implementierung → Test → Betrieb</em>) laufen streng sequenziell (hintereinander) ab. Jede Phase muss ein abgeschlossenes Dokument (z.B. Pflichtenheft) erzeugen, bevor die nächste beginnt. Ein Rücksprung ist theoretisch nicht vorgesehen.
+                        </p>
+                        <span class="inline-block px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-[11px] font-bold">Kritik: Sehr realitätsfern bei Anforderungsänderungen.</span>
+                    </div>
+
+                    <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                        <h3 class="text-base font-extrabold text-ihk-900 mb-2">ii) Erweitertes Wasserfallmodell</h3>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-3">
+                            Hier wurde erkannt, dass Fehler passieren. Das erweiterte Modell erlaubt kontrollierte Rücksprünge (Iterationen) <em>ausschließlich in die direkt vorangegangene Phase</em>. Stellt man im „Test“ einen Fehler fest, darf man in die „Implementierung“ zurückspringen, um ihn zu beheben.
+                        </p>
+                        <span class="inline-block px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">Vorteil: Realistischer als der reine Wasserfall.</span>
+                    </div>
+                </div>
+
+                <!-- V-Modell mit SVG -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-white avoid-break">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2">iii) Das V-Modell (Verifikation &amp; Validierung)</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">
+                        Das V-Modell stellt den Entwicklungsphasen (linker, absteigender Ast) direkt die passenden Qualitätssicherungs- und Testphasen (rechter, aufsteigender Ast) gegenüber. Es zwingt Entwickler dazu, bereits beim Schreiben der Anforderungen (Lastenheft) die passenden Abnahmetests zu definieren. Die Basis des „V“ bildet die eigentliche Programmierung.
+                    </p>
+
+                    <figure class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center max-w-2xl mx-auto">
+                        <svg role="img" viewBox="0 0 600 320" class="w-full h-auto">
+                            <title>Das V-Modell im Software-Engineering</title>
+                            <path d="M 160 40 L 440 40" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4" fill="none" marker-end="url(#arrow-v)" />
+                            <path d="M 210 100 L 390 100" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4" fill="none" marker-end="url(#arrow-v)" />
+                            <path d="M 260 160 L 340 160" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4" fill="none" marker-end="url(#arrow-v)" />
+
+                            <defs>
+                                <marker id="arrow-v" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                    <polygon points="0 0, 6 3, 0 6" fill="#94a3b8" />
+                                </marker>
+                                <marker id="arrow-solid" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                    <polygon points="0 0, 6 3, 0 6" fill="#0284c7" />
+                                </marker>
+                            </defs>
+
+                            <rect x="20" y="20" width="140" height="40" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+                            <text x="90" y="44" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">Anforderungsanalyse</text>
+
+                            <rect x="70" y="80" width="140" height="40" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+                            <text x="140" y="104" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">System-Architektur</text>
+
+                            <rect x="120" y="140" width="140" height="40" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" />
+                            <text x="190" y="164" font-size="10" font-weight="bold" fill="#0369a1" text-anchor="middle">Modul-Design</text>
+
+                            <path d="M 90 60 L 140 80" stroke="#0284c7" stroke-width="1.5" marker-end="url(#arrow-solid)" />
+                            <path d="M 140 120 L 190 140" stroke="#0284c7" stroke-width="1.5" marker-end="url(#arrow-solid)" />
+                            <path d="M 190 180 L 250 220" stroke="#0284c7" stroke-width="1.5" marker-end="url(#arrow-solid)" />
+
+                            <rect x="230" y="220" width="140" height="40" rx="4" fill="#0f294a" stroke="#0f172a" stroke-width="1.5" />
+                            <text x="300" y="244" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Programmierung</text>
+
+                            <path d="M 350 220 L 410 180" stroke="#0284c7" stroke-width="1.5" marker-end="url(#arrow-solid)" />
+                            <path d="M 460 120 L 410 140" stroke="#0284c7" stroke-width="1.5" marker-end="url(#arrow-solid)" transform="rotate(180 435 130)" />
+                            <path d="M 510 60 L 460 80" stroke="#0284c7" stroke-width="1.5" marker-end="url(#arrow-solid)" transform="rotate(180 485 70)" />
+
+                            <rect x="340" y="140" width="140" height="40" rx="4" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" />
+                            <text x="410" y="164" font-size="10" font-weight="bold" fill="#166534" text-anchor="middle">Modul-/Unit-Test</text>
+
+                            <rect x="390" y="80" width="140" height="40" rx="4" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" />
+                            <text x="460" y="104" font-size="10" font-weight="bold" fill="#166534" text-anchor="middle">Integrationstest</text>
+
+                            <rect x="440" y="20" width="140" height="40" rx="4" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" />
+                            <text x="510" y="44" font-size="10" font-weight="bold" fill="#166534" text-anchor="middle">Abnahmetest (UAT)</text>
+
+                            <text x="300" y="35" font-size="8" fill="#64748b" text-anchor="middle">Validierung gegen Anforderungen</text>
+                            <text x="300" y="95" font-size="8" fill="#64748b" text-anchor="middle">Verifikation der Architektur</text>
+                            <text x="300" y="155" font-size="8" fill="#64748b" text-anchor="middle">Verifikation des Designs</text>
+                        </svg>
+                        <figcaption class="text-xs text-slate-500 mt-3 font-medium"><strong>Abb. 1: Das V-Modell</strong> ordnet jedem Entwicklungsschritt (links) direkt eine formale Testphase (rechts) zu.</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 1c: AGILE MODELLE (Scrum & Kanban)
+             ===================================================================== -->
+        <section id="aufgabe-1c" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 1c (Teilaufgaben i &amp; ii)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1c. Agile Vorgehensmodelle (Value-driven)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Scrum &amp; Kanban</span>
+            </div>
+
+            <div class="space-y-6">
+                <div class="avoid-break">
+                    <h3 class="text-lg font-bold text-sky-800 flex items-center gap-2 mb-3">
+                        <span class="w-7 h-7 rounded-md bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-extrabold">i</span>
+                        Scrum – Das meistgenutzte agile Framework
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-700 mb-4">
+                        Scrum verzichtet auf dicke Lastenhefte und setzt stattdessen auf kleine, sich selbst organisierende Teams, die in festen Zeitblöcken (Sprints) funktionierende Software ausliefern. Hier sind die zentralen Begriffe in Kürze:
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs sm:text-sm text-slate-700">
+                        <div class="p-3 border border-slate-200 rounded-lg bg-slate-50">
+                            <strong class="text-ihk-900 block mb-0.5">Stakeholder</strong>
+                            Alle Personen, die ein Interesse am Produkt haben (z. B. Auftraggeber, Endnutzer, Management). Sie liefern Anforderungen und Feedback, mischen sich aber nicht ins Tagesgeschäft ein.
+                        </div>
+                        <div class="p-3 border border-sky-200 rounded-lg bg-sky-50">
+                            <strong class="text-sky-900 block mb-0.5">Product Owner (Rolle)</strong>
+                            Trägt die inhaltliche Verantwortung für das Produkt. Er pflegt das Backlog, priorisiert die Aufgaben und entscheidet, <em>was</em> den größten Geschäftswert (Value) bringt.
+                        </div>
+                        <div class="p-3 border border-emerald-200 rounded-lg bg-emerald-50">
+                            <strong class="text-emerald-900 block mb-0.5">Scrum Master (Rolle)</strong>
+                            Der Coach des Teams. Er sorgt dafür, dass die Scrum-Regeln eingehalten werden und räumt Hindernisse (Impediments) aus dem Weg, damit die Entwickler in Ruhe arbeiten können.
+                        </div>
+                        <div class="p-3 border border-slate-200 rounded-lg bg-slate-50">
+                            <strong class="text-ihk-900 block mb-0.5">Product Backlog (Artefakt)</strong>
+                            Die dynamische, geordnete To-Do-Liste für das <em>gesamte Projekt</em>. Es ersetzt das klassische Lastenheft und enthält alle gewünschten Features (oft als User Stories).
+                        </div>
+                        <div class="p-3 border border-slate-200 rounded-lg bg-slate-50">
+                            <strong class="text-ihk-900 block mb-0.5">Sprint Backlog (Artefakt)</strong>
+                            Die konkrete To-Do-Liste für den <em>aktuellen Sprint</em>. Das Entwicklerteam zieht (Pull-Prinzip) Aufgaben aus dem Product Backlog hierüber und verpflichtet sich, diese umzusetzen.
+                        </div>
+                        <div class="p-3 border border-amber-200 rounded-lg bg-amber-50">
+                            <strong class="text-amber-900 block mb-0.5">Sprint &amp; Iteration (Event)</strong>
+                            Ein fest definierter Zeitraum (Timebox, meist 2 bis 4 Wochen), in dem das Team ungestört programmiert. Jeder Sprint ist eine Iteration (Wiederholungsschleife) des Gesamtprozesses.
+                        </div>
+                        <div class="p-3 border border-purple-200 rounded-lg bg-purple-50">
+                            <strong class="text-purple-900 block mb-0.5">Daily Standup (Event)</strong>
+                            Ein tägliches, maximal 15-minütiges Statusmeeting des Entwicklungsteams. Jeder berichtet kurz: Was habe ich gestern getan? Was tue ich heute? Gibt es Blockaden?
+                        </div>
+                        <div class="p-3 border border-rose-200 rounded-lg bg-rose-50">
+                            <strong class="text-rose-900 block mb-0.5">Increment (Artefakt)</strong>
+                            Die Summe aller abgeschlossenen Backlog-Einträge am Ende eines Sprints. Es muss potenziell auslieferbar (lauffähige Software) sein und die „Definition of Done“ erfüllen.
+                        </div>
+                        <div class="p-3 border border-slate-200 rounded-lg bg-slate-50">
+                            <strong class="text-ihk-900 block mb-0.5">Review &amp; Retrospective (Events)</strong>
+                            Im <strong>Review</strong> zeigt das Team den Stakeholdern die fertige Software (Produkt-Feedback). In der <strong>Retrospektive</strong> spricht das Team intern über den Prozess: Was lief gut, was müssen wir als Team verbessern?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-5 bg-white avoid-break">
+                    <h3 class="text-lg font-bold text-sky-800 flex items-center gap-2 mb-3">
+                        <span class="w-7 h-7 rounded-md bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-extrabold">ii</span>
+                        Kanban – Flussorientierte Entwicklung
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Kanban kommt ursprünglich aus der japanischen Automobilindustrie (Toyota). Im Gegensatz zu Scrum gibt es bei Kanban <strong>keine festen Sprints und keine festen Rollen</strong>. Es geht um den kontinuierlichen Fluss von Aufgaben. Zentrale Prinzipien sind:<br>
+                        1. <strong>Visualisiere die Arbeit:</strong> Alle Aufgaben hängen als Tickets auf einem Kanban-Board (Spalten: z. B. <em>Backlog → In Progress → Review → Done</em>).<br>
+                        2. <strong>Limitiere die parallele Arbeit (WIP-Limit):</strong> Es dürfen z. B. maximal 3 Tickets gleichzeitig in der Spalte „In Progress“ liegen. Das verhindert Multitasking-Chaos und zwingt das Team, Dinge <em>fertigzustellen</em>, bevor Neues angefangen wird.<br>
+                        3. <strong>Pull-Prinzip:</strong> Niemand bekommt Aufgaben „zugewiesen“ (Push), sondern Mitarbeiter „ziehen“ sich selbst eine neue Aufgabe, sobald sie Kapazität haben.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 1d: DEVOPS
+             ===================================================================== -->
+        <section id="aufgabe-1d" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 1d • Continuous Integration &amp; Deployment</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1d. DevOps im Kontext der Vorgehensmodelle</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">CI/CD &amp; Kultur</span>
+            </div>
+
+            <div class="space-y-5 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                <p>
+                    Früher gab es einen harten Schnitt: Das agile Team hat programmiert (<strong>Dev</strong>elopment) und das fertige Paket über den Zaun zum Administrator-Team geworfen, das es betreiben musste (<strong>Op</strong>eration<strong>s</strong>). Das führte zu Konflikten („Auf meinem Rechner lief der Code aber!“). <strong>DevOps</strong> ist kein eigenes Vorgehensmodell, sondern eine Kultur und ein Werkzeugkasten, der Entwicklung und IT-Betrieb zu einem nahtlosen Endlos-Kreislauf (Loop) verschmilzt.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 avoid-break">
+                    <div class="rounded-xl bg-emerald-50/70 border border-emerald-200 border-t-4 border-t-emerald-600 p-5">
+                        <h3 class="font-extrabold text-emerald-900 text-sm sm:text-base mb-2">Die Rolle im agilen Modell: Die natürliche Symbiose</h3>
+                        <p class="mb-2">In agilen Vorgehensmodellen (Scrum, Kanban) ist DevOps der technische Motor. Da agile Teams in kurzen Sprints auslieferbare Software produzieren, <strong>muss</strong> das Deployment schnell und fehlerfrei sein:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><strong>Kultur:</strong> Keine Trennung zwischen Dev und Ops („You build it, you run it“).</li>
+                            <li><strong>Prozess:</strong> Vollautomatisierter Fluss bis in die Produktion (Continuous Deployment).</li>
+                            <li><strong>Architektur:</strong> Oft modulare Architekturen (Microservices) für unabhängige Deployments.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rounded-xl bg-sky-50/70 border border-sky-200 border-t-4 border-t-sky-600 p-5">
+                        <h3 class="font-extrabold text-sky-900 text-sm sm:text-base mb-2">Die Rolle im klassischen Modell: Brücke über die Silos</h3>
+                        <p class="mb-2">In klassischen Modellen (Wasserfall, V-Modell) wird DevOps oft hybrid genutzt („Water-Scrum-Fall“) und dient vor allem der <strong>Risikominimierung</strong>:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><strong>Kultur:</strong> Abteilungen (Dev, QA, Ops) bleiben bestehen, arbeiten aber über gemeinsame Pipelines zusammen.</li>
+                            <li><strong>Prozess:</strong> Fokus liegt auf <em>Continuous Integration (CI)</em> und automatisierten Test-/Staging-Umgebungen.</li>
+                            <li><strong>Architektur:</strong> Verkürzt die schmerzhafte Integrations- und Testphase am Projektende („Shift Left“).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Einheitlich gestylte Tailwind-Tabelle (ersetzt die alte unformatierte HTML-Tabelle) -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200 avoid-break">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3.5 font-bold w-1/5">Merkmal</th>
+                                <th class="p-3.5 font-bold w-2/5">DevOps in klassischen Modellen</th>
+                                <th class="p-3.5 font-bold w-2/5">DevOps in agilen Modellen</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-bold text-ihk-900">Release-Frequenz</td>
+                                <td class="p-3.5 text-slate-700">Seltene, große Releases (Big Bang), aber automatisierte Zwischen-Builds für Testzwecke.</td>
+                                <td class="p-3.5 text-slate-700">Sehr häufige, kleine Releases (mehrmals pro Woche oder Tag) direkt in Produktion.</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-bold text-ihk-900">Hauptfokus</td>
+                                <td class="p-3.5 text-slate-700">Risikominimierung in der späten Integrationsphase und Beschleunigung der Testzyklen.</td>
+                                <td class="p-3.5 text-slate-700">Maximale Geschwindigkeit, kontinuierliches Feedback und schnelle Time-to-Market.</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-bold text-ihk-900">Teamstruktur</td>
+                                <td class="p-3.5 text-slate-700">Getrennte Abteilungen (Dev, QA, Ops), die über automatisierte Pipelines kollaborieren.</td>
+                                <td class="p-3.5 text-slate-700">Interdisziplinäre, autarke Teams, die Entwicklung und Betrieb gemeinsam verantworten.</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-bold text-ihk-900">Fehlerkultur</td>
+                                <td class="p-3.5 text-slate-700">Fehler werden durch automatisierte Tests in Quality Gates vor dem Release abgefangen.</td>
+                                <td class="p-3.5 text-slate-700">Fehler werden schnell in Produktion erkannt (Monitoring) und durch Rollbacks/Hotfixes behoben.</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-bold text-ihk-900">Automatisierungsgrad</td>
+                                <td class="p-3.5 text-slate-700">Teilweise (Fokus auf CI und Testumgebungen); finale Produktionsfreigabe meist manuell.</td>
+                                <td class="p-3.5 text-slate-700">Maximal (End-to-End von der Code-Zeile bis zum Live-System vollautomatisiert).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- DevOps Infinity Loop Bild & Phasen -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center avoid-break">
+                    <figure class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                        <div class="flex justify-center items-center w-full overflow-hidden">
+                            <img src="../assets/bilder/Devops.png"
+                                 alt="DevOps Continuous Loop (Plan, Code, Build, Test, Release, Deploy, Operate, Monitor)"
+                                 class="w-full max-w-xl max-h-80 object-contain rounded-lg shadow-sm">
+                        </div>
+                        <figcaption class="text-xs text-slate-500 text-center mt-3">
+                            <strong>Abb. 2: Der DevOps-Lifecycle</strong> – Kontinuierliche Integration und Auslieferung in 8 Phasen.
+                        </figcaption>
+                    </figure>
+
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-2">
+                        <strong class="text-ihk-900 block border-b border-slate-200 pb-2 mb-2 text-sm">Wie integriert sich DevOps konkret in Scrum?</strong>
+                        <p>
+                            Während Scrum den menschlichen Prozess regelt (Sprintplanung, Daily), automatisiert DevOps die technischen Schritte über eine <strong>CI/CD-Pipeline</strong>:
+                        </p>
+                        <ul class="list-disc pl-5 space-y-1.5">
+                            <li>Checkt ein Entwickler im Sprint Code ein (<strong>Code</strong>), baut ein Server automatisch die Software (<strong>Build</strong>) und führt Unit-Tests aus (<strong>Test</strong>).</li>
+                            <li>Ist alles grün, wird das Paket geschnürt (<strong>Release</strong>) und vollautomatisch auf dem Server installiert (<strong>Deploy / Operate</strong>).</li>
+                            <li>Die Software überwacht sich selbst (<strong>Monitor</strong>). Steigt im CanvasFlow-Backend die Speicherauslastung, fließt dieses Feedback direkt als neues Ticket zurück in die nächste Sprintplanung (<strong>Plan</strong>).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 2: VISUALISIERUNG (Gegenüberstellung / Vergleichstabelle)
+             ===================================================================== -->
+        <section id="aufgabe-2" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 2 (Teilaufgaben 2a bis 2e)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">2. Visualisierung – Vergleich der Vorgehensmodelle</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Gegenüberstellung</span>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200 avoid-break shadow-sm">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm min-w-[800px]">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3 font-bold w-32 border-r border-ihk-700">Kriterium</th>
+                            <th class="p-3 font-bold w-1/4 border-r border-ihk-700">Wasserfallmodell</th>
+                            <th class="p-3 font-bold w-1/4 border-r border-ihk-700">V-Modell</th>
+                            <th class="p-3 font-bold w-1/4 border-r border-ihk-700">Scrum (Agil)</th>
+                            <th class="p-3 font-bold w-1/4">Kanban (Agil)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="bg-white">
+                            <td class="p-3 font-bold text-ihk-900 bg-slate-50 border-r border-slate-200">a) Merkmale / Grundprinzipien</td>
+                            <td class="p-3 border-r border-slate-200">Streng sequenziell, dokumentengetrieben, starre Phasen ohne Rücksprung.</td>
+                            <td class="p-3 border-r border-slate-200">Symmetrisch: Jeder Spezifikationsphase steht eine direkte Testphase gegenüber. Qualitätssicherung steht im Fokus.</td>
+                            <td class="p-3 border-r border-slate-200">Iterativ &amp; inkrementell, timeboxed (Sprints), empirische Prozesskontrolle, wertegetrieben.</td>
+                            <td class="p-3">Flussbasiert (Flow), Pull-Prinzip, Visualisierung der Arbeit, strenge Limitierung paralleler Aufgaben (WIP-Limits).</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3 font-bold text-ihk-900 bg-slate-100 border-r border-slate-200">b) Vorgehensweise / Prozessschritte</td>
+                            <td class="p-3 border-r border-slate-200">Analyse → Design → Implementierung → Test → Betrieb (Einmaliger Durchlauf).</td>
+                            <td class="p-3 border-r border-slate-200">Abstieg ins Detail (Anforderung → Architektur → Code) und Aufstieg durch Teststufen (Unit → Integration → Abnahme).</td>
+                            <td class="p-3 border-r border-slate-200">Sprint Planning → Sprint (2-4 Wochen) → Daily Standup → Sprint Review → Retrospektive.</td>
+                            <td class="p-3">Backlog → In Progress → Review → Done. Tickets wandern fließend von links nach rechts über das Board.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3 font-bold text-ihk-900 bg-slate-50 border-r border-slate-200">c) Rollen und Verantwortlichkeiten</td>
+                            <td class="p-3 border-r border-slate-200">Klassisch hierarchisch: Projektleiter (PL), Analyst, Architekt, Entwickler, Tester.</td>
+                            <td class="p-3 border-r border-slate-200">Projektleiter, Anforderungsanalytiker, Systemarchitekt, Entwickler, Testmanager.</td>
+                            <td class="p-3 border-r border-slate-200">Genau drei: Product Owner (Was?), Scrum Master (Wie/Prozess?), Development Team (Umsetzung). Kein Projektleiter!</td>
+                            <td class="p-3">Keine vorgeschriebenen Rollen. Bestehende Rollen und Titel können einfach beibehalten werden.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3 font-bold text-ihk-900 bg-slate-100 border-r border-slate-200">d) Vorteile &amp; Nachteile</td>
+                            <td class="p-3 border-r border-slate-200">
+                                <span class="text-emerald-700 font-bold">+</span> Einfach planbar.<br>
+                                <span class="text-rose-700 font-bold">-</span> Sehr unflexibel; Fehler fallen erst am Projektende auf.
+                            </td>
+                            <td class="p-3 border-r border-slate-200">
+                                <span class="text-emerald-700 font-bold">+</span> Sehr hohe Softwarequalität; Fehler werden früh entdeckt.<br>
+                                <span class="text-rose-700 font-bold">-</span> Sehr hoher Dokumentations-Aufwand; starr.
+                            </td>
+                            <td class="p-3 border-r border-slate-200">
+                                <span class="text-emerald-700 font-bold">+</span> Hohe Flexibilität bei Änderungen; frühe Ergebnisse.<br>
+                                <span class="text-rose-700 font-bold">-</span> Hoher Kommunikationsaufwand; Endtermin oft ungenau.
+                            </td>
+                            <td class="p-3">
+                                <span class="text-emerald-700 font-bold">+</span> Vermeidet Überlastung; sehr reaktionsschnell.<br>
+                                <span class="text-rose-700 font-bold">-</span> Gefahr der Verzettelung, wenn Prioritäten unklar sind.
+                            </td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3 font-bold text-ihk-900 bg-slate-50 border-r border-slate-200">e) Typische Einsatzbereiche</td>
+                            <td class="p-3 border-r border-slate-200">Selten. Höchstens bei simplen, vollkommen vorhersehbaren Mini-Projekten ohne Änderungsrisiko.</td>
+                            <td class="p-3 border-r border-slate-200">Sicherheitskritische Industrie-Projekte (Medizintechnik, Militär, Behörden), wo Normen &amp; Verträge streng sind.</td>
+                            <td class="p-3 border-r border-slate-200">Moderne App- und Webentwicklung in Start-Ups &amp; Mittelstand. Unklare, dynamische Kundenanforderungen.</td>
+                            <td class="p-3">IT-Support (Ticketsysteme), Wartungs-Teams (Bugfixing) oder zur Optimierung bestehender Prozesse.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 3: PRAXISTRANSFER (CanvasFlow Projekt)
+             ===================================================================== -->
+        <section id="aufgabe-3" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 3 (Teilaufgaben 3a bis 3c)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">3. Praxistransfer – Anwendung auf „CanvasFlow“</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Transferleistung FIAE</span>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    Stell dir vor, du bist der Softwareentwickler / Projektverantwortliche für die Moodboard-App <strong>„CanvasFlow“</strong> aus unserem ersten Lernauftrag. Die Entwicklung des 2D-Infinite-Canvas und der Multiformat-Uploads (Bild, PDF, Audio) ist technisch anspruchsvoll und die Design-Agentur (Auftraggeber) wird während der Entwicklung sicher noch Änderungswünsche zur Benutzeroberfläche haben.
+                </p>
+
+                <div class="rounded-xl border-l-4 border-l-sky-500 bg-slate-50 p-4 sm:p-5 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">3a) Welches Vorgehensmodell würdest du wählen und warum?</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Für die Neu-Entwicklung von CanvasFlow wähle ich <strong>Scrum</strong> (Agil). <br>
+                        <strong>Faktoren für diese Entscheidung:</strong> Die Bedienung eines Infinite Canvas (Zooming, Panning) muss sich für den Nutzer perfekt „anfühlen“. Man kann in einem klassischen Lastenheft/Wasserfallmodell schwer im Vorfeld exakt auf Papier beschreiben, wie sich das Maus-Dragging verhalten soll. Bei Scrum bauen wir im ersten Sprint einen Basis-Prototypen, zeigen ihn den Designern der Kreativ-Agentur (im Sprint Review) und können deren direktes Feedback (z. B. „Der Snap-Effekt beim Platzieren der Bilder ist zu stark“) sofort in den nächsten Sprint als neues Ticket einplanen.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border-l-4 border-l-sky-500 bg-slate-50 p-4 sm:p-5 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">
+                        3b) Inwieweit hängen Vorgehensmodelle mit der Strukturierung von Meilensteinen zusammen?
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed mb-3">
+                        <strong>Antwort:</strong> Das gewählte Vorgehensmodell bestimmt grundlegend die <em>Art</em> und den <em>Inhalt</em> der Meilensteine:
+                    </p>
+                    <ul class="space-y-2 text-xs sm:text-sm text-slate-700 list-disc pl-5 mb-3">
+                        <li><strong>Klassisch (z. B. V-Modell):</strong> Meilensteine sind phasen- und dokumentenbasiert. Ein Meilenstein (Phase-Gate) ist erreicht, wenn eine Projektphase abgeschlossen und das Pflichtenheft oder die Architektur-Spezifikation formell abgenommen wurde. Funktionierende Software gibt es erst am Projektende.</li>
+                        <li><strong>Agil (z. B. Scrum):</strong> Meilensteine sind funktionsbasiert (Feature-getrieben). Das Projekt wird nicht in Phasen, sondern in lieferbare Inkremente aufgeteilt.</li>
+                    </ul>
+                    <div class="bg-white p-3.5 rounded-lg border border-sky-200 border-l-4 border-l-sky-500 shadow-sm mt-4">
+                        <strong class="text-sky-800 text-xs uppercase tracking-wider block mb-1">Praxisbeispiel CanvasFlow (Agiler Meilenstein)</strong>
+                        <p class="text-xs sm:text-sm text-slate-700">
+                            Da wir uns für Scrum entschieden haben, liefert jedes Sprintende (alle 2 Wochen) ein potenziell auslieferbares Inkrement. Große Projekt-Meilensteine bündeln wir: Beispielsweise legen wir fest, dass nach exakt 3 Sprints (6 Wochen) der <strong>Meilenstein M1: Minimal Viable Product (MVP)</strong> erreicht ist. Zu diesem Zeitpunkt müssen Nutzer Bilder hochladen und verschieben können. Erweiterte Features wie PDF- und Audio-Karten gehören explizit erst zum nachfolgenden Meilenstein.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border-l-4 border-l-sky-500 bg-slate-50 p-4 sm:p-5 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">3c) Wie würdest du den DevOps-Gedanken darin verankern?</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Den DevOps-Gedanken verankere ich durch eine <strong>CI/CD-Pipeline (GitLab CI)</strong> in unserem C#/.NET Core und Vue.js Techstack. Jedes Mal, wenn ein Entwickler ein neues Feature für CanvasFlow programmiert und den Code hochlädt (Push), wird das System automatisch kompiliert (Build). Sofort laufen unsere automatisierten Tests (Unit-Tests für die REST-API). Ist alles fehlerfrei, verpackt ein Docker-Container die neue Version und lädt sie automatisch auf unseren Test-Server (Staging). So hat der Product Owner ohne manuelles Eingreifen eines Admins immer sofort die aktuellste Version zum Testen im Browser.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BONUS-SEKTION 1: NORMEN & STANDARDS
+             ===================================================================== -->
+        <section id="normen-standards" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Hintergrundwissen für deine IHK-Ausbildung</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">4. Offizielle Normen &amp; Standards zu Prozessen</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-bold">Prüfungswissen Normen</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">Der Scrum Guide</span>
+                        <span class="text-xs text-slate-500">Ken Schwaber &amp; Jeff Sutherland</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Das offizielle Regelwerk für Scrum</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Scrum ist kein geschützter Begriff, aber es gibt eine „Bibel“: Den von den Erfindern verfassten Scrum Guide (zuletzt aktualisiert 2020). Er ist nur knapp 15 Seiten lang und definiert verbindlich die drei Rollen, fünf Events und drei Artefakte. In IHK-Prüfungen gilt stets das Wording aus genau diesem Dokument.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">ISO/IEC/IEEE 12207</span>
+                        <span class="text-xs text-slate-500">International Organization for Standardization</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Software life cycle processes</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Diese internationale Norm definiert eine umfassende Struktur für Software-Lebenszyklusprozesse. Sie schreibt zwar nicht vor, <em>ob</em> man Wasserfall oder Agil nutzen soll, aber sie listet alle Prozesse auf, die existieren müssen (z.B. Wartungsprozesse, Architekturprozesse, Qualitätssicherung), unabhängig vom gewählten Vorgehensmodell.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BONUS-SEKTION 2: GLOSSAR
+             ===================================================================== -->
+        <section id="glossar" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Alle Fachbegriffe verständlich übersetzt</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">5. Großes Fremdwörter- &amp; Fachbegriffs-Lexikon (Glossar)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Azubi-Nachschlagewerk</span>
+            </div>
+
+            <div class="no-print bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm text-slate-700 font-medium">
+                    🔎 <strong>Schnellfilter:</strong> Tippe einen Fachbegriff ein (z. B. <em>CI/CD</em>, <em>Tailoring</em>, <em>MVP</em>), um das Lexikon live zu durchsuchen:
+                </div>
+                <input type="text" id="glossarySearch" oninput="filterGlossary()" placeholder="Begriff suchen..."
+                       class="w-full sm:w-72 px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            </div>
+
+            <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <!-- Dynamically populated by glossarData.js -->
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BONUS-SEKTION 3: QUELLENVERZEICHNIS
+             ===================================================================== -->
+        <section id="quellen" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Literatur, Normen &amp; Weiterführende Links</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">6. Quellen- und Nachschlageverzeichnis für deine Ausbildung</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">Quellenangaben</span>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3.5 font-bold w-1/4">Quelle / Standard / Buch</th>
+                            <th class="p-3.5 font-bold w-1/4">Autor / Herausgeber</th>
+                            <th class="p-3.5 font-bold w-1/2">Nutzen für deine FIAE-Ausbildung &amp; Fundstelle</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Der Scrum Guide (2020)</td>
+                            <td class="p-3.5 text-slate-700">Ken Schwaber, Jeff Sutherland</td>
+                            <td class="p-3.5 text-slate-700">Der definitive Leitfaden für Scrum. Pflichtlektüre, da IHK-Prüfungsfragen exakt auf dem hier genutzten Wording aufbauen. Kostenlos verfügbar unter: <span class="font-mono text-xs text-sky-700">scrumguides.org</span></td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">Basiswissen Software-Engineering</td>
+                            <td class="p-3.5 text-slate-700">Helmut Balzert (W3L-Verlag)</td>
+                            <td class="p-3.5 text-slate-700">Das akademische Standardwerk im deutschsprachigen Raum für alle Phasenmodelle (Wasserfall, V-Modell).</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">IT-Handbuch für Fachinformatiker<br><span class="text-xs font-normal text-slate-500">(11. Auflage)</span></td>
+                            <td class="p-3.5 text-slate-700">Sascha Kersken (Rheinwerk)</td>
+                            <td class="p-3.5 text-slate-700">Basis-Nachschlagewerk. Beinhaltet kompakte Zusammenfassungen der Projektmanagement- und Vorgehensmodelle.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">The DevOps Handbook</td>
+                            <td class="p-3.5 text-slate-700">Gene Kim, Jez Humble, u.a.</td>
+                            <td class="p-3.5 text-slate-700">Tiefgreifende Erklärung der CI/CD-Pipelines, Automatisierung und der kulturellen Verschmelzung von Development und Operations.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- FOOTER (Einheitlich!) -->
+        <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-200">
+            <p class="font-semibold text-slate-700">Ausarbeitung zum IHK-Lernauftrag 03: Software-Engineering &amp; Vorgehensmodelle (Fachinformatiker/-in Anwendungsentwicklung)</p>
+            <p class="mt-1">Beispielprojekt „CanvasFlow“ • Optimiert für Bildschirmansicht und vollständigen A4-Druck ohne Abschneiden (Strg+P / 🖨️ Button oben).</p>
+        </footer>
+
+    </main>
+
+    
+    <!-- ==================== JAVASCRIPT GLOBAL GLOSSAR ==================== -->
+    <script src="../assets/js/glossarData.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glossaryGrid = document.getElementById('glossaryGrid');
+            if (!glossaryGrid) return;
+            
+            // Initiales Rendern aller Begriffe
+            renderGlossary('');
+            
+            // Event Listener für die Suche
+            const searchInput = document.getElementById('glossarySearch');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    renderGlossary(e.target.value);
+                });
+            }
+        });
+
+        function renderGlossary(filterText) {
+            const grid = document.getElementById('glossaryGrid');
+            grid.innerHTML = ''; // Leeren
+            
+            const query = filterText.toLowerCase().trim();
+            
+            const filtered = globalesGlossar.filter(item => {
+                return item.titel.toLowerCase().includes(query) || 
+                       item.beschreibung.toLowerCase().includes(query);
+            });
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500">Keine passenden Begriffe gefunden.</div>';
+                return;
+            }
+            
+            filtered.forEach(item => {
+                // Farb-Mapping für die Badges
+                let badgeClass = "bg-slate-100 text-slate-700";
+                if(item.farbe === 'sky') badgeClass = "bg-sky-100 text-sky-800";
+                if(item.farbe === 'linux') badgeClass = "bg-linux-100 text-linux-800";
+                if(item.farbe === 'java') badgeClass = "bg-java-100 text-java-800";
+                
+                const cardHTML = `
+                    <div class="glossary-card rounded-xl border border-slate-200 p-4 bg-slate-50/60 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <h4 class="font-extrabold text-ihk-900 leading-tight">${item.titel}</h4>
+                        </div>
+                        <p class="text-slate-700 text-xs sm:text-sm flex-1">${item.beschreibung}</p>
+                        <div class="mt-3 pt-3 border-t border-slate-200">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                                ${item.modul}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+    </script>
+
+</body>
+</html>

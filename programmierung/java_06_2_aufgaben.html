@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK-Lernauftrag 06 (Aufgaben): Übungen zu Datentypen & Operatoren – Modul Programmierung</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Einheitliche Tailwind Config + Java-Theme (Orange) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ihk: { 50: '#f0f7ff', 100: '#e0effe', 200: '#bae0fd', 500: '#0284c7', 600: '#0369a1', 700: '#075985', 800: '#0c4a6e', 900: '#0f294a' },
+                        java: { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Einbindung der zentralen CSS-Datei -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    
+    <!-- Fallback-Styles für Standalone-Nutzung & A4-Druck -->
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: auto !important; overflow-x: hidden; background-color: #f1f5f9; color: #0f172a; }
+        p, li, td { font-size: 0.875rem; line-height: 1.625; }
+        @media (min-width: 640px) { p, li, td { font-size: 1rem; } }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 14mm 12mm; }
+            html, body { background-color: #ffffff !important; color: #000000 !important; font-size: 9.5pt !important; line-height: 1.4 !important; height: auto !important; overflow: visible !important; }
+            p, li, td { font-size: 9.5pt !important; line-height: 1.4 !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            main, section, article, div { overflow: visible !important; max-width: 100% !important; }
+            .avoid-break, tr, blockquote, figure, .glossary-card { break-inside: avoid !important; page-break-inside: avoid !important; }
+            .print-page-start { break-before: page; page-break-before: always; }
+            h1, h2, h3, h4 { break-after: avoid !important; page-break-after: avoid !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; }
+            .glossary-card { display: block !important; }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-java-500 selection:text-white">
+
+    <!-- ==================== WIKI-NAVIGATION (TOP BAR) ==================== -->
+    <div class="bg-slate-950 text-slate-400 text-xs py-2 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-slate-800 no-print">
+        <a href="../index.html" class="font-bold text-java-400 hover:text-white transition flex items-center gap-1">🏠 Dashboard</a>
+        <span class="text-slate-600">|</span>
+        <span class="font-bold text-java-400">Programmierung:</span>
+        <a href="java_04_eclipse_ide.html" class="hover:text-white transition">LA 04</a>
+        <a href="java_05_aufbau.html" class="hover:text-white transition">LA 05</a>
+        <a href="java_06_grundlagen.html" class="hover:text-white transition">LA 06 (Theorie)</a>
+        <a href="java_06_2_aufgaben.html" class="hover:text-white transition text-white font-medium">LA 06 (Aufgaben)</a>
+        <a href="java_07_kontrollstrukturen.html" class="hover:text-white transition">LA 07</a>
+    </div>
+
+    <!-- ==================== STICKY TOP NAVIGATION ==================== -->
+    <header class="no-print sticky top-0 z-50 bg-ihk-900/95 backdrop-blur-md text-white border-b border-java-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-4">
+
+                <!-- Branding -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-java-400 to-red-600 flex items-center justify-center font-extrabold text-lg shadow-inner font-mono">
+                        { }
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-java-500/20 text-java-300 border border-java-400/30">Modul: Programmierung</span>
+                            <span class="text-xs text-slate-300 hidden sm:inline">LA_06_1_Aufgaben</span>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base text-white leading-tight">Praxis-Übungen: Datentypen, Casting &amp; Operatoren</p>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Links -->
+                <nav class="hidden xl:flex flex-1 justify-center items-center gap-1 text-xs font-medium whitespace-nowrap">
+                    <a href="#block-1" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1. Datentypen &amp; Überlauf</a>
+                    <a href="#block-2" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">2. Rechen-Rätsel (A4 &amp; A9)</a>
+                    <a href="#block-3" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">3. Unicode &amp; Escape</a>
+                    <a href="#block-4" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">4. Präfix &amp; Postfix</a>
+                    <a href="#glossar" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-emerald-300">Glossar</a>
+                    <a href="#quellen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">Quellen</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-java-500 hover:bg-java-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow-md cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-12 0h12v4H6v-4z" />
+                        </svg>
+                        <span>🖨️ Als PDF drucken / speichern</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile / Tablet Sub-Navbar -->
+            <div class="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-700/80 text-xs font-medium">
+                <a href="#block-1" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1. Datentypen</a>
+                <a href="#block-2" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">2. Rechen-Rätsel</a>
+                <a href="#block-3" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">3. Unicode &amp; Escape</a>
+                <a href="#block-4" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">4. Präfix &amp; Postfix</a>
+                <a href="#glossar" class="shrink-0 px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-200">Glossar</a>
+                <a href="#quellen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">Quellen</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HAUPTINHALT ==================== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- HERO / DOKUMENTKOPF -->
+        <section class="bg-ihk-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl border-l-8 border-java-500 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-java-300 mb-3">
+                <span>IT-Berufe • Ausbildung zum Fachinformatiker Anwendungsentwicklung</span>
+                <span>Lernauftrag 06 (Praxisteil): LA_06_1_Aufgaben</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                Übungsaufgaben &amp; Musterlösungen: Datentypen, Casting &amp; Operatoren
+            </h1>
+            <p class="text-slate-200 leading-relaxed mb-6">
+                Nachdem wir im ersten Teil von Lernauftrag 06 die theoretischen Grundlagen erarbeitet haben, wenden wir das Wissen nun auf <strong>12 praxisnahe Prüfungs- und Code-Aufgaben</strong> an. Hier trainierst du genau den Blick, den auch der Java-Compiler hat: Warum wirft <code>float f = 8.5;</code> einen Fehler? Was gibt <code>15 / 2</code> wirklich aus? Wie buchstabiert man über Unicode-Zahlen das Wort <strong>„BFW“</strong> und warum liefern <code>++faktor</code> und <code>faktor++</code> völlig unterschiedliche Ergebnisse?
+            </p>
+
+            <!-- Info-Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700/80 text-xs sm:text-sm">
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-java-300 block mb-1">🔍 Compiler-Blick schärfen</span>
+                    Alle 12 Aufgaben aus dem Übungsblatt Schritt für Schritt gelöst – inklusive Erklärung, <em>warum</em> ein Ausdruck funktioniert oder fehlschlägt.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-emerald-300 block mb-1">🔤 Unicode &amp; Escape-Codes</span>
+                    ASCII/UTF-16-Tabelle für die „BFW“-Aufgabe sowie alle wichtigen Steuerzeichen (<code>\t</code>, <code>\n</code>, <code>\"</code>) anschaulich aufbereitet.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-amber-300 block mb-1">⚡ Präfix vs. Postfix</span>
+                    Die berüchtigten Inkrement-/Dekrement-Rätsel (<code>a++ * --b</code>) Zeile für Zeile im Speicher-Trace durchgerechnet.
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BLOCK 1: AUFGABEN 1 BIS 3 (BITS, ÜBERLAUF & FLIESSKOMMA)
+             ===================================================================== -->
+        <section id="block-1" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgaben 1 bis 3</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1. Speicherbedarf, Variablenüberlauf &amp; Fließkomma-Genauigkeit</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Speicher &amp; Grenzen</span>
+            </div>
+
+            <!-- Aufgabe 1: Die 8 elementaren Datentypen und ihre Bits -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-100 text-java-800 flex items-center justify-center text-sm">A1</span>
+                    Nennen Sie die acht elementaren Datentypen und die Anzahl der benötigten Bits
+                </h3>
+                <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3 font-bold w-1/4">Elementarer Datentyp</th>
+                                <th class="p-3 font-bold w-1/4">Anzahl der Bits (und Bytes)</th>
+                                <th class="p-3 font-bold w-1/2">Kategorie &amp; Kurzinfo</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="bg-white">
+                                <td class="p-3 font-mono font-bold text-java-700">byte</td>
+                                <td class="p-3 font-mono font-bold">8 Bit <span class="text-slate-500 font-normal">(1 Byte)</span></td>
+                                <td class="p-3 text-slate-700">Kleinste Ganzzahl (-128 bis +127)</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3 font-mono font-bold text-java-700">short</td>
+                                <td class="p-3 font-mono font-bold">16 Bit <span class="text-slate-500 font-normal">(2 Byte)</span></td>
+                                <td class="p-3 text-slate-700">Kurze Ganzzahl (-32.768 bis +32.767)</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3 font-mono font-bold text-java-700">int</td>
+                                <td class="p-3 font-mono font-bold">32 Bit <span class="text-slate-500 font-normal">(4 Byte)</span></td>
+                                <td class="p-3 text-slate-700">Standard-Ganzzahl (ca. &plusmn; 2,14 Milliarden)</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3 font-mono font-bold text-java-700">long</td>
+                                <td class="p-3 font-mono font-bold">64 Bit <span class="text-slate-500 font-normal">(8 Byte)</span></td>
+                                <td class="p-3 text-slate-700">Große Ganzzahl (ca. &plusmn; 9,22 Trillionen, Suffix <code>L</code>)</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3 font-mono font-bold text-sky-700">float</td>
+                                <td class="p-3 font-mono font-bold">32 Bit <span class="text-slate-500 font-normal">(4 Byte)</span></td>
+                                <td class="p-3 text-slate-700">Gleitkommazahl einfacher Genauigkeit (Suffix <code>f</code>)</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3 font-mono font-bold text-sky-700">double</td>
+                                <td class="p-3 font-mono font-bold">64 Bit <span class="text-slate-500 font-normal">(8 Byte)</span></td>
+                                <td class="p-3 text-slate-700">Standard-Gleitkommazahl doppelter Genauigkeit</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3 font-mono font-bold text-emerald-700">char</td>
+                                <td class="p-3 font-mono font-bold">16 Bit <span class="text-slate-500 font-normal">(2 Byte)</span></td>
+                                <td class="p-3 text-slate-700">Einzelnes Unicode-Zeichen (UTF-16, 0 bis 65.535)</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3 font-mono font-bold text-emerald-700">boolean</td>
+                                <td class="p-3 font-mono font-bold">1 Bit <span class="text-slate-500 font-normal">(intern meist 8 Bit / 1 Byte)</span></td>
+                                <td class="p-3 text-slate-700">Wahrheitswert (<code>true</code> oder <code>false</code>)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Aufgabe 2: Variablenüberlauf -->
+            <div class="rounded-xl border-l-4 border-l-rose-500 bg-rose-50/40 p-5 space-y-3 avoid-break shadow-sm">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-rose-200 text-rose-900 flex items-center justify-center text-sm">A2</span>
+                    Was ist ein Variablenüberlauf, welche Auswirkungen hat er und wie ist er vermeidbar?
+                </h3>
+                <p class="text-slate-700 text-sm leading-relaxed">
+                    <strong>Was ist ein Variablenüberlauf (Overflow)?</strong><br>
+                    Ein Variablenüberlauf tritt auf, wenn das Ergebnis einer arithmetischen Berechnung den maximal darstellbaren Speicherbereich (Wertebereich) des verwendeten Datentyps überschreitet.
+                </p>
+                <p class="text-slate-700 text-sm leading-relaxed">
+                    <strong>Auswirkungen auf eine Berechnung:</strong><br>
+                    Java wirft bei einem Ganzzahl-Überlauf <em>keine Fehlermeldung</em>! Stattdessen kippt der Wert durch die interne Zweierkomplement-Darstellung wie bei einem alten Kilometerzähler vom höchsten positiven Wert direkt auf den <strong>kleinsten negativen Wert</strong> um. Beispiel bei <code>int</code>: Rechnet man <code>2147483647 + 1</code>, lautet das Ergebnis plötzlich <code>-2147483648</code>. Folgeberechnungen (z. B. Kontostände, Preise oder Array-Indizes) werden dadurch komplett verfälscht.
+                </p>
+                <div class="bg-white p-4 rounded-lg border border-rose-200 text-xs sm:text-sm text-slate-700">
+                    <strong class="text-emerald-800 block mb-1">✅ Wie lässt sich ein Variablenüberlauf vermeiden?</strong>
+                    <ol class="list-decimal pl-5 space-y-1">
+                        <li><strong>Größeren Datentyp wählen:</strong> Statt <code>byte</code> oder <code>short</code> direkt <code>int</code> verwenden; wenn Werte die 2-Milliarden-Grenze erreichen können, auf <code>long</code> (64 Bit) oder die Klasse <code>BigInteger</code> (unbegrenzte Größe) ausweichen.</li>
+                        <li><strong>Wertebereich vorab prüfen / sichere Methoden nutzen:</strong> Ab Java 8 bietet die Standardbibliothek Methoden wie <code>Math.addExact(a, b)</code> oder <code>Math.multiplyExact(a, b)</code> an. Diese erkennen einen Überlauf sofort und werfen gezielt eine <code>ArithmeticException</code>, statt heimlich mit falschen negativen Zahlen weiterzurechnen.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Aufgabe 3: Fließkomma-Datentypen -->
+            <div class="space-y-3 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-sky-100 text-sky-800 flex items-center justify-center text-sm">A3</span>
+                    Die zwei Fließkomma-Datentypen und ihre Genauigkeit (Nachkommastellen)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="rounded-xl border border-sky-200 bg-sky-50/40 p-4">
+                        <span class="font-mono font-extrabold text-lg text-sky-700">float (32 Bit)</span>
+                        <p class="text-sm text-slate-700 mt-1"><strong>Genauigkeit:</strong> ca. <strong>6 bis 7 signifikante Dezimalstellen</strong> (Einfache Genauigkeit / Single Precision nach IEEE 754).</p>
+                    </div>
+                    <div class="rounded-xl border border-sky-300 bg-sky-50/80 p-4">
+                        <span class="font-mono font-extrabold text-lg text-sky-900">double (64 Bit) ★ Standard</span>
+                        <p class="text-sm text-slate-700 mt-1"><strong>Genauigkeit:</strong> ca. <strong>15 bis 17 signifikante Dezimalstellen</strong> (Doppelte Genauigkeit / Double Precision nach IEEE 754).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BLOCK 2: AUFGABEN 4 & 9 (WAS GIBT DIE CONSOLE AUS? / FEHLERSUCHE)
+             ===================================================================== -->
+        <section id="block-2" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgaben 4 &amp; 9</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">2. Code-Analyse: Welche Werte werden in der Console ausgegeben?</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-java-600 text-white text-xs font-bold">Compiler-Check</span>
+            </div>
+
+            <!-- Aufgabe 4 -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">A4</span>
+                    Ausgabewerte bzw. Fehleranalyse der 10 Berechnungen aus Aufgabe 4
+                </h3>
+                <p class="text-slate-700 text-sm">
+                    Hier prüfen wir Zeile für Zeile, ob der Code kompiliert und welchen exakten Wert <code>System.out.println()</code> ausgibt:
+                </p>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3.5 font-bold w-2/5">Gegebener Java-Code</th>
+                                <th class="p-3.5 font-bold w-1/5">Ausgabe / Ergebnis</th>
+                                <th class="p-3.5 font-bold w-2/5">Technische Begründung</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="bg-white">
+                                <td class="p-3 font-mono text-xs bg-slate-900 text-slate-100">double d = 1e3;<br>System.out.println(d);</td>
+                                <td class="p-3 font-mono font-bold text-emerald-700">1000.0</td>
+                                <td class="p-3 text-slate-700">Wissenschaftliche Exponentialschreibweise: <code>1e3</code> bedeutet $1 \cdot 10^3 = 1000$. Da <code>d</code> ein <code>double</code> ist, wird <code>1000.0</code> ausgegeben.</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3 font-mono text-xs bg-slate-900 text-slate-100">float f = (float)1e-3;<br>System.out.println(f);</td>
+                                <td class="p-3 font-mono font-bold text-emerald-700">0.001</td>
+                                <td class="p-3 text-slate-700"><code>1e-3</code> bedeutet $1 \cdot 10^{-3} = 0.001$. Durch den expliziten Cast <code>(float)</code> darf der <code>double</code>-Wert in <code>f</code> gespeichert werden.</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3 font-mono text-xs bg-slate-900 text-slate-100">double d = 15 / 2;<br>System.out.println(f);</td>
+                                <td class="p-3 font-mono font-bold text-rose-700">Fehler!<br><span class="text-[11px] font-sans text-slate-600">(Bei println(d) wäre es <strong>7.0</strong>)</span></td>
+                                <td class="p-3 text-slate-700"><strong>Doppelte Falle:</strong> 1. In diesem Block heißt die Variable <code>d</code>, ausgegeben wird aber <code>f</code> (nicht deklariert &rarr; Fehler). 2. Selbst wenn man <code>d</code> ausgibt, rechnet <code>15 / 2</code> erst als reine <code>int</code>-Division (<code>7</code>) und legt diese als <code>7.0</code> in <code>d</code> ab!</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3 font-mono text-xs bg-slate-900 text-slate-100">double d = 12;<br>float f = 8.5;<br>System.out.println(f - d);</td>
+                                <td class="p-3 font-mono font-bold text-rose-700">Fehler!</td>
+                                <td class="p-3 text-slate-700">Kommazahlen ohne Suffix (wie <code>8.5</code>) sind in Java standardmäßig vom Typ <code>double</code> (64 Bit). Sie passen ohne <code>8.5f</code> oder <code>(float)</code> nicht in eine 32-Bit-<code>float</code>-Variable!</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3 font-mono text-xs bg-slate-900 text-slate-100">int a = 10;<br>double d = a * 0.5;<br>System.out.println(d);</td>
+                                <td class="p-3 font-mono font-bold text-emerald-700">5.0</td>
+                                <td class="p-3 text-slate-700">Da <code>0.5</code> ein <code>double</code> ist, wird <code>a</code> bei der Multiplikation automatisch zu <code>10.0</code> verbreitert. Das Ergebnis ist <code>5.0</code>.</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3 font-mono text-xs bg-slate-900 text-slate-100">float f = 0.8f;<br>int a = 9;<br>f = a / 2;<br>System.out.println(f);</td>
+                                <td class="p-3 font-mono font-bold text-emerald-700">4.0</td>
+                                <td class="p-3 text-slate-700"><strong>Klassische Prüfungsfalle:</strong> Rechts vom <code>=</code> stehen mit <code>a</code> (9) und <code>2</code> zwei reine <code>int</code>-Werte! Java rechnet <code>9 / 2 = 4</code> (Ganzzahldivision) und weist erst danach die <code>4</code> dem <code>float f</code> zu &rarr; <code>4.0</code> (Info: Auf dem Aufgabenblatt doppelt abgedruckt).</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3 font-mono text-xs bg-slate-900 text-slate-100">int a = 10;<br>float g = 0.5f;<br>float f = (a + g) * 2f;<br>System.out.println(f);</td>
+                                <td class="p-3 font-mono font-bold text-emerald-700">21.0</td>
+                                <td class="p-3 text-slate-700">Klammer zuerst: <code>a + g</code> ergibt als <code>float</code> <code>10.5f</code>. Multipliziert mit <code>2f</code> (bzw. <code>2</code> im dritten Kasten des Aufgabenblatts) ergibt das <code>21.0f</code> &rarr; Ausgabe: <code>21.0</code>.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Aufgabe 9: Math.PI und Float-Fallen -->
+            <div class="space-y-4 avoid-break pt-4">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">A9</span>
+                    Aufgabe 9: Berechnungen mit <code>float</code> und der Konstante <code>Math.PI</code>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="rounded-xl border border-rose-200 bg-rose-50/40 p-4 space-y-2">
+                        <pre class="bg-slate-950 text-slate-100 p-3 rounded-lg font-mono text-xs"><code>float f = 0.5f;
+int a = 10 * f;
+System.out.println((float) a);</code></pre>
+                        <p class="text-xs sm:text-sm font-bold text-rose-800">Ergebnis: ❌ Fehler (Compiler-Error)</p>
+                        <p class="text-xs text-slate-700">
+                            <strong>Grund:</strong> Der Ausdruck <code>10 * f</code> multipliziert einen <code>int</code> mit einem <code>float</code>. Das Ergebnis der Rechnung ist vom Typ <code>float</code> (<code>5.0f</code>) und kann nicht ohne expliziten Cast <code>(int)</code> in der <code>int</code>-Variablen <code>a</code> gespeichert werden.
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl border border-rose-200 bg-rose-50/40 p-4 space-y-2">
+                        <pre class="bg-slate-950 text-slate-100 p-3 rounded-lg font-mono text-xs"><code>float radius = 18;
+float umfang = 2 * Math.PI * radius;
+System.out.println(umfang);</code></pre>
+                        <p class="text-xs sm:text-sm font-bold text-rose-800">Ergebnis: ❌ Fehler (Compiler-Error)</p>
+                        <p class="text-xs text-slate-700">
+                            <strong>Grund:</strong> <code>Math.PI</code> hat den Datentyp <code>double</code> (64 Bit). Sobald ein <code>double</code> in einer Rechnung vorkommt, wird das gesamte Ergebnis zu einem <code>double</code>. Ein 64-Bit-<code>double</code> passt aber nicht ohne Cast in die 32-Bit-Variable <code>float umfang</code>!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BLOCK 3: AUFGABEN 5, 6, 7 & 8 (CHAR, UNICODE "BFW", STRING & ESCAPE)
+             ===================================================================== -->
+        <section id="block-3" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgaben 5 bis 8</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">3. Zeichenkodierung (<code>char</code>), Unicode-Rätsel &amp; Strings</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Text &amp; Zeichen</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 avoid-break">
+                <!-- Aufgabe 5 -->
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm">A5</span>
+                        Zeichenkodierung &amp; Bit-Breite von <code>char</code>
+                    </h3>
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        Dem Datentyp <code>char</code> liegt in Java der <strong>Unicode-Standard (konkret UTF-16)</strong> zugrunde. Zur Darstellung eines einzelnen Zeichens werden exakt <strong>16 Bit (2 Byte)</strong> benötigt. Dadurch lassen sich $2^{16} = 65.536$ verschiedene Zeichen direkt abbilden (die ersten 128 Zeichen von 0 bis 127 sind dabei identisch mit der klassischen <strong>ASCII-Tabelle</strong>).
+                    </p>
+                </div>
+
+                <!-- Aufgabe 7 -->
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm">A7</span>
+                        Ist <code>String</code> ein elementarer Datentyp?
+                    </h3>
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        <strong>Nein!</strong> <code>String</code> ist <em>kein</em> elementarer (primitiver) Datentyp, sondern ein <strong>Referenzdatentyp (eine vollwertige Klasse</strong> aus dem Paket <code>java.lang</code>). Das erkennt man schon an der Großschreibung von <code>String</code>. Eine String-Variable speichert nicht den Text direkt, sondern eine Speicheradresse (Referenz) auf das String-Objekt im Heap-Speicher.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Aufgabe 6: BFW in Unicode ausgeben -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-100 text-java-800 flex items-center justify-center text-sm">A6</span>
+                    Unicode-Praxis: Den Programmcode vervollständigen, um „BFW“ auszugeben
+                </h3>
+                <p class="text-slate-700 text-sm leading-relaxed">
+                    In der Unicode-/ASCII-Tabelle beginnt das große lateinische Alphabet beim Buchstaben <code>'A'</code> mit dem Dezimalwert <strong>65</strong> (Hexadezimal <code>0x41</code>). Durch einfaches Abzählen (oder Nachschlagen) erhalten wir die Werte für <strong>B</strong>, <strong>F</strong> und <strong>W</strong> und wandeln die <code>int</code>-Zahlen per <code>(char)</code>-Cast in echte Buchstaben um:
+                </p>
+
+                <div class="grid grid-cols-3 gap-3 text-center text-xs sm:text-sm font-mono">
+                    <div class="bg-java-50 border border-java-200 p-3 rounded-xl">
+                        <span class="text-lg font-extrabold text-java-700 block">'B'</span>
+                        <span>Dezimal: <strong>66</strong></span><br>
+                        <span class="text-slate-500">Hex: 0x42</span>
+                    </div>
+                    <div class="bg-java-50 border border-java-200 p-3 rounded-xl">
+                        <span class="text-lg font-extrabold text-java-700 block">'F'</span>
+                        <span>Dezimal: <strong>70</strong></span><br>
+                        <span class="text-slate-500">Hex: 0x46</span>
+                    </div>
+                    <div class="bg-java-50 border border-java-200 p-3 rounded-xl">
+                        <span class="text-lg font-extrabold text-java-700 block">'W'</span>
+                        <span>Dezimal: <strong>87</strong></span><br>
+                        <span class="text-slate-500">Hex: 0x57</span>
+                    </div>
+                </div>
+
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>BfwUnicodeAusgabe.java (Lösung zu Aufgabe 6)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Java</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-purple-400">int</span> a = <span class="text-sky-300">66</span>; <span class="text-slate-400">// Dezimal 66 (oder Hexadezimal: 0x42) steht für 'B'</span>
+<span class="text-purple-400">int</span> b = <span class="text-sky-300">70</span>; <span class="text-slate-400">// Dezimal 70 (oder Hexadezimal: 0x46) steht für 'F'</span>
+<span class="text-purple-400">int</span> c = <span class="text-sky-300">87</span>; <span class="text-slate-400">// Dezimal 87 (oder Hexadezimal: 0x57) steht für 'W'</span>
+
+System.out.print((<span class="text-purple-400">char</span>) a);
+System.out.print((<span class="text-purple-400">char</span>) b);
+System.out.print((<span class="text-purple-400">char</span>) c);
+<span class="text-slate-400">// Konsolenausgabe (ohne Zeilenumbruch, da print statt println): BFW</span></code></pre>
+                </div>
+            </div>
+
+            <!-- Aufgabe 8: Escape-Sequenzen (Heinz Erhardt Gedicht) -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">A8</span>
+                    Escape-Sequenzen: Welche Ausgabe erzeugt die Anweisung in Aufgabe 8?
+                </h3>
+                <p class="text-slate-700 text-sm leading-relaxed">
+                    In einem String leitet der Backslash (<code>\</code>) eine sogenannte <strong>Escape-Sequenz (Steuerzeichen)</strong> ein:
+                    <code>\t</code> erzeugt einen Tabulator-Abstand, <code>\n</code> erzwingt einen Zeilenumbruch (Newline) und <code>\"</code> gibt ein sichtbares Anführungszeichen im Text aus, ohne den String versehentlich zu beenden.
+                </p>
+
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>Anweisung &amp; resultierende Konsolenausgabe (Aufgabe 8)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-emerald-300">Console Output</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-slate-500">// Ausgeführter Befehl:</span>
+System.out.println(<span class="text-emerald-300">"Hinter eines Baumes\t \"Rinde\"\nwohnt eine \"Made\"\n!"</span>);
+
+<span class="text-slate-500">// Exakte Ausgabe in der Console (3 Zeilen):</span>
+Hinter eines Baumes	 "Rinde"
+wohnt eine "Made"
+!</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BLOCK 4: AUFGABEN 10, 11 & 12 (PRÄFIX- UND POSTFIX-NOTATION)
+             ===================================================================== -->
+        <section id="block-4" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgaben 10, 11 &amp; 12</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">4. Inkrement &amp; Dekrement: Präfix- vs. Postfix-Notation</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Prüfungsklassiker</span>
+            </div>
+
+            <!-- Aufgabe 11 zuerst als Theorie-Basis für 10 & 12 -->
+            <div class="rounded-xl border-l-4 border-l-java-500 bg-java-50/40 p-5 space-y-4 avoid-break shadow-sm">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-200 text-java-900 flex items-center justify-center text-sm">A11</span>
+                    Erläuterung der „Präfix- und Postfix-Notation“ (Aufgabe 11)
+                </h3>
+                <p class="text-slate-700 text-sm leading-relaxed">
+                    Steht <code>++</code> oder <code>--</code> ganz allein in einer Zeile (<code>faktor++;</code>), ist es völlig egal, ob die Zeichen vor oder hinter der Variablen stehen. Steckt der Operator jedoch <strong>mitten in einer größeren Rechnung oder Zuweisung</strong>, entscheidet die Position über die Reihenfolge:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-java-200">
+                        <strong class="text-java-800 block mb-1">1. Präfix-Notation (<code>++faktor</code> / <code>--faktor</code>)</strong>
+                        <p class="text-xs sm:text-sm text-slate-700 mb-2">
+                            <strong>„Zuerst ändern, dann rechnen!“</strong><br>
+                            Die Variable wird <em>sofort</em> um 1 erhöht, und dieser neue, erhöhte Wert fließt direkt in die aktuelle Multiplikation ein.
+                        </p>
+                        <code class="block bg-slate-900 text-slate-100 p-2.5 rounded text-xs font-mono">
+                            int faktor = 5;<br>
+                            ergebnis = 5 * ++faktor;<br>
+                            <span class="text-emerald-400">// faktor wird erst 6 -> 5 * 6 = 30</span>
+                        </code>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-sky-200">
+                        <strong class="text-sky-800 block mb-1">2. Postfix-Notation (<code>faktor++</code> / <code>faktor--</code>)</strong>
+                        <p class="text-xs sm:text-sm text-slate-700 mb-2">
+                            <strong>„Zuerst mit altem Wert rechnen, danach ändern!“</strong><br>
+                            Für die aktuelle Rechnung wird noch der <em>alte</em> Wert von <code>faktor</code> (5) benutzt. Erst danach erhöht sich <code>faktor</code> im Speicher auf 6.
+                        </p>
+                        <code class="block bg-slate-900 text-slate-100 p-2.5 rounded text-xs font-mono">
+                            int faktor = 5;<br>
+                            ergebnis = 5 * faktor++;<br>
+                            <span class="text-sky-300">// Rechnet 5 * 5 = 25 (danach ist faktor = 6)</span>
+                        </code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aufgabe 10 & 12: Schritt-für-Schritt Berechnungen -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">A10/12</span>
+                    Schritt-für-Schritt-Lösung der Code-Rätsel aus Aufgabe 10 und Aufgabe 12
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Aufgabe 10 -->
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <strong class="text-ihk-900 text-sm">Aufgabe 10</strong>
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono font-bold text-xs">Ausgabe: 36</span>
+                        </div>
+                        <pre class="bg-slate-950 text-slate-100 p-3 rounded-lg font-mono text-xs"><code>int a = 2;
+int b = ++a;   // Präfix: a wird 3, b wird 3
+int c = 2 * b; // c = 2 * 3 = 6
+c *= c;        // Kurz für c = c * c -> 6 * 6 = 36
+System.out.println(c); // Gibt 36 aus</code></pre>
+                    </div>
+
+                    <!-- Aufgabe 12 Teil 1 -->
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <strong class="text-ihk-900 text-sm">Aufgabe 12 (Block 1)</strong>
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono font-bold text-xs">Ausgabe: 109</span>
+                        </div>
+                        <pre class="bg-slate-950 text-slate-100 p-3 rounded-lg font-mono text-xs"><code>int a = 10;
+int b = 12;
+int c = a++ * --b;     // a++ nutzt 10 (a wird 11)
+                       // --b senkt b sofort auf 11
+                       // c = 10 * 11 = 110
+System.out.println(--c); // --c senkt 110 sofort auf 109!</code></pre>
+                    </div>
+
+                    <!-- Aufgabe 12 Teil 2 -->
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <strong class="text-ihk-900 text-sm">Aufgabe 12 (Block 2)</strong>
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono font-bold text-xs">Ausgabe: 30</span>
+                        </div>
+                        <pre class="bg-slate-950 text-slate-100 p-3 rounded-lg font-mono text-xs"><code>int c = 7;
+c = --c * --c;         // Links: --c senkt c von 7 auf 6
+                       // Rechts: --c senkt c von 6 auf 5
+                       // Rechnung: 6 * 5 = 30
+System.out.println(c); // Gibt 30 aus</code></pre>
+                    </div>
+
+                    <!-- Aufgabe 12 Teil 3 -->
+                    <div class="rounded-xl border border-rose-200 bg-rose-50/40 p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <strong class="text-rose-900 text-sm">Aufgabe 12 (Block 3)</strong>
+                            <span class="px-2.5 py-0.5 rounded-full bg-rose-200 text-rose-900 font-mono font-bold text-xs">Ausgabe: Fehler!</span>
+                        </div>
+                        <pre class="bg-slate-950 text-slate-100 p-3 rounded-lg font-mono text-xs"><code>int c = 7;
+c *= --7; // ❌ COMPILER-FEHLER!
+System.out.println(c);</code></pre>
+                        <p class="text-xs text-slate-700">
+                            <strong>Begründung:</strong> Der Dekrement-Operator <code>--</code> verändert den Wert einer Speicherzelle. Er kann <strong>nur auf echte Variablen</strong> (wie <code>--c</code>) angewendet werden, niemals auf ein festes Zahlen-Literal wie <code>7</code> (eine 7 kann man nicht auf 6 umbiegen)!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SEKTION 5: GLOSSAR (MIT LIVE-SUCHE)
+             ===================================================================== -->
+        <section id="glossar" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Fachbegriffe der Programmierung übersetzt</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">5. Fremdwörter- &amp; Fachbegriffs-Lexikon zu den Übungen</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Azubi-Nachschlagewerk</span>
+            </div>
+
+            <div class="no-print bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm text-slate-700 font-medium">
+                    🔎 <strong>Schnellfilter:</strong> Tippe einen Fachbegriff ein (z. B. <em>Präfix</em>, <em>Unicode</em>, <em>Escape</em>, <em>Overflow</em>), um das Lexikon live zu durchsuchen:
+                </div>
+                <input type="text" id="glossarySearch" oninput="filterGlossary()" placeholder="Begriff suchen..."
+                       class="w-full sm:w-72 px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-java-500">
+            </div>
+
+            <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <!-- Dynamically populated by glossarData.js -->
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SEKTION 6: QUELLENVERZEICHNIS
+             ===================================================================== -->
+        <section id="quellen" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Lernmaterialien &amp; Referenzen</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">6. Literatur- &amp; Quellenverzeichnis (Java)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">Quellenangaben</span>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3.5 font-bold w-1/4">Thema / Format</th>
+                            <th class="p-3.5 font-bold w-1/4">Literatur / Autor</th>
+                            <th class="p-3.5 font-bold w-1/2">Bezug zur Ausbildung</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="bg-java-500/10 border-l-4 border-java-500">
+                            <td class="p-3.5 font-bold text-ihk-900">🔗 IHK-Wiki: Theorie LA 06</td>
+                            <td class="p-3.5 text-slate-700">Eigenes Dokument (LA_06_1 Grundlagen)</td>
+                            <td class="p-3.5 text-slate-700">Alle theoretischen Grundlagen zu diesen 12 Aufgaben findest du im <a href="java_06_grundlagen.html" class="text-java-700 font-bold hover:underline">Theorie-Dokument LA 06 (Variablen, Datentypen &amp; Operatoren)</a>.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Buch Rheinwerk</td>
+                            <td class="p-3.5 text-slate-700">Programmieren lernen mit Java &amp; Openbook „Java ist auch eine Insel“</td>
+                            <td class="p-3.5 text-slate-700">Nachschlagewerk zu impliziter/expliziter Typumwandlung, Unicode-Zeichensätzen und Präfix-/Postfix-Ausdrücken.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">Skript FU-Hagen</td>
+                            <td class="p-3.5 text-slate-700">Java – Konzepte, Techniken, Programmierung</td>
+                            <td class="p-3.5 text-slate-700">Vertiefende Übungen zur Auswertungsreihenfolge von Operatoren und Ganzzahlarithmetik.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-200 mt-12">
+        <p class="font-semibold text-slate-700">Ausarbeitung zum IHK-Lernauftrag 06 (LA_06_1_Aufgaben) • Fachinformatiker/-in Anwendungsentwicklung</p>
+        <p class="mt-1">Thema: Übungen zu Datentypen, Casting, Unicode &amp; Präfix/Postfix • Optimiert für Bildschirmansicht und A4-Druck (Strg+P / 🖨️ Button oben).</p>
+    </footer>
+
+    
+    <!-- ==================== JAVASCRIPT GLOBAL GLOSSAR ==================== -->
+    <script src="../assets/js/glossarData.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glossaryGrid = document.getElementById('glossaryGrid');
+            if (!glossaryGrid) return;
+            
+            // Initiales Rendern aller Begriffe
+            renderGlossary('');
+            
+            // Event Listener für die Suche
+            const searchInput = document.getElementById('glossarySearch');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    renderGlossary(e.target.value);
+                });
+            }
+        });
+
+        function renderGlossary(filterText) {
+            const grid = document.getElementById('glossaryGrid');
+            grid.innerHTML = ''; // Leeren
+            
+            const query = filterText.toLowerCase().trim();
+            
+            const filtered = globalesGlossar.filter(item => {
+                return item.titel.toLowerCase().includes(query) || 
+                       item.beschreibung.toLowerCase().includes(query);
+            });
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500">Keine passenden Begriffe gefunden.</div>';
+                return;
+            }
+            
+            filtered.forEach(item => {
+                // Farb-Mapping für die Badges
+                let badgeClass = "bg-slate-100 text-slate-700";
+                if(item.farbe === 'sky') badgeClass = "bg-sky-100 text-sky-800";
+                if(item.farbe === 'linux') badgeClass = "bg-linux-100 text-linux-800";
+                if(item.farbe === 'java') badgeClass = "bg-java-100 text-java-800";
+                
+                const cardHTML = `
+                    <div class="glossary-card rounded-xl border border-slate-200 p-4 bg-slate-50/60 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <h4 class="font-extrabold text-ihk-900 leading-tight">${item.titel}</h4>
+                        </div>
+                        <p class="text-slate-700 text-xs sm:text-sm flex-1">${item.beschreibung}</p>
+                        <div class="mt-3 pt-3 border-t border-slate-200">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                                ${item.modul}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+    </script>
+
+</body>
+</html>

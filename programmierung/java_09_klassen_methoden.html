@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK-Lernauftrag 09: Klassen, Eigenschaften & Methoden – Modul Programmierung</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Einheitliche Tailwind Config + Java-Theme (Orange) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ihk: { 50: '#f0f7ff', 100: '#e0effe', 200: '#bae0fd', 500: '#0284c7', 600: '#0369a1', 700: '#075985', 800: '#0c4a6e', 900: '#0f294a' },
+                        java: { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Einbindung der zentralen CSS-Datei -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    
+    <!-- Fallback-Styles für Standalone-Nutzung & A4-Druck -->
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: auto !important; overflow-x: hidden; background-color: #f1f5f9; color: #0f172a; }
+        p, li, td { font-size: 0.875rem; line-height: 1.625; }
+        @media (min-width: 640px) { p, li, td { font-size: 1rem; } }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 14mm 12mm; }
+            html, body { background-color: #ffffff !important; color: #000000 !important; font-size: 9.5pt !important; line-height: 1.4 !important; height: auto !important; overflow: visible !important; }
+            p, li, td { font-size: 9.5pt !important; line-height: 1.4 !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            main, section, article, div { overflow: visible !important; max-width: 100% !important; }
+            .avoid-break, tr, blockquote, figure, .glossary-card { break-inside: avoid !important; page-break-inside: avoid !important; }
+            .print-page-start { break-before: page; page-break-before: always; }
+            h1, h2, h3, h4 { break-after: avoid !important; page-break-after: avoid !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; }
+            .glossary-card { display: block !important; }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-java-500 selection:text-white">
+
+    <!-- ==================== WIKI-NAVIGATION (TOP BAR) ==================== -->
+    <div class="bg-slate-950 text-slate-400 text-xs py-2 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-slate-800 no-print">
+        <a href="../index.html" class="font-bold text-java-400 hover:text-white transition flex items-center gap-1">🏠 Dashboard</a>
+        <span class="text-slate-600">|</span>
+        <span class="font-bold text-java-400">Programmierung:</span>
+        <a href="java_04_eclipse_ide.html" class="hover:text-white transition">LA 04</a>
+        <a href="java_05_aufbau.html" class="hover:text-white transition">LA 05</a>
+        <a href="java_06_grundlagen.html" class="hover:text-white transition">LA 06_1</a>
+        <a href="java_06_2_aufgaben.html" class="hover:text-white transition">LA 06_2</a>
+        <a href="java_07_kontrollstrukturen.html" class="hover:text-white transition">LA 07</a>
+        <a href="java_09_klassen_methoden.html" class="hover:text-white transition text-white font-medium">LA 09</a>
+    </div>
+
+    <!-- ==================== STICKY TOP NAVIGATION ==================== -->
+    <header class="no-print sticky top-0 z-50 bg-ihk-900/95 backdrop-blur-md text-white border-b border-java-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-4">
+
+                <!-- Branding -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-java-400 to-red-600 flex items-center justify-center font-extrabold text-lg shadow-inner font-mono">
+                        { }
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-java-500/20 text-java-300 border border-java-400/30">Modul: Programmierung</span>
+                            <span class="text-xs text-slate-300 hidden sm:inline">Lernauftrag 09 (LA_09)</span>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base text-white leading-tight">Klassen, Eigenschaften (Attribute) &amp; Methoden</p>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Links -->
+                <nav class="hidden xl:flex flex-1 justify-center items-center gap-1 text-xs font-medium whitespace-nowrap">
+                    <a href="#aufbau-rueckgabe" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1. Methodenaufbau</a>
+                    <a href="#modifier-static" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">2. Modifier &amp; Static</a>
+                    <a href="#getter-setter" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">3. Getter &amp; Setter</a>
+                    <a href="#scope-overloading" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">4. Scope &amp; Overloading</a>
+                    <a href="#normen-standards" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-amber-300">OOP-Prinzipien</a>
+                    <a href="#mini-quiz" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-java-300">Quiz</a>
+                    <a href="#glossar" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-emerald-300">Glossar</a>
+                    <a href="#quellen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">Quellen</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-java-500 hover:bg-java-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow-md cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-12 0h12v4H6v-4z" />
+                        </svg>
+                        <span>🖨️ Als PDF drucken / speichern</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile / Tablet Sub-Navbar -->
+            <div class="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-700/80 text-xs font-medium">
+                <a href="#aufbau-rueckgabe" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1. Methodenaufbau</a>
+                <a href="#modifier-static" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">2. Modifier &amp; Static</a>
+                <a href="#getter-setter" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">3. Getter &amp; Setter</a>
+                <a href="#scope-overloading" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">4. Scope &amp; Overloading</a>
+                <a href="#normen-standards" class="shrink-0 px-2.5 py-1 rounded bg-amber-900/60 text-amber-200">OOP-Prinzipien</a>
+                <a href="#mini-quiz" class="shrink-0 px-2.5 py-1 rounded bg-java-900/60 text-java-200">Quiz</a>
+                <a href="#glossar" class="shrink-0 px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-200">Glossar</a>
+                <a href="#quellen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">Quellen</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HAUPTINHALT ==================== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- HERO / DOKUMENTKOPF -->
+        <section class="bg-ihk-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl border-l-8 border-java-500 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-java-300 mb-3">
+                <span>IT-Berufe • Ausbildung zum Fachinformatiker Anwendungsentwicklung</span>
+                <span>Lernauftrag 09 (LA_09): Klassen, Eigenschaften &amp; Methoden</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                Klassen, Eigenschaften &amp; Methoden in Java
+            </h1>
+            <p class="text-slate-200 leading-relaxed mb-6">
+                Aus den vorangegangenen Lernaufträgen kennen wir bereits den Grundaufbau einer Klasse und wissen, wie Eigenschaften (<strong>Attribute</strong>) mit Datentypen definiert werden. Doch erst durch <strong>Methoden</strong> erwachen Objekte zum Leben: Während Attribute beschreiben, was ein Objekt <em>ist</em> oder <em>hat</em> (z. B. <code>name</code>, <code>lebenspunkte</code>, <code>kontostand</code>), legen Methoden fest, was ein Objekt <em>tun kann</em> (sein Verhalten). In diesem Lernauftrag analysieren wir alle Bestandteile einer Methodendeklaration – von Zugriffsmodifiern über Rückgabewerte und Getter/Setter bis hin zu Variablen-Scopes und Method Overloading.
+            </p>
+
+            <!-- Info-Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700/80 text-xs sm:text-sm">
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-java-300 block mb-1">🏗️ Anatomie einer Methode</span>
+                    Kapitel 2.7 &amp; 5.3: Methodenkopf, Signatur, Parameterliste, Rückgabetypen (inkl. <code>void</code>) und Namenskonventionen.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-emerald-300 block mb-1">🔒 Kapselung &amp; Modifier</span>
+                    Kapitel 3.3 &amp; 6: Sichtbarkeiten (<code>public</code>, <code>protected</code>, <code>private</code>), <code>static</code>, <code>final</code> sowie sichere Getter &amp; Setter.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-amber-300 block mb-1">🎯 Scope &amp; Overloading</span>
+                    Gültigkeitsbereiche lokaler Variablen im Arbeitsspeicher und das Überladen gleichnamiger Methoden mit verschiedenen Parametern.
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SEKTION 1: GRUNDAUFBAU, RÜCKGABEWERTE & BEZEICHNER (AUFGABEN 1, 3, 4, 5)
+             ===================================================================== -->
+        <section id="aufbau-rueckgabe" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Kapitel 2.7 &amp; 5.3 (Aufgaben 1, 3, 4 &amp; 5)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1. Grundaufbau einer Methode, Bezeichner &amp; Rückgabewerte</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Methodendeklaration</span>
+            </div>
+
+            <!-- Aufgabe 1: Grundaufbau einer Methode -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-100 text-java-800 flex items-center justify-center text-sm">F1</span>
+                    Formulieren Sie den Grundaufbau einer Methode innerhalb einer Klasse
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    Jede Methode in Java steht innerhalb des Klassenrumpfs und besteht aus zwei Hauptteilen: dem <strong>Methodenkopf (Header)</strong>, der die Schnittstelle nach außen definiert, und dem <strong>Methodenrumpf (Body)</strong> in geschweiften Klammern <code>{ ... }</code>, der die eigentlichen Programmierbefehle enthält:
+                </p>
+
+                <!-- SVG: Anatomie einer Java-Methode -->
+                <figure class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <svg role="img" viewBox="0 0 820 175" class="w-full h-auto block">
+                        <title>Anatomie einer Methodendeklaration in Java</title>
+                        <rect x="10" y="8" width="800" height="26" rx="5" fill="#0f294a" />
+                        <text x="410" y="25" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">DER GRUNDAUFBAU EINER METHODE IN JAVA (METHODENKOPF + METHODENRUMPF)</text>
+
+                        <!-- Baustein 1: Zugriffsmodifier -->
+                        <rect x="15" y="46" width="125" height="64" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5" />
+                        <text x="77" y="68" font-size="12" font-weight="bold" font-family="monospace" fill="#9a3412" text-anchor="middle">public</text>
+                        <text x="77" y="86" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle">1. Sichtbarkeit</text>
+                        <text x="77" y="100" font-size="8" fill="#64748b" text-anchor="middle">(Zugriffsmodifier)</text>
+
+                        <!-- Baustein 2: Optionaler Modifier -->
+                        <rect x="150" y="46" width="115" height="64" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" />
+                        <text x="207" y="68" font-size="12" font-weight="bold" font-family="monospace" fill="#475569" text-anchor="middle">[static]</text>
+                        <text x="207" y="86" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle">2. Optional</text>
+                        <text x="207" y="100" font-size="8" fill="#64748b" text-anchor="middle">static / final</text>
+
+                        <!-- Baustein 3: Rückgabetyp -->
+                        <rect x="275" y="46" width="130" height="64" rx="6" fill="#eff6ff" stroke="#0284c7" stroke-width="1.5" />
+                        <text x="340" y="68" font-size="12" font-weight="bold" font-family="monospace" fill="#075985" text-anchor="middle">double</text>
+                        <text x="340" y="86" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle">3. Rückgabetyp</text>
+                        <text x="340" y="100" font-size="8" fill="#64748b" text-anchor="middle">Datentyp oder void</text>
+
+                        <!-- Baustein 4: Methodenname -->
+                        <rect x="415" y="46" width="175" height="64" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="1.5" />
+                        <text x="502" y="68" font-size="12" font-weight="bold" font-family="monospace" fill="#065f46" text-anchor="middle">berechneRabatt</text>
+                        <text x="502" y="86" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle">4. Methodenbezeichner</text>
+                        <text x="502" y="100" font-size="8" fill="#64748b" text-anchor="middle">in lowerCamelCase</text>
+
+                        <!-- Baustein 5: Parameterliste -->
+                        <rect x="600" y="46" width="205" height="64" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5" />
+                        <text x="702" y="68" font-size="11.5" font-weight="bold" font-family="monospace" fill="#92400e" text-anchor="middle">(double preis, int proz)</text>
+                        <text x="702" y="86" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle">5. Parameterliste</text>
+                        <text x="702" y="100" font-size="8" fill="#64748b" text-anchor="middle">Eingabewerte in Klammern ()</text>
+
+                        <!-- Baustein 6: Methodenrumpf -->
+                        <rect x="15" y="122" width="790" height="44" rx="6" fill="#0f172a" />
+                        <text x="410" y="148" font-size="11.5" font-weight="bold" font-family="monospace" fill="#f8fafc" text-anchor="middle">6. Methodenrumpf: {  double abzug = preis * proz / 100.0;   return preis - abzug;  }</text>
+                    </svg>
+                    <figcaption class="text-xs text-slate-500 text-center mt-2">
+                        <strong>Abb. 1: Die 6 Bausteine einer Methode</strong> – Methodenname und Parameterliste (Baustein 4 + 5) bilden zusammen die eindeutige <em>Methodensignatur</em>.
+                    </figcaption>
+                </figure>
+
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>Allgemeine Syntax-Schablone einer Methode</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Java Syntax</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-slate-500">// Allgemeiner Aufbau:</span>
+<span class="text-purple-400">[Zugriffsmodifier] [static/final]</span> <span class="text-sky-300">Rückgabetyp</span> <span class="text-amber-300">methodenName</span>(<span class="text-emerald-300">Datentyp parameter1, Datentyp parameter2</span>) {
+    <span class="text-slate-500">// Methodenrumpf (Anweisungen / lokale Berechnungen)</span>
+    <span class="text-purple-400">return</span> ergebnisWert; <span class="text-slate-500">// Nur nötig, wenn Rückgabetyp NICHT void ist</span>
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Aufgabe 4: Regeln für Methodenbezeichner -->
+            <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break space-y-3">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F4</span>
+                    Welche Regeln gibt es für Methodenbezeichner?
+                </h3>
+                <p class="text-slate-700 text-sm leading-relaxed">
+                    Für die Benennung einer Methode gelten sowohl die <strong>zwingenden Compiler-Regeln</strong> für Java-Bezeichner als auch die <strong>Java Naming Conventions</strong> für sauberen Code:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+                    <div class="bg-white p-4 rounded-lg border border-slate-200">
+                        <strong class="text-rose-800 block mb-1.5">⚖️ Harte Compiler-Regeln (Syntax)</strong>
+                        <ul class="list-disc pl-5 space-y-1 text-slate-700">
+                            <li>Darf <strong>nicht mit einer Ziffer</strong> beginnen (<code>1berechne()</code> ist verboten, <code>berechne1()</code> ist erlaubt).</li>
+                            <li>Darf <strong>keine Leerzeichen</strong> oder Rechenzeichen (wie <code>-</code>, <code>+</code>, <code>/</code>) enthalten.</li>
+                            <li>Erlaubt sind Buchstaben, Ziffern, Unterstrich (<code>_</code>) und Dollarzeichen (<code>$</code>).</li>
+                            <li>Darf <strong>kein reserviertes Java-Schlüsselwort</strong> sein (z. B. nicht <code>while()</code> oder <code>class()</code>).</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-java-200">
+                        <strong class="text-java-800 block mb-1.5">✨ Konventionen (Best Practices)</strong>
+                        <ul class="list-disc pl-5 space-y-1 text-slate-700">
+                            <li><strong>lowerCamelCase:</strong> Methoden beginnen <strong>immer mit einem Kleinbuchstaben</strong>. Jedes weitere zusammengesetzte Wort beginnt groß (z. B. <code>berechneBruttoPreis()</code>).</li>
+                            <li><strong>Sprechende Verben (Tätigkeitswörter):</strong> Da Methoden Aktionen ausführen, benennt man sie mit Verben (z. B. <code>speichereDaten()</code>, <code>pruefePasswort()</code>, <code>getName()</code>).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aufgaben 3 & 5: Möglichkeiten für Rückgabewerte & Bedeutung von void -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 avoid-break">
+                <!-- Aufgabe 3 -->
+                <div class="rounded-xl border border-sky-200 bg-sky-50/40 p-5 space-y-3">
+                    <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-sky-200 text-sky-900 flex items-center justify-center text-sm">F3</span>
+                        Welche Möglichkeiten für Rückgabewerte gibt es?
+                    </h3>
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        Eine Methode kann in Java nach getaner Arbeit über den Befehl <code>return</code> genau <strong>einen Rückgabewert</strong> an den Aufrufer zurückliefern. Dafür gibt es drei Möglichkeiten:
+                    </p>
+                    <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-slate-700">
+                        <li><strong>1. Primitive Datentypen:</strong> Alle 8 elementaren Typen wie <code>int</code>, <code>double</code>, <code>boolean</code> oder <code>char</code> (z. B. <code>public boolean istVolljaehrig()</code>).</li>
+                        <li><strong>2. Komplexe Referenzdatentypen (Objekte &amp; Arrays):</strong> Jede beliebige Klasse wie <code>String</code>, eigene Objekte (z. B. <code>Kunde</code>), Listen oder Arrays (z. B. <code>int[]</code>), wenn man mehrere Werte gebündelt zurückgeben möchte.</li>
+                        <li><strong>3. Kein Rückgabewert (<code>void</code>):</strong> Wenn die Methode nichts zurückgibt (siehe Frage 5).</li>
+                    </ul>
+                </div>
+
+                <!-- Aufgabe 5 -->
+                <div class="rounded-xl border border-java-200 bg-java-50/40 p-5 space-y-3">
+                    <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-java-200 text-java-900 flex items-center justify-center text-sm">F5</span>
+                        Was bedeutet der Rückgabewert <code>void</code>?
+                    </h3>
+                    <p class="text-sm text-slate-700 leading-relaxed">
+                        Das englische Wort <strong><code>void</code></strong> bedeutet „leer“ bzw. „Leere“. Steht im Methodenkopf <code>void</code> anstelle eines Datentyps, führt die Methode zwar ihre Befehle aus (z. B. etwas auf der Konsole ausgeben oder ein Attribut ändern), <strong>gibt aber keinen Ergebniswert an den Aufrufer zurück</strong>.
+                    </p>
+                    <div class="bg-white p-3 rounded-lg border border-java-200 text-xs text-slate-700">
+                        <strong>Wichtig für den Code:</strong> Eine <code>void</code>-Methode benötigt am Ende <strong>kein</strong> <code>return</code>-Statement. Man darf jedoch ein leeres <code>return;</code> (ohne Wert dahinter) nutzen, um die Methode vorzeitig abzubrechen.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SEKTION 2: MODIFIER & STATISCHE METHODEN (AUFGABEN 2 & 6)
+             ===================================================================== -->
+        <section id="modifier-static" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Kapitel 3.3 &amp; 6 (Aufgaben 2 &amp; 6)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">2. Zugriffsmodifier, <code>final</code> &amp; statische Methoden (<code>static</code>)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-java-600 text-white text-xs font-bold">Sichtbarkeit &amp; Klassenebene</span>
+            </div>
+
+            <!-- Aufgabe 2: Zugriffsmodifier + static + final -->
+            <div class="space-y-5 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F2</span>
+                    Was bedeuten die Modifier <code>public</code>, <code>protected</code>, <code>private</code>, <code>static</code> und <code>final</code>?
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    In Java unterscheidet man zwischen <strong>Sichtbarkeits-Modifiern (Access Modifiers)</strong>, die regeln, <em>wer</em> von außen auf eine Klasse, ein Attribut oder eine Methode zugreifen darf, und <strong>Verhaltens-Modifiern (Non-Access Modifiers)</strong> wie <code>static</code> und <code>final</code>:
+                </p>
+
+                <!-- Sichtbarkeits-Matrix (Prüfungsklassiker!) -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3.5 font-bold w-36">Zugriffsmodifier</th>
+                                <th class="p-3.5 font-bold text-center">Eigene Klasse</th>
+                                <th class="p-3.5 font-bold text-center">Gleiches Package</th>
+                                <th class="p-3.5 font-bold text-center">Unterklasse (Vererbung)</th>
+                                <th class="p-3.5 font-bold text-center">Überall (Alle Klassen)</th>
+                                <th class="p-3.5 font-bold w-1/3">Bedeutung &amp; typischer Einsatz</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-emerald-700">public</td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-slate-700"><strong>Öffentlich:</strong> Von überall im gesamten Projekt aufrufbar (Standard für Schnittstellen-Methoden, Getter/Setter und <code>main</code>).</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-extrabold text-sky-700">protected</td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-center font-bold text-rose-600">❌ Nein</td>
+                                <td class="p-3.5 text-slate-700"><strong>Geschützt:</strong> Sichtbar im selben Package sowie in allen erbenden Kindklassen (Unterklassen) – auch wenn diese in einem anderen Package liegen.</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-semibold text-slate-600"><em>(kein Modifier)</em><br><span class="text-[10px] font-sans">package-private</span></td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-center font-bold text-rose-600">❌ Nein</td>
+                                <td class="p-3.5 text-center font-bold text-rose-600">❌ Nein</td>
+                                <td class="p-3.5 text-slate-700"><strong>Paket-Sichtbarkeit (Default):</strong> Wenn man gar nichts hinschreibt, ist das Element nur innerhalb desselben Packages (Ordners) sichtbar.</td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-extrabold text-rose-700">private</td>
+                                <td class="p-3.5 text-center font-bold text-emerald-600">✅ Ja</td>
+                                <td class="p-3.5 text-center font-bold text-rose-600">❌ Nein</td>
+                                <td class="p-3.5 text-center font-bold text-rose-600">❌ Nein</td>
+                                <td class="p-3.5 text-center font-bold text-rose-600">❌ Nein</td>
+                                <td class="p-3.5 text-slate-700"><strong>Streng privat:</strong> Zugriff ist <em>ausschließlich</em> innerhalb derselben Klasse erlaubt! Standard für Attribute (Datenkapselung) und interne Hilfsmethoden.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Die beiden Funktions-Modifier: static & final -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                    <div class="rounded-xl border border-purple-200 bg-purple-50/40 p-5 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <code class="text-base font-extrabold text-purple-800 font-mono">static</code>
+                            <span class="px-2 py-0.5 rounded bg-purple-200 text-purple-900 font-bold text-[11px]">Klassen-Modifier</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Bindet ein Attribut oder eine Methode fest an die <strong>Klasse als Ganzes</strong> statt an einzelne Objekte (Instanzen). Ein <code>static</code>-Element existiert im Speicher genau <strong>ein einziges Mal</strong>, egal ob 0 oder 1.000 Objekte der Klasse erzeugt wurden.
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl border border-amber-200 bg-amber-50/40 p-5 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <code class="text-base font-extrabold text-amber-800 font-mono">final</code>
+                            <span class="px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-bold text-[11px]">Unveränderlichkeits-Modifier</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Bedeutet „endgültig / unveränderbar“ und hat je nach Einsatzort drei Wirkungen:<br>
+                            • <strong>Bei Variablen/Attributen:</strong> Macht sie zur <em>Konstante</em> (Wert kann nur einmal zugewiesen werden, z. B. <code>final double MWST = 0.19;</code>).<br>
+                            • <strong>Bei Methoden:</strong> Verhindert, dass Unterklassen die Methode überschreiben (<em>Overriding-Schutz</em>).<br>
+                            • <strong>Bei Klassen:</strong> Verhindert, dass man von dieser Klasse erben kann (z. B. ist <code>String</code> in Java <code>final</code>).
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aufgabe 6: Was sind statische Methoden? -->
+            <div class="rounded-xl border-l-4 border-l-java-500 bg-java-50/30 p-5 space-y-4 avoid-break shadow-sm">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-200 text-java-900 flex items-center justify-center text-sm">F6</span>
+                    Was sind statische Methoden (<code>static</code>) im Detail?
+                </h3>
+                <p class="text-slate-700 text-sm leading-relaxed">
+                    Normalerweise muss man von einer Klasse zuerst mit dem Schlüsselwort <code>new</code> ein konkretes Objekt erzeugen, um deren Methoden aufzurufen (<em>Instanzmethode</em>). <strong>Statische Methoden (Klassenmethoden)</strong> tragen das Schlüsselwort <code>static</code> im Methodenkopf und gehören direkt zum Bauplan (der Klasse) selbst:
+                </p>
+                <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-slate-700">
+                    <li><strong>Aufruf ohne Objekt:</strong> Man ruft sie direkt über den Klassennamen auf: <code>Klassenname.methodenname()</code>. Bekannteste Beispiele sind die Mathematik-Methoden wie <code>Math.round(3.7)</code> oder <code>Math.sqrt(25)</code> sowie unsere <code>public static void main(String[] args)</code>-Methode (die beim Programmstart aufgerufen werden muss, wenn noch gar kein Objekt existiert).</li>
+                    <li><strong>Einschränkung im Speicher:</strong> Da eine statische Methode keinem bestimmten Objekt gehört, kennt sie keinen <code>this</code>-Zeiger und <strong>kann nicht direkt auf normale (nicht-statische) Objektattribute zugreifen</strong>!</li>
+                </ul>
+
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>Vergleich: Statische Methode vs. Objektmethode (Instanzmethode)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Java</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-purple-400">public class</span> <span class="text-amber-300">Taschenrechner</span> {
+    <span class="text-slate-500">// 1. STATISCHE METHODE (mit 'static'): Braucht kein Objekt!</span>
+    <span class="text-purple-400">public static int</span> <span class="text-sky-300">addiere</span>(<span class="text-purple-400">int</span> a, <span class="text-purple-400">int</span> b) {
+        <span class="text-purple-400">return</span> a + b;
+    }
+
+    <span class="text-slate-500">// 2. NORMALE OBJEKTMETHODE (ohne 'static'): Braucht ein Objekt mit 'new'!</span>
+    <span class="text-purple-400">public void</span> <span class="text-sky-300">zeigeModell</span>() {
+        System.out.println(<span class="text-emerald-300">"Casio FX-991"</span>);
+    }
+
+    <span class="text-purple-400">public static void</span> <span class="text-sky-300">main</span>(String[] args) {
+        <span class="text-slate-500">// Aufruf der statischen Methode direkt über den Klassennamen:</span>
+        <span class="text-purple-400">int</span> summe = Taschenrechner.addiere(<span class="text-sky-300">10</span>, <span class="text-sky-300">25</span>);
+
+        <span class="text-slate-500">// Aufruf der Objektmethode erfordert vorherige Objekterzeugung mit 'new':</span>
+        Taschenrechner meinRechner = <span class="text-purple-400">new</span> Taschenrechner();
+        meinRechner.zeigeModell();
+    }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SEKTION 3: GETTER UND SETTER / DATENKAPSELUNG (AUFGABE 7)
+             ===================================================================== -->
+        <section id="getter-setter" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgabenblock (Aufgabe 7)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">3. Getter &amp; Setter: Kontrollierter Zugriff auf Attribute</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Datenkapselung</span>
+            </div>
+
+            <div class="space-y-5 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm">F7</span>
+                    Was sind Getter und Setter und zu welchem Zweck werden sie erstellt?
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    In der professionellen objektorientierten Programmierung macht man die Attribute (Eigenschaften) einer Klasse niemals <code>public</code>, sondern schützt sie mit dem Modifier <strong><code>private</code></strong> vor direktem Fremdzugriff von außen (<strong>Prinzip der Datenkapselung / Information Hiding</strong>). Damit andere Klassen die Werte trotzdem kontrolliert auslesen oder ändern können, stellt man öffentliche Zugriffsmethoden bereit:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="rounded-xl border border-emerald-200 bg-emerald-50/50 p-5 space-y-2">
+                        <strong class="text-emerald-900 text-base block">📖 Der Getter (Lese-Methode: <code>get...</code>)</strong>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Ein <strong>Getter</strong> dient dazu, den aktuellen Wert eines privaten Attributs nach außen hin <strong>abzufragen (auszulesen)</strong>. Er hat denselben Rückgabetyp wie das Attribut, nimmt keine Parameter entgegen und gibt einfach <code>return this.attribut;</code> zurück (bei <code>boolean</code>-Attributen nennt man ihn oft <code>is...</code> statt <code>get...</code>).
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl border border-sky-200 bg-sky-50/50 p-5 space-y-2">
+                        <strong class="text-sky-900 text-base block">✏️ Der Setter (Schreib-Methode: <code>set...</code>)</strong>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Ein <strong>Setter</strong> dient dazu, den Wert eines privaten Attributs von außen <strong>gezielt zu verändern (neu zu setzen)</strong>. Er hat den Rückgabetyp <code>void</code> und nimmt den neuen Wert als Parameter entgegen.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Warum das Ganze? Die 3 Hauptzwecke -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                    <strong class="text-ihk-900 text-sm block mb-2">🎯 Welchen Zweck verfolgt man mit Gettern und Settern? (Warum nicht einfach <code>public</code> Attribute?)</strong>
+                    <ol class="list-decimal pl-5 space-y-1.5 text-xs sm:text-sm text-slate-700">
+                        <li><strong>Validierung &amp; Plausibilitätsprüfung (Türsteher-Prinzip):</strong> Wäre ein Attribut <code>lebenspunkte</code> oder <code>alter</code> öffentlich (<code>public</code>), könnte jeder Programmierer von außen <code>spieler.lebenspunkte = -999;</code> reinschreiben. Ein <strong>Setter</strong> wirkt wie ein Türsteher: Er kann den übergebenen Wert mit einer <code>if</code>-Bedingung prüfen und ungültige Werte ablehnen oder korrigieren!</li>
+                        <li><strong>Gezielte Zugriffssteuerung (Read-Only):</strong> Wenn ein Attribut (wie eine <code>kontoNummer</code> oder <code>spielerId</code>) von außen zwar gelesen, aber niemals überschrieben werden darf, programmiert man einfach <em>nur einen Getter</em> und lässt den Setter weg.</li>
+                        <li><strong>Leichte Wartbarkeit:</strong> Ändert sich später die interne Speicherung in der Klasse (z. B. Preis wird intern plötzlich in Cent statt Euro gespeichert), muss man nur den Code im Getter/Setter anpassen, ohne dass fremde Klassen umgeschrieben werden müssen.</li>
+                    </ol>
+                </div>
+
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>SpielerCharakter.java (Praxisbeispiel: private Attribute + Getter &amp; Setter mit Schutzlogik)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Java</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-purple-400">public class</span> <span class="text-amber-300">SpielerCharakter</span> {
+
+    <span class="text-slate-500">// 1. Attribute sind streng 'private' (von außen nicht direkt manipulierbar!)</span>
+    <span class="text-purple-400">private</span> String name;
+    <span class="text-purple-400">private int</span> lebenspunkte = <span class="text-sky-300">100</span>;
+
+    <span class="text-slate-500">// 2. GETTER für 'name' (Lesezugriff)</span>
+    <span class="text-purple-400">public</span> String <span class="text-sky-300">getName</span>() {
+        <span class="text-purple-400">return</span> <span class="text-purple-400">this</span>.name;
+    }
+
+    <span class="text-slate-500">// 3. SETTER für 'name' (Schreibzugriff mit Prüfung auf leeren Text)</span>
+    <span class="text-purple-400">public void</span> <span class="text-sky-300">setName</span>(String neuerName) {
+        <span class="text-purple-400">if</span> (neuerName != <span class="text-purple-400">null</span> &amp;&amp; !neuerName.isEmpty()) {
+            <span class="text-purple-400">this</span>.name = neuerName;
+        }
+    }
+
+    <span class="text-slate-500">// 4. GETTER für 'lebenspunkte'</span>
+    <span class="text-purple-400">public int</span> <span class="text-sky-300">getLebenspunkte</span>() {
+        <span class="text-purple-400">return</span> <span class="text-purple-400">this</span>.lebenspunkte;
+    }
+
+    <span class="text-slate-500">// 5. SETTER für 'lebenspunkte' mit Türsteher-Logik (0 bis max. 100 LP)</span>
+    <span class="text-purple-400">public void</span> <span class="text-sky-300">setLebenspunkte</span>(<span class="text-purple-400">int</span> neueLp) {
+        <span class="text-purple-400">if</span> (neueLp &lt; <span class="text-sky-300">0</span>) {
+            <span class="text-purple-400">this</span>.lebenspunkte = <span class="text-sky-300">0</span>;   <span class="text-slate-400">// Schutz: Keine negativen Lebenspunkte möglich!</span>
+        } <span class="text-purple-400">else if</span> (neueLp &gt; <span class="text-sky-300">100</span>) {
+            <span class="text-purple-400">this</span>.lebenspunkte = <span class="text-sky-300">100</span>; <span class="text-slate-400">// Schutz: Maximalwert 100 nicht überschreiten!</span>
+        } <span class="text-purple-400">else</span> {
+            <span class="text-purple-400">this</span>.lebenspunkte = neueLp;
+        }
+    }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SEKTION 4: LOKALE VARIABLEN, SCOPE & OVERLOADING (AUFGABEN 8 & 9)
+             ===================================================================== -->
+        <section id="scope-overloading" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgabenblock (Aufgaben 8 &amp; 9)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">4. Lokale Variablen (Scope) &amp; Methoden-Überladung (Overloading)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Gültigkeit &amp; Polymorphie</span>
+            </div>
+
+            <!-- Aufgabe 8: Lokale Variablen & Scope -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-100 text-java-800 flex items-center justify-center text-sm">F8</span>
+                    Wie ist der Zugriff auf „lokale“ Variablen geregelt und was bedeutet „Scope“?
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    Variablen, die <em>innerhalb</em> einer Methode (oder in deren Parameterliste) deklariert werden, nennt man <strong>lokale Variablen</strong>. Im Gegensatz zu den Attributen einer Klasse dienen sie nur als kurzlebige Zwischenspeicher für eine Berechnung:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-5 space-y-2">
+                        <strong class="text-ihk-900 text-base block">🔐 Wie ist der Zugriff auf lokale Variablen geregelt?</strong>
+                        <ul class="list-disc pl-5 space-y-1.5 text-xs sm:text-sm text-slate-700">
+                            <li><strong>Streng lokal isoliert:</strong> Auf eine lokale Variable kann <em>ausschließlich</em> innerhalb genau der Methode (bzw. des Klammerblocks <code>{ ... }</code>) zugegriffen werden, in der sie erstellt wurde.</li>
+                            <li><strong>Keine Zugriffsmodifier:</strong> Da andere Methoden oder Klassen sie ohnehin niemals sehen können, darf man vor lokale Variablen kein <code>public</code> oder <code>private</code> schreiben.</li>
+                            <li><strong>Lebensdauer:</strong> Sie entstehen beim Aufruf der Methode im Arbeitsspeicher (Stack) und werden <strong>sofort gelöscht</strong>, sobald die Methode am Ende ihrer schließenden Klammer <code>}</code> ankommt.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rounded-xl border border-amber-200 bg-amber-50/40 p-5 space-y-2">
+                        <strong class="text-amber-950 text-base block">🔭 Was bedeutet der Begriff „Scope“?</strong>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Der englische Fachbegriff <strong>Scope</strong> bedeutet <strong>Gültigkeits- und Sichtbarkeitsbereich</strong> einer Variablen im Programmcode.
+                        </p>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            <strong>Faustregel für den Scope in Java:</strong> Eine Variable ist immer ab der Zeile ihrer Deklaration bis exakt zum Ende des umschließenden Anweisungsblocks (also bis zur nächsten zugehörigen schließenden geschweiften Klammer <code>}</code>) gültig und sichtbar. Man unterscheidet:
+                            <br>1. <em>Klassen-/Objekt-Scope</em> (Attribute: in der ganzen Klasse sichtbar)
+                            <br>2. <em>Methoden-Scope</em> (Lokale Variablen: nur in dieser Methode sichtbar)
+                            <br>3. <em>Block-Scope</em> (z. B. <code>int i</code> in einer <code>for</code>-Schleife: nur in der Schleife sichtbar).
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aufgabe 9: Method Overloading -->
+            <div class="space-y-4 avoid-break pt-4">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-100 text-java-800 flex items-center justify-center text-sm">F9</span>
+                    Was bedeutet „Overloading“ (Überladen) im Zusammenhang mit Methoden?
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    Unter <strong>Method Overloading (Überladen von Methoden)</strong> versteht man die Möglichkeit, innerhalb <em>derselben</em> Klasse <strong>mehrere Methoden mit exakt demselben Methodennamen</strong> anzulegen. Damit der Java-Compiler beim Aufruf genau weiß, welche Version der Methode gemeint ist, müssen sich die Methoden zwingend in ihrer <strong>Parameterliste</strong> unterscheiden:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+                    <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
+                        <strong class="text-emerald-900 block mb-1">✅ 1. Anzahl der Parameter</strong>
+                        Eine Methode nimmt 2 Parameter an, die gleichnamige Schwester-Methode nimmt 3 Parameter an (z. B. <code>addiere(int a, int b)</code> vs. <code>addiere(int a, int b, int c)</code>).
+                    </div>
+                    <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
+                        <strong class="text-emerald-900 block mb-1">✅ 2. Datentypen der Parameter</strong>
+                        Beide nehmen 2 Parameter an, aber mit unterschiedlichen Typen (z. B. <code>addiere(int a, int b)</code> vs. <code>addiere(double a, double b)</code>).
+                    </div>
+                    <div class="bg-rose-50 border border-rose-200 p-4 rounded-xl">
+                        <strong class="text-rose-900 block mb-1">❌ Prüfungsfalle Rückgabetyp!</strong>
+                        Nur den Rückgabetyp zu ändern (z. B. <code>int berechne(int x)</code> und <code>double berechne(int x)</code>) reicht <strong>NICHT</strong> zum Überladen und führt zu einem Compiler-Fehler!
+                    </div>
+                </div>
+
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>OverloadingUndScopeDemo.java (Praxisbeispiel zu Aufgabe 8 &amp; 9)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Java</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-purple-400">public class</span> <span class="text-amber-300">OverloadingUndScopeDemo</span> {
+
+    <span class="text-slate-500">// Klassen-Attribut (Klassen-Scope: in allen Methoden dieser Klasse sichtbar)</span>
+    <span class="text-purple-400">private</span> String waehrung = <span class="text-emerald-300">"EUR"</span>;
+
+    <span class="text-slate-500">// --- OVERLOADING: 3 Methoden mit demselben Namen 'berechnePreis' ---</span>
+
+    <span class="text-slate-500">// Variante 1: Nur Grundpreis (1 Parameter: double)</span>
+    <span class="text-purple-400">public double</span> <span class="text-sky-300">berechnePreis</span>(<span class="text-purple-400">double</span> grundpreis) {
+        <span class="text-purple-400">double</span> mwstFaktor = <span class="text-sky-300">1.19</span>; <span class="text-slate-400">// Lokale Variable (Scope: nur in Variante 1 gültig!)</span>
+        <span class="text-purple-400">return</span> grundpreis * mwstFaktor;
+    }
+
+    <span class="text-slate-500">// Variante 2: Grundpreis + Stückzahl (2 Parameter: double, int)</span>
+    <span class="text-purple-400">public double</span> <span class="text-sky-300">berechnePreis</span>(<span class="text-purple-400">double</span> grundpreis, <span class="text-purple-400">int</span> stueckzahl) {
+        <span class="text-slate-400">// Hier wäre 'mwstFaktor' aus Variante 1 unbekannt (außerhalb des Scopes)!</span>
+        <span class="text-purple-400">return</span> (grundpreis * stueckzahl) * <span class="text-sky-300">1.19</span>;
+    }
+
+    <span class="text-slate-500">// Variante 3: Grundpreis + Stückzahl + Rabatt (3 Parameter: double, int, double)</span>
+    <span class="text-purple-400">public double</span> <span class="text-sky-300">berechnePreis</span>(<span class="text-purple-400">double</span> grundpreis, <span class="text-purple-400">int</span> stueckzahl, <span class="text-purple-400">double</span> rabattEuro) {
+        <span class="text-purple-400">double</span> zwischensumme = (grundpreis * stueckzahl) - rabattEuro;
+        <span class="text-purple-400">return</span> zwischensumme * <span class="text-sky-300">1.19</span>;
+    }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SEKTION 5: OOP-PRINZIPIEN & STANDARDS
+             ===================================================================== -->
+        <section id="normen-standards" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Hintergrundwissen für deine IHK-Ausbildung</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">5. Wichtige OOP-Konzepte: Geheimnisprinzip &amp; Methodensignatur</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-bold">Prüfungswissen OOP</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">Information Hiding</span>
+                        <span class="text-xs text-slate-500">Geheimnisprinzip (David Parnas)</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Warum Attribute fast immer <code>private</code> sind</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Das <strong>Geheimnisprinzip (Information Hiding)</strong> besagt, dass eine Klasse ihre internen Datenstrukturen vor der Außenwelt verstecken soll. Andere Klassen dürfen nur über klar definierte Methoden (Getter/Setter/Fachmethoden) mit dem Objekt kommunizieren. Das verhindert unkontrollierte Seiteneffekte in großen Softwareprojekten.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">Methodensignatur</span>
+                        <span class="text-xs text-slate-500">Java Language Specification (JLS)</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Was genau gehört zur Signatur einer Methode?</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        In der IHK-Prüfung wird gerne gefragt: <em>„Woraus besteht die Signatur einer Methode in Java?“</em><br>
+                        Offizielle Antwort: Ausschließlich aus dem <strong>Methodennamen</strong> und der geordneten Liste der <strong>Parameter-Datentypen</strong> (z. B. <code>berechnePreis(double, int)</code>). Zugriffsmodifier (<code>public</code>) und Rückgabetyp (<code>double</code>) gehören laut Java-Spezifikation <strong>nicht</strong> zur Signatur!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             INTERAKTIVES MINI-QUIZ ZU LERNAUFTRAG 09 (NUR BILDSCHIRM)
+             ===================================================================== -->
+        <section id="mini-quiz" class="no-print bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Interaktiver Selbsttest zu LA 09</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">🎯 Mini-Quiz: Klassen, Attribute &amp; Methoden</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="quizScoreBadge" class="px-3 py-1 rounded-full bg-java-100 text-java-800 text-xs font-extrabold border border-java-200">
+                        Punkte: 0 / 6
+                    </span>
+                    <button onclick="resetLa09Quiz()" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">
+                        🔄 Zurücksetzen
+                    </button>
+                </div>
+            </div>
+
+            <p class="text-sm text-slate-700">
+                Teste dein Wissen zu den 9 Aufgaben aus diesem Lernauftrag! Klicke einfach auf die richtige Antwort – du erhältst sofort Feedback mit einer kurzen Begründung:
+            </p>
+
+            <!-- Quiz-Container (wird per JS gerendert) -->
+            <div id="la09QuizContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+        </section>
+
+        <!-- =====================================================================
+             SEKTION 6: GLOSSAR (MIT GLOBALER LIVE-SUCHE)
+             ===================================================================== -->
+        <section id="glossar" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Fachbegriffe der Programmierung übersetzt</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">6. Fremdwörter- &amp; Fachbegriffs-Lexikon (Klassen &amp; Methoden)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Globales Azubi-Nachschlagewerk</span>
+            </div>
+
+            <div class="no-print bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm text-slate-700 font-medium">
+                    🔎 <strong>Globale Wiki-Suche:</strong> Tippe einen Fachbegriff ein (z. B. <em>Getter</em>, <em>Scope</em>, <em>Overloading</em>, <em>static</em>, <em>void</em>), um das gesamte Wiki zu durchsuchen:
+                </div>
+                <input type="text" id="glossarySearch" placeholder="Begriff suchen..."
+                       class="w-full sm:w-72 px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-java-500">
+            </div>
+
+            <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+                <!-- Wird dynamisch über glossarData.js befüllt -->
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             SEKTION 7: QUELLENVERZEICHNIS
+             ===================================================================== -->
+        <section id="quellen" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Lernmaterialien &amp; Referenzen</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">7. Literatur- &amp; Quellenverzeichnis (Java)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">Quellenangaben</span>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3.5 font-bold w-1/4">Thema / Format</th>
+                            <th class="p-3.5 font-bold w-1/4">Literatur / Autor</th>
+                            <th class="p-3.5 font-bold w-1/2">Bezug zur Ausbildung</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="bg-java-500/10 border-l-4 border-java-500">
+                            <td class="p-3.5 font-bold text-ihk-900">🔗 IHK-Wiki: Grundaufbau</td>
+                            <td class="p-3.5 text-slate-700">Eigenes Dokument (LA 05 &amp; LA 06)</td>
+                            <td class="p-3.5 text-slate-700">Die hier vertieften Methoden- und Attributkonzepte bauen direkt auf <a href="java_05_aufbau.html" class="text-java-700 font-bold hover:underline">LA 05 (Klassen &amp; Bezeichner)</a> sowie <a href="java_06_grundlagen.html" class="text-java-700 font-bold hover:underline">LA 06 (Datentypen)</a> auf.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Java-Schulungsunterlagen</td>
+                            <td class="p-3.5 text-slate-700">Kapitel 2.7 (Methoden) &amp; Kapitel 3.3 (Statische und dynamische Elemente)</td>
+                            <td class="p-3.5 text-slate-700">Grundlagen der Methodendeklaration, Parameterübergabe sowie Unterschied zwischen Klassen- (<code>static</code>) und Instanzmethoden.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">Buch Rheinwerk (PlJ)</td>
+                            <td class="p-3.5 text-slate-700">„Programmieren lernen mit Java“ (Kap. 5.3 S. 180–194 &amp; Kap. 6 S. 204–213) + „Java ist auch eine Insel“</td>
+                            <td class="p-3.5 text-slate-700">Praxisnahe Vertiefung zu Sichtbarkeiten, Datenkapselung mit Gettern/Settern, Gültigkeitsbereichen (Scope) und Methoden-Überladung.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Online-Tutorials &amp; Skript</td>
+                            <td class="p-3.5 text-slate-700">Java-Tutorial.org, YouTube Videos &amp; Skript FU-Hagen</td>
+                            <td class="p-3.5 text-slate-700">Ergänzendes Lernmaterial zu objektorientierten Konzepten, Techniken und sauberer Programmierung.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-200 mt-12">
+        <p class="font-semibold text-slate-700">Ausarbeitung zum IHK-Lernauftrag 09 (Modul: Programmierung) • Fachinformatiker/-in Anwendungsentwicklung</p>
+        <p class="mt-1">Thema: Klassen, Eigenschaften (Attribute) &amp; Methoden • Optimiert für Bildschirmansicht und A4-Druck (Strg+P / 🖨️ Button oben).</p>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT: MINI-QUIZ & GLOBAL GLOSSAR ==================== -->
+    <script src="../assets/js/glossarData.js"></script>
+    <script>
+        // 1. MINI-QUIZ LOGIK
+        const la09QuizFragen = [
+            {
+                frage: "1. Welche Bestandteile gehören in Java offiziell zur „Methodensignatur“?",
+                optionen: [
+                    "Zugriffsmodifier, Rückgabetyp und Methodenname",
+                    "Nur der Methodenname und die geordnete Liste der Parameter-Datentypen",
+                    "Methodenname, Rückgabetyp und die Namen der lokalen Variablen"
+                ],
+                korrekt: 1,
+                erklaerung: "Richtig! Laut Java-Spezifikation bilden ausschließlich der Methodenname und die Datentypen der Parameterliste die Signatur (wichtig beim Overloading!)."
+            },
+            {
+                frage: "2. Welcher Zugriffsmodifier erlaubt den Zugriff im selben Package UND zusätzlich in erbenden Unterklassen (auch in anderen Packages)?",
+                optionen: [
+                    "private",
+                    "protected",
+                    "final"
+                ],
+                korrekt: 1,
+                erklaerung: "Genau! 'protected' schützt das Element vor fremden Klassen von außen, öffnet es aber gezielt für das eigene Package und alle Kindklassen (Vererbung)."
+            },
+            {
+                frage: "3. Was bedeutet das Schlüsselwort 'void' im Kopf einer Methode?",
+                optionen: [
+                    "Die Methode darf keine Parameter in den runden Klammern annehmen.",
+                    "Die Methode ist leer und enthält noch keinen Programmcode.",
+                    "Die Methode führt ihre Befehle aus, gibt aber keinen Ergebniswert per 'return' zurück."
+                ],
+                korrekt: 2,
+                erklaerung: "Volltreffer! 'void' (engl. für Leere) gibt an, dass kein Wert an den Aufrufer zurückgeliefert wird (z. B. bei reinen Ausgabe-Methoden oder Settern)."
+            },
+            {
+                frage: "4. Wie ruft man eine mit 'static' deklarierte Methode (z. B. in der Klasse 'MatheHelfer') standardmäßig auf?",
+                optionen: [
+                    "Direkt über den Klassennamen: MatheHelfer.berechne(); (ohne vorheriges 'new')",
+                    "Man muss zwingend zuerst mit 'new MatheHelfer()' ein Objekt erzeugen.",
+                    "Statische Methoden können nur innerhalb derselben Methode aufgerufen werden."
+                ],
+                korrekt: 0,
+                erklaerung: "Stark! Statische Methoden gehören zur Klasse selbst und existieren unabhängig von Objekten. Deshalb ruft man sie direkt über Klassenname.methode() auf."
+            },
+            {
+                frage: "5. Warum macht man Attribute fast immer 'private' und nutzt stattdessen 'public' Getter und Setter?",
+                optionen: [
+                    "Weil Java keine öffentlichen Attribute unterstützt.",
+                    "Um das Programm schneller kompilieren zu können.",
+                    "Datenkapselung: Der Setter kann neue Werte vor dem Speichern auf Gültigkeit prüfen (Türsteher-Prinzip)."
+                ],
+                korrekt: 2,
+                erklaerung: "Exakt! Durch 'private' Attribute + Getter/Setter (Kapselung) verhinderst du, dass von außen unsinnige Werte (wie negativer Kontostand oder -50 Lebenspunkte) direkt eingeschleust werden."
+            },
+            {
+                frage: "6. Wann spricht man von gültigem „Method Overloading“ (Überladen) in einer Klasse?",
+                optionen: [
+                    "Wenn zwei Methoden gleich heißen, sich aber in Anzahl oder Datentyp ihrer Parameter unterscheiden.",
+                    "Wenn zwei Methoden gleich heißen, dieselben Parameter haben, aber einen anderen Rückgabetyp besitzen.",
+                    "Wenn eine Methode mehr als 10 lokale Variablen im Rumpf deklariert."
+                ],
+                korrekt: 0,
+                erklaerung: "Perfekt! Beim Overloading heißen mehrere Methoden gleich, haben aber unterschiedliche Parameterlisten. Nur den Rückgabetyp zu ändern reicht dem Compiler nicht!"
+            }
+        ];
+
+        let la09Punkte = 0;
+        let la09Beantwortet = {};
+
+        function renderLa09Quiz() {
+            const container = document.getElementById('la09QuizContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            la09QuizFragen.forEach((q, qIndex) => {
+                const card = document.createElement('div');
+                card.className = 'rounded-xl border border-slate-200 bg-slate-50/70 p-4 flex flex-col justify-between space-y-3';
+
+                let optionsHTML = '';
+                q.optionen.forEach((opt, oIndex) => {
+                    optionsHTML += `
+                        <button id="q${qIndex}_opt${oIndex}"
+                                onclick="checkLa09Answer(${qIndex}, ${oIndex})"
+                                class="w-full text-left p-2.5 rounded-lg border border-slate-200 bg-white hover:bg-java-50 hover:border-java-300 text-xs sm:text-sm text-slate-700 font-medium transition cursor-pointer">
+                            ${opt}
+                        </button>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div>
+                        <h3 class="font-extrabold text-ihk-900 text-sm mb-3">${q.frage}</h3>
+                        <div class="space-y-2">${optionsHTML}</div>
+                    </div>
+                    <div id="q${qIndex}_feedback" class="hidden text-xs p-3 rounded-lg font-medium"></div>
+                `;
+                container.appendChild(card);
+            });
+
+            const badge = document.getElementById('quizScoreBadge');
+            if (badge) badge.textContent = `Punkte: ${la09Punkte} / ${la09QuizFragen.length}`;
+        }
+
+        function checkLa09Answer(qIndex, selectedIndex) {
+            if (la09Beantwortet[qIndex]) return;
+            la09Beantwortet[qIndex] = true;
+
+            const frageObj = la09QuizFragen[qIndex];
+            const feedbackBox = document.getElementById(`q${qIndex}_feedback`);
+
+            frageObj.optionen.forEach((_, oIndex) => {
+                const btn = document.getElementById(`q${qIndex}_opt${oIndex}`);
+                btn.disabled = true;
+                btn.classList.remove('hover:bg-java-50', 'hover:border-java-300', 'cursor-pointer');
+                btn.classList.add('cursor-default');
+
+                if (oIndex === frageObj.korrekt) {
+                    btn.className = 'w-full text-left p-2.5 rounded-lg border-2 border-emerald-500 bg-emerald-50 text-xs sm:text-sm text-emerald-950 font-bold';
+                } else if (oIndex === selectedIndex) {
+                    btn.className = 'w-full text-left p-2.5 rounded-lg border-2 border-rose-500 bg-rose-50 text-xs sm:text-sm text-rose-950 font-semibold line-through';
+                } else {
+                    btn.classList.add('opacity-50');
+                }
+            });
+
+            feedbackBox.classList.remove('hidden');
+            if (selectedIndex === frageObj.korrekt) {
+                la09Punkte++;
+                feedbackBox.className = 'text-xs p-3 rounded-lg font-medium bg-emerald-100 text-emerald-900 border border-emerald-200';
+                feedbackBox.innerHTML = `✅ ${frageObj.erklaerung}`;
+            } else {
+                feedbackBox.className = 'text-xs p-3 rounded-lg font-medium bg-rose-100 text-rose-900 border border-rose-200';
+                feedbackBox.innerHTML = `❌ Leider falsch. ${frageObj.erklaerung}`;
+            }
+
+            const badge = document.getElementById('quizScoreBadge');
+            if (badge) badge.textContent = `Punkte: ${la09Punkte} / ${la09QuizFragen.length}`;
+        }
+
+        function resetLa09Quiz() {
+            la09Punkte = 0;
+            la09Beantwortet = {};
+            renderLa09Quiz();
+        }
+
+        // 2. GLOBALE GLOSSAR LOGIK
+        document.addEventListener('DOMContentLoaded', () => {
+            renderLa09Quiz();
+
+            const glossaryGrid = document.getElementById('glossaryGrid');
+            if (!glossaryGrid) return;
+
+            renderGlossary('');
+
+            const searchInput = document.getElementById('glossarySearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    renderGlossary(e.target.value);
+                });
+            }
+        });
+
+        function renderGlossary(filterText) {
+            const grid = document.getElementById('glossaryGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const query = filterText.toLowerCase().trim();
+            const daten = (typeof globalesGlossar !== 'undefined') ? globalesGlossar : [];
+
+            const filtered = daten.filter(item => {
+                return item.titel.toLowerCase().includes(query) ||
+                       item.beschreibung.toLowerCase().includes(query);
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500">Keine passenden Begriffe gefunden.</div>';
+                return;
+            }
+
+            filtered.forEach(item => {
+                let badgeClass = "bg-slate-100 text-slate-700";
+                if (item.farbe === 'sky') badgeClass = "bg-sky-100 text-sky-800";
+                if (item.farbe === 'linux') badgeClass = "bg-linux-100 text-linux-800";
+                if (item.farbe === 'java') badgeClass = "bg-java-100 text-java-800";
+
+                const cardHTML = `
+                    <div class="glossary-card rounded-xl border border-slate-200 p-4 bg-slate-50/60 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <h4 class="font-extrabold text-ihk-900 leading-tight">${item.titel}</h4>
+                        </div>
+                        <p class="text-slate-700 text-xs sm:text-sm flex-1">${item.beschreibung}</p>
+                        <div class="mt-3 pt-3 border-t border-slate-200">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                                ${item.modul}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK-Lernauftrag: Anforderungsanalyse & Projektdokumentation – Beispielprojekt „CanvasFlow“</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ihk: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            800: '#0c4a6e',
+                            900: '#0f294a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Grundlegende Styles für optimale Lesbarkeit und kein Abschneiden */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: auto !important;
+            overflow-x: hidden;
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+
+        /* Punktraster-Hintergrund für das CanvasFlow UI-Mockup (wie bei Milanote) */
+        .canvas-dot-grid {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 1.35px, transparent 1.35px);
+            background-size: 20px 20px;
+        }
+
+        /* Spezielle Druck-Optimierung (@media print) gegen jegliches Abschneiden */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 14mm 12mm 14mm 12mm;
+            }
+            html, body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                font-size: 9.5pt !important;
+                line-height: 1.4 !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            /* Verstecke interaktive Web-Navigation beim Drucken */
+            .no-print {
+                display: none !important;
+            }
+            /* Zeige Druck-Kopfzeile nur im Druck */
+            .print-only {
+                display: block !important;
+            }
+            /* Stelle sicher, dass alle Container vollständig mitwachsen */
+            main, section, article, div {
+                overflow: visible !important;
+                max-width: 100% !important;
+            }
+            /* Verhindere das Zerschneiden von Karten, Boxen, Tabellenzeilen und Grafiken */
+            .avoid-break, tr, blockquote, figure, .glossary-card {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            /* Hauptaufgaben sauber auf neuen Seiten beginnen lassen oder zusammenhalten */
+            .print-page-start {
+                break-before: page;
+                page-break-before: always;
+            }
+            h1, h2, h3, h4 {
+                break-after: avoid !important;
+                page-break-after: avoid !important;
+            }
+            /* Erzwinge Hintergrundfarben und Rahmen für Diagramme und Badges im PDF */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                box-shadow: none !important;
+            }
+            /* Sorge dafür, dass im Druck auch ausgeblendete Glossar-Karten sichtbar sind */
+            .glossary-card {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-sky-600 selection:text-white">
+    <!-- ==================== WIKI-NAVIGATION (TOP BAR) ==================== -->
+    <div class="bg-slate-950 text-slate-400 text-xs py-2 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-slate-800 no-print">
+        <a href="../index.html" class="font-bold text-sky-400 hover:text-white transition flex items-center gap-1">🏠 Dashboard</a>
+        <span class="text-slate-600">|</span>
+        <span class="font-bold text-sky-400">Software Engineering:</span>
+        <a href="se_02_anforderungsanalyse.html" class="hover:text-white transition text-white font-medium">LA 02</a>
+        <a href="se_03_vorgehensmodelle.html" class="hover:text-white transition">LA 03</a>
+        <a href="se_04_saas.html" class="hover:text-white transition">LA 04</a>
+        <a href="se_05_linux_systeme.html" class="hover:text-white transition">LA 05</a>
+    </div>
+
+    <!-- ==================== STICKY TOP NAVIGATION (NUR BILDSCHIRM) ==================== -->
+    <header class="no-print sticky top-0 z-50 bg-ihk-900/95 backdrop-blur-md text-white border-b border-sky-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-4">
+
+                <!-- Branding -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-400 to-indigo-600 flex items-center justify-center font-extrabold text-lg shadow-inner">
+                        CF
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/30">IHK FIAE</span>
+                            <span class="text-xs text-slate-300 hidden sm:inline">Lernauftrag 02: Anforderungsanalyse</span>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base text-white leading-tight">Anforderungsanalyse am Beispiel „CanvasFlow“</p>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Links (Zentriert & Einzeilig) -->
+                <nav class="hidden xl:flex flex-1 justify-center items-center gap-1 text-xs font-medium whitespace-nowrap">
+                    <a href="#aufgabe-1" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1. Projektidee</a>
+                    <a href="#aufgabe-2" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">2. Begriffe</a>
+                    <a href="#aufgabe-3" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">3. FA & NFA (ISO 25010)</a>
+                    <a href="#aufgabe-4" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">4. SMART-Regel</a>
+                    <a href="#aufgabe-5" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">5. Lasten-/Pflichtenheft</a>
+                    <a href="#aufgabe-6" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">6. Selbstüberprüfung</a>
+                    <a href="#normen-standards" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-amber-300">Normen</a>
+                    <a href="#glossar" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-emerald-300">Glossar</a>
+                    <a href="#quellen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">Quellen</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow-md cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-12 0h12v4H6v-4z" />
+                        </svg>
+                        <span>🖨️ Als PDF drucken / speichern</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile / Tablet Sub-Navbar -->
+            <div class="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-700/80 text-xs font-medium">
+                <a href="#aufgabe-1" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1. Projektidee</a>
+                <a href="#aufgabe-2" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">2. Begriffe</a>
+                <a href="#aufgabe-3" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">3. Anforderungen</a>
+                <a href="#aufgabe-4" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">4. SMART</a>
+                <a href="#aufgabe-5" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">5. Dokumente</a>
+                <a href="#aufgabe-6" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">6. Fragen</a>
+                <a href="#normen-standards" class="shrink-0 px-2.5 py-1 rounded bg-amber-900/60 text-amber-200">Normen & ISO</a>
+                <a href="#glossar" class="shrink-0 px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-200">Fremdwörter</a>
+                <a href="#quellen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">Quellen</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HAUPTINHALT (FLIESSENDES DOKUMENT) ==================== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- HERO / DOKUMENTKOPF -->
+        <section class="bg-ihk-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl border-l-8 border-sky-500 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-sky-300 mb-3">
+                <span>Deutsche IHK-Ausbildung • Fachinformatiker/-in für Anwendungsentwicklung (FIAE)</span>
+                <span>Lernauftrag: Requirements Engineering & Planung</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                Anforderungsanalyse & Projektdokumentation in der Softwareentwicklung
+            </h1>
+            <p class="text-slate-200 text-sm sm:text-base leading-relaxed mb-6">
+                Willkommen zu diesem ausführlichen Leitfaden! Jede professionelle Softwareentwicklung beginnt mit einer Idee: Welche Anwendung soll entstehen und welchen Nutzen bringt sie? Damit aus einer groben Idee ein umsetzbares Softwareprojekt wird, musst du als angehender Fachinformatiker Anforderungen klar ermitteln, strukturieren und dokumentieren. In dieser Ausarbeitung gehen wir alle sechs Aufgaben deines Lernauftrags Schritt für Schritt anhand eines praxisnahen Beispielprojekts durch: <strong class="text-sky-300">„CanvasFlow“</strong> – einer visuellen Multiformat-Arbeitsfläche im Stil von <em>Milanote</em> und <em>Pinterest</em>.
+            </p>
+
+            <!-- Info-Banner für den Leser -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700/80 text-xs sm:text-sm">
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-sky-300 block mb-1">🎯 Durchgehendes Praxisprojekt</span>
+                    Alle Beispiele, Tabellen, Diagramme und Dokumente beziehen sich einheitlich auf die kreative Kollaborationsplattform <strong>„CanvasFlow“</strong>.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-emerald-300 block mb-1">📖 Fremdwörter direkt erklärt</span>
+                    Fachbegriffe wie <em>Infinite Canvas</em>, <em>REST-API</em>, <em>Persistenz</em> oder <em>Scope Creep</em> werden direkt im Text und im großen <a href="#glossar" class="underline hover:text-white">Glossar</a> erklärt.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-amber-300 block mb-1">⚖️ Offizielle IHK-Normen</span>
+                    Inklusive fundierter Erklärungen zu <strong>DIN 69901-5</strong> (Lasten-/Pflichtenheft), <strong>ISO/IEC 25010</strong> (Softwarequalität) und <strong>SMART</strong>.
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         AUFGABE 1: FIKTIVE PROJEKTIDEE ENTWICKELN ("CANVASFLOW")
+         ===================================================================== -->
+        <section id="aufgabe-1" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 1 (Teilaufgaben 1a bis 1d)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1. Fiktive Projektidee entwickeln: „CanvasFlow“</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Konzeption & Systemabgrenzung</span>
+            </div>
+
+            <!-- 1a & 1b: Anwendungsbeschreibung -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-sky-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-extrabold">1a/b</span>
+                    Überlegung & Beschreibung der Anwendung in eigenen Worten
+                </h3>
+
+                <div class="prose max-w-none text-slate-700 space-y-4 text-sm sm:text-base leading-relaxed">
+                    <p>
+                        <strong>Warum eine neue Anwendung? Das Problem in der Praxis:</strong> Wenn Kreative, Software-Entwickler, Game-Designer oder Marketing-Teams ein neues Projekt starten (zum Beispiel ein Videospiel, ein Marken-Redesign oder eine Web-App), sammeln sie zunächst unzählige Ideen. Klassische Plattformen wie <em>Pinterest</em> eignen sich zwar gut, um reine Bilder in einem starren Raster (Grid) zu merken, scheitern aber sofort, wenn echte Arbeitsdateien hinzukommen. In der Realität besteht ein Projekt nicht nur aus Fotos, sondern auch aus PDF-Spezifikationen, Markdown-Textnotizen, Farbpaletten (Hex-Codes), kurzen Audio-Snippets (z. B. Soundeffekten oder Sprachmemos), Quellcode-Schnipseln und To-Do-Listen. Bisher liegen diese Dateien verstreut in Cloud-Ordnern, Chat-Verläufen und Notiz-Apps.
+                    </p>
+                    <p>
+                        <strong>Die Lösung – „CanvasFlow“ (ähnlich wie Milanote):</strong> <strong>CanvasFlow</strong> ist eine webbasierte visuelle Arbeits- und Moodboard-Plattform, die eine frei zoom- und verschiebbare 2D-Arbeitsoberfläche (ein sogenanntes <strong>Infinite Canvas</strong>, also eine „unendliche Leinwand“) bereitstellt. Du kannst per <em>Drag-and-Drop</em> (Ziehen und Ablegen mit der Maus) beliebige Medientypen direkt auf dem Board platzieren, frei anordnen, visuell gruppieren und mit dynamischen Pfeillinien verbinden. So entsteht eine lebendige Projektlandkarte, auf der ein UI-Screenshot direkt neben dem zugehörigen CSS-Code-Block, einer mehrseitigen PDF-Anforderungsdatei und einer abspielbaren MP3-Audiodatei liegt.
+                    </p>
+                    <p>
+                        <strong>Aufbau durch verschachtelte Boards (Hierarchie):</strong> Damit große Projekte übersichtlich bleiben, unterstützt CanvasFlow verschachtelte Unter-Boards (<em>Nested Boards</em>). Ein Haupt-Board „Neues Indie-Game“ kann beispielsweise Unter-Boards für „Charakter-Design“, „Soundtrack & Audio-Demos“ sowie „Backend-Architektur“ enthalten. Teams können Boards per Freigabelink teilen, live gemeinsam bearbeiten oder als hochauflösendes PDF-Moodboard für Kundenpräsentationen exportieren.
+                    </p>
+                </div>
+
+                <!-- Fremdwort-Erklärbox direkt im Kontext -->
+                <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 avoid-break">
+                    <h4 class="text-xs font-extrabold uppercase tracking-wider text-sky-900 mb-2">💡 Fremdwörter-Check zu Aufgabe 1a & 1b (Einfach erklärt)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-slate-700">
+                        <div>
+                            <strong class="text-ihk-900">Moodboard (Stimmungsbild):</strong> Eine visuelle Collage aus Bildern, Farben, Texten und Mustern, um die Atmosphäre oder Stilrichtung eines Projekts zu planen.
+                        </div>
+                        <div>
+                            <strong class="text-ihk-900">Infinite Canvas (Unendliche Leinwand):</strong> Eine digitale Zeichen- oder Arbeitsfläche ohne feste Seitenränder, auf der du stufenlos herauszoomen und in alle Richtungen scrollen kannst.
+                        </div>
+                        <div>
+                            <strong class="text-ihk-900">Syntax-Highlighting:</strong> Automatische farbliche Hervorhebung von Programmierbefehlen in Code-Schnipseln, damit Entwickler den Code schneller lesen können.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VISUELLES UI-MOCKUP VON CANVASFLOW (MIT BILDERN & MULTIFORMAT-KARTEN) -->
+            <figure class="border-2 border-slate-300 rounded-2xl overflow-hidden shadow-lg avoid-break">
+                <!-- Mockup Browser Topbar -->
+                <div class="bg-slate-900 text-white px-4 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                        <span class="ml-2 font-mono text-slate-400">app.canvasflow.de/board/redesign-2026</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded bg-slate-800 text-sky-300 font-mono">Zoom: 100%</span>
+                        <span class="px-2 py-0.5 rounded bg-emerald-600/30 text-emerald-300 border border-emerald-500/40">● 3 Teammitglieder online</span>
+                    </div>
+                </div>
+
+                <!-- Mockup Workspace: Left Toolbar + Dot-Grid Canvas -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 canvas-dot-grid p-4 sm:p-6 gap-4 relative">
+                    <!-- Left Tool Palette (Milanote Style) -->
+                    <div class="lg:col-span-2 bg-white/95 backdrop-blur rounded-xl border border-slate-200 p-3 shadow-sm flex lg:flex-col justify-around lg:justify-start gap-2.5 text-xs font-semibold text-slate-700">
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 hidden lg:block">Werkzeuge (Drag & Drop)</div>
+                        <div class="flex items-center gap-2 p-1.5 rounded-lg bg-sky-50 text-sky-800 border border-sky-200">
+                            <span>📝</span> <span>Notiz / Markdown</span>
+                        </div>
+                        <div class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100">
+                            <span>🖼️</span> <span>Bild / Inspiration</span>
+                        </div>
+                        <div class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100">
+                            <span>📄</span> <span>PDF-Dokument</span>
+                        </div>
+                        <div class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100">
+                            <span>🎵</span> <span>Audio-Snippet</span>
+                        </div>
+                        <div class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100">
+                            <span>💻</span> <span>Code-Block</span>
+                        </div>
+                        <div class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-100">
+                            <span>🗂️</span> <span>Sub-Board</span>
+                        </div>
+                    </div>
+
+                    <!-- Main 2D Canvas Area with Multi-Format Cards -->
+                    <div class="lg:col-span-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Column 1: Image Card + Color Palette Card -->
+                        <div class="space-y-4">
+                            <!-- Card 1: Image Pin -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80"
+                                     onerror="this.onerror=null;this.src='https://placehold.co/600x340/0f294a/ffffff?text=UI+Design+Inspiration';"
+                                     alt="UI Design Inspiration auf dem CanvasFlow Board"
+                                     class="w-full h-36 object-cover">
+                                <div class="p-3">
+                                    <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+                                        <span class="font-mono">IMG_hero_mockup.webp</span>
+                                        <span>2,4 MB</span>
+                                    </div>
+                                    <p class="text-xs font-bold text-slate-800">Minimalistisches Layout-Konzept</p>
+                                    <p class="text-[11px] text-slate-600 mt-0.5">Referenzbild für die neue Startseite inkl. Typografie-Kontrast.</p>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: Color Swatches -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-3">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">🎨 Projekt-Farbpalette (Hex)</span>
+                                <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-mono">
+                                    <div>
+                                        <div class="h-8 rounded-md bg-[#0F294A] mb-1 border border-slate-200"></div>
+                                        <span>#0F294A</span>
+                                    </div>
+                                    <div>
+                                        <div class="h-8 rounded-md bg-[#0284C7] mb-1 border border-slate-200"></div>
+                                        <span>#0284C7</span>
+                                    </div>
+                                    <div>
+                                        <div class="h-8 rounded-md bg-[#10B981] mb-1 border border-slate-200"></div>
+                                        <span>#10B981</span>
+                                    </div>
+                                    <div>
+                                        <div class="h-8 rounded-md bg-[#F59E0B] mb-1 border border-slate-200"></div>
+                                        <span>#F59E0B</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Column 2: PDF Attachment + Audio Snippet + Task List -->
+                        <div class="space-y-4">
+                            <!-- Card 3: PDF Card -->
+                            <div class="bg-white rounded-xl border-l-4 border-l-rose-500 border border-slate-200 shadow-sm p-3.5">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-9 h-9 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center font-extrabold text-xs shrink-0">PDF</div>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-slate-900">Styleguide_Kunde_v2.pdf</h4>
+                                            <p class="text-[11px] text-slate-500">18 Seiten • Hochgeladen von Anna</p>
+                                        </div>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-semibold">Vorschau</span>
+                                </div>
+                                <p class="text-[11px] text-slate-600 mt-2 bg-slate-50 p-2 rounded border border-slate-100">
+                                    📌 <strong>Kommentar:</strong> Bitte Seite 7 (Logo-Schutzzone) beim Header-Design unbedingt beachten!
+                                </p>
+                            </div>
+
+                            <!-- Card 4: Audio Waveform Card -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-3.5">
+                                <div class="flex items-center justify-between text-[11px] mb-1.5">
+                                    <span class="font-bold text-indigo-700">🎵 UI_Click_Sound_v3.wav</span>
+                                    <span class="font-mono text-slate-400">00:14 / 48 kHz</span>
+                                </div>
+                                <!-- SVG Audio Waveform -->
+                                <svg viewBox="0 0 240 36" class="w-full h-9 bg-indigo-50/70 rounded-lg p-1.5 border border-indigo-100">
+                                    <circle cx="16" cy="18" r="10" fill="#4f46e5" />
+                                    <polygon points="14,13 21,18 14,23" fill="#ffffff" />
+                                    <g fill="#6366f1">
+                                        <rect x="36" y="12" width="3" height="12" rx="1" />
+                                        <rect x="42" y="7" width="3" height="22" rx="1" />
+                                        <rect x="48" y="4" width="3" height="28" rx="1" />
+                                        <rect x="54" y="10" width="3" height="16" rx="1" />
+                                        <rect x="60" y="14" width="3" height="8" rx="1" />
+                                        <rect x="66" y="6" width="3" height="24" rx="1" />
+                                        <rect x="72" y="3" width="3" height="30" rx="1" />
+                                        <rect x="78" y="9" width="3" height="18" rx="1" />
+                                        <rect x="84" y="12" width="3" height="12" rx="1" />
+                                        <rect x="90" y="5" width="3" height="26" rx="1" />
+                                        <rect x="96" y="8" width="3" height="20" rx="1" />
+                                        <rect x="102" y="13" width="3" height="10" rx="1" />
+                                    </g>
+                                    <g fill="#cbd5e1">
+                                        <rect x="108" y="7" width="3" height="22" rx="1" />
+                                        <rect x="114" y="11" width="3" height="14" rx="1" />
+                                        <rect x="120" y="5" width="3" height="26" rx="1" />
+                                        <rect x="126" y="9" width="3" height="18" rx="1" />
+                                        <rect x="132" y="14" width="3" height="8" rx="1" />
+                                        <rect x="138" y="8" width="3" height="20" rx="1" />
+                                        <rect x="144" y="4" width="3" height="28" rx="1" />
+                                        <rect x="150" y="10" width="3" height="16" rx="1" />
+                                        <rect x="156" y="12" width="3" height="12" rx="1" />
+                                        <rect x="162" y="7" width="3" height="22" rx="1" />
+                                        <rect x="168" y="11" width="3" height="14" rx="1" />
+                                        <rect x="174" y="15" width="3" height="6" rx="1" />
+                                        <rect x="180" y="9" width="3" height="18" rx="1" />
+                                        <rect x="186" y="6" width="3" height="24" rx="1" />
+                                        <rect x="192" y="12" width="3" height="12" rx="1" />
+                                        <rect x="198" y="14" width="3" height="8" rx="1" />
+                                        <rect x="204" y="10" width="3" height="16" rx="1" />
+                                        <rect x="210" y="15" width="3" height="6" rx="1" />
+                                    </g>
+                                </svg>
+                            </div>
+
+                            <!-- Card 5: Checklist -->
+                            <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-3.5 text-xs">
+                                <span class="font-bold text-slate-800 block mb-2">✅ Sprint-Aufgaben (To-Do)</span>
+                                <div class="space-y-1.5 text-slate-600">
+                                    <div class="flex items-center gap-2 line-through text-slate-400">
+                                        <span class="text-emerald-600">☑</span> <span>Farbkontraste nach WCAG prüfen</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sky-600">☐</span> <span>PDF-Vorschau im Canvas testen</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sky-600">☐</span> <span>Freigabelink an Auftraggeber senden</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Column 3: Code Snippet Card + Nested Folder Board -->
+                        <div class="space-y-4">
+                            <!-- Card 6: Code Block -->
+                            <div class="bg-slate-900 text-slate-100 rounded-xl border border-slate-700 shadow-sm p-3.5 font-mono text-[11px]">
+                                <div class="flex items-center justify-between text-slate-400 text-[10px] pb-2 mb-2 border-b border-slate-800">
+                                    <span>💻 canvasItem.model.ts</span>
+                                    <span class="text-sky-400">TypeScript</span>
+                                </div>
+                                <pre class="overflow-x-auto leading-relaxed"><code><span class="text-purple-400">interface</span> <span class="text-amber-300">CanvasItem</span> {
+  id: <span class="text-sky-300">string</span>;
+  type: <span class="text-emerald-300">'img'</span> | <span class="text-emerald-300">'pdf'</span> | <span class="text-emerald-300">'audio'</span>;
+  posX: <span class="text-sky-300">number</span>;
+  posY: <span class="text-sky-300">number</span>;
+  assetUrl?: <span class="text-sky-300">string</span>;
+}</code></pre>
+                            </div>
+
+                            <!-- Card 7: Nested Sub-Board -->
+                            <div class="bg-gradient-to-br from-sky-50 to-indigo-50 rounded-xl border-2 border-dashed border-sky-300 p-3.5">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center text-lg shadow">🗂️</div>
+                                    <div>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-sky-700">Verschachteltes Sub-Board</span>
+                                        <h4 class="text-xs font-extrabold text-ihk-900">Backend & Datenbank-Architektur</h4>
+                                        <p class="text-[11px] text-slate-600">Enthält 14 Elemente (ERD, API-Docs)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <figcaption class="bg-slate-100 px-4 py-2.5 text-xs text-slate-600 font-medium border-t border-slate-200 text-center">
+                    <strong>Abb. 1: Visuelles UI-Mockup von „CanvasFlow“</strong> – Im Gegensatz zu Pinterest können Nutzer hier Bilder, PDFs, Audiodateien, Farbpaletten, To-Dos und Programmcode frei auf einer 2D-Oberfläche kombinieren.
+                </figcaption>
+            </figure>
+
+            <!-- 1c: Abgrenzungen definieren (In-Scope vs. Out-of-Scope) -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-lg font-bold text-sky-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-extrabold">1c</span>
+                    Systemabgrenzung: Was gehört ausdrücklich NICHT zum Funktionsumfang?
+                </h3>
+                <p class="text-sm sm:text-base text-slate-700">
+                    Damit das Entwicklungsprojekt kalkulierbar bleibt und es nicht zu einem sogenannten <strong>Scope Creep</strong> (einem unkontrollierten Ausufern der Projektanforderungen während der Programmierphase) kommt, ziehen wir eine scharfe Grenze zwischen dem <strong>In-Scope</strong> (enthalten) und dem <strong>Out-of-Scope</strong> (explizit ausgeschlossen):
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- IN SCOPE -->
+                    <div class="rounded-xl bg-emerald-50/70 border border-emerald-200 border-t-4 border-t-emerald-600 p-5">
+                        <h4 class="font-extrabold text-emerald-900 text-sm sm:text-base flex items-center gap-2 mb-3">
+                            <span>✅ IN-SCOPE (Gehört zum Funktionsumfang von Release 1.0)</span>
+                        </h4>
+                        <ul class="space-y-2 text-xs sm:text-sm text-slate-700 list-disc pl-5">
+                            <li><strong>Freie 2D-Arbeitsfläche (Infinite Canvas):</strong> Stufenloses Zoomen (10 % bis 400 %), Verschieben (Panning) und Positionieren von Karten nach X/Y-Koordinaten.</li>
+                            <li><strong>Multiformat-Karten:</strong> Unterstützung für Bilder (JPG, PNG, WebP, SVG), Dokumente (PDF-Vorschau, Markdown-Text), Audio-Player (MP3, WAV), Farbpaletten und Code-Blöcke.</li>
+                            <li><strong>Visuelle Beziehungen & Hierarchien:</strong> Verbinden von Karten durch SVG-Pfeillinien sowie das Anlegen von verschachtelten Unter-Boards (Sub-Boards).</li>
+                            <li><strong>Kollaboration & Export:</strong> Rollenbasierte Freigabe (Lesen / Bearbeiten) sowie Export eines gesamten Boards als druckfertiges PDF- oder PNG-Moodboard.</li>
+                        </ul>
+                    </div>
+
+                    <!-- OUT OF SCOPE -->
+                    <div class="rounded-xl bg-rose-50/70 border border-rose-200 border-t-4 border-t-rose-600 p-5">
+                        <h4 class="font-extrabold text-rose-900 text-sm sm:text-base flex items-center gap-2 mb-3">
+                            <span>⛔ OUT-OF-SCOPE (Gehört ausdrücklich NICHT dazu!)</span>
+                        </h4>
+                        <ul class="space-y-2 text-xs sm:text-sm text-slate-700 list-disc pl-5">
+                            <li><strong>Keine Bild-, Audio- oder Videobearbeitungs-Engine:</strong> CanvasFlow ist kein Ersatz für <em>Photoshop</em>, <em>Figma</em> oder <em>Premiere</em>. Hochgeladene Dateien werden angezeigt und abgespielt, aber nicht im Browser geschnitten oder retuschiert.</li>
+                            <li><strong>Kein vollwertiges Cloud-Backup / Netzlaufwerk:</strong> Kein Ersatz für Dropbox oder Google Drive für riesige Rohdaten (Einzeldateien sind auf maximal 50 MB begrenzt, kein 4K-Videostreaming).</li>
+                            <li><strong>Keine integrierte Buchhaltung oder Zeiterfassung:</strong> Keine Erstellung von Kundenrechnungen, Stundenzetteln oder Gehaltsabrechnungen.</li>
+                            <li><strong>Kein integrierter Audio-/Video-Gruppenchat:</strong> Keine eigene Videokonferenz-Funktion wie Microsoft Teams oder Discord innerhalb des Boards.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Systemkontextdiagramm SVG -->
+            <figure class="bg-slate-50 border border-slate-200 rounded-xl p-4 avoid-break">
+                <svg role="img" viewBox="0 0 800 175" class="w-full h-auto block">
+                    <title>Systemkontext und Abgrenzung von CanvasFlow</title>
+                    <!-- In-Scope Zone -->
+                    <rect x="12" y="10" width="525" height="155" rx="10" fill="#f0f9ff" stroke="#0284c7" stroke-width="2" stroke-dasharray="6,4" />
+                    <text x="26" y="30" font-size="11" font-weight="bold" fill="#0369a1">SYSTEMGRENZE (IN-SCOPE): Webplattform „CanvasFlow“</text>
+
+                    <!-- Out-of-Scope Zone -->
+                    <rect x="552" y="10" width="236" height="155" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="2" stroke-dasharray="6,4" />
+                    <text x="566" y="30" font-size="11" font-weight="bold" fill="#991b1b">ABGRENZUNG (OUT-OF-SCOPE)</text>
+
+                    <!-- Left Actor -->
+                    <rect x="26" y="55" width="115" height="80" rx="6" fill="#0f294a" />
+                    <text x="83" y="86" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">Kreativ- &amp; IT-Teams</text>
+                    <text x="83" y="104" font-size="9.5" fill="#93c5fd" text-anchor="middle">Drag &amp; Drop, Planung</text>
+                    <text x="83" y="118" font-size="9" fill="#cbd5e1" text-anchor="middle">(Browser / Tablet)</text>
+
+                    <!-- Arrow 1 -->
+                    <line x1="141" y1="95" x2="178" y2="95" stroke="#0284c7" stroke-width="2.5" />
+                    <polygon points="178,90 188,95 178,100" fill="#0284c7" />
+
+                    <!-- Center System -->
+                    <rect x="190" y="45" width="195" height="100" rx="8" fill="#ffffff" stroke="#0284c7" stroke-width="2" />
+                    <text x="287" y="68" font-size="11.5" font-weight="bold" fill="#0f294a" text-anchor="middle">CanvasFlow Core-System</text>
+                    <text x="287" y="88" font-size="9.5" fill="#334155" text-anchor="middle">• 2D Infinite Canvas Engine</text>
+                    <text x="287" y="104" font-size="9.5" fill="#334155" text-anchor="middle">• Multiformat-Vorschau (PDF/Audio)</text>
+                    <text x="287" y="120" font-size="9.5" fill="#334155" text-anchor="middle">• JSONB-Koordinaten &amp; PDF-Export</text>
+
+                    <!-- Arrow 2 -->
+                    <line x1="385" y1="95" x2="418" y2="95" stroke="#0284c7" stroke-width="2.5" />
+                    <polygon points="418,90 428,95 418,100" fill="#0284c7" />
+
+                    <!-- Right Storage inside Scope -->
+                    <rect x="430" y="55" width="92" height="80" rx="6" fill="#0369a1" />
+                    <text x="476" y="84" font-size="10.5" font-weight="bold" fill="#ffffff" text-anchor="middle">PostgreSQL</text>
+                    <text x="476" y="99" font-size="9.5" fill="#e0f2fe" text-anchor="middle">&amp; S3 MinIO</text>
+                    <text x="476" y="116" font-size="8.5" fill="#bae6fd" text-anchor="middle">Datei-Speicher</text>
+
+                    <!-- Out of Scope Boxes -->
+                    <rect x="566" y="44" width="208" height="32" rx="4" fill="#ffffff" stroke="#fca5a5" />
+                    <text x="670" y="64" font-size="9.5" font-weight="bold" fill="#991b1b" text-anchor="middle">✕ Bild-/Videoschnitt (wie Photoshop)</text>
+
+                    <rect x="566" y="84" width="208" height="32" rx="4" fill="#ffffff" stroke="#fca5a5" />
+                    <text x="670" y="104" font-size="9.5" font-weight="bold" fill="#991b1b" text-anchor="middle">✕ Buchhaltung &amp; Rechnungsstellung</text>
+
+                    <rect x="566" y="124" width="208" height="32" rx="4" fill="#ffffff" stroke="#fca5a5" />
+                    <text x="670" y="144" font-size="9.5" font-weight="bold" fill="#991b1b" text-anchor="middle">✕ Video-Calls &amp; Rohdaten-Archiv &gt;50MB</text>
+                </svg>
+                <figcaption class="text-xs text-slate-500 text-center mt-2">
+                    <strong>Abb. 2: Systemkontext-Diagramm</strong> – Saubere Abgrenzung dessen, was „CanvasFlow“ leistet (links, blau) und was bewusst ausgeschlossen wird (rechts, rot).
+                </figcaption>
+            </figure>
+
+            <!-- 1d: Techstack auswählen und erklären -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-lg font-bold text-sky-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-extrabold">1d</span>
+                    Auswahl der Technologien („Techstack“) – inklusive Erklärung für Azubis
+                </h3>
+                <p class="text-sm sm:text-base text-slate-700">
+                    Unter dem Begriff <strong>Techstack</strong> (kurz für <em>Technology Stack</em>, also „Technologiestapel“) versteht man die Kombination aller Programmiersprachen, Frameworks, Datenbanken und Server-Werkzeuge, aus denen eine Anwendung aufgebaut ist. Für „CanvasFlow“ wählen wir eine klassische, skalierbare <strong>Drei-Schichten-Architektur</strong> (Präsentationsschicht, Logikschicht, Datenhaltungsschicht):
+                </p>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3.5 font-bold w-1/5">Architekturschicht</th>
+                                <th class="p-3.5 font-bold w-1/4">Gewählte Technologie</th>
+                                <th class="p-3.5 font-bold w-11/20">Warum genau diese Technik für „CanvasFlow“? (inkl. Begriffserklärung)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-bold text-ihk-900">1. Frontend<br><span class="text-xs font-normal text-slate-500">(Benutzeroberfläche im Browser)</span></td>
+                                <td class="p-3.5">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-semibold text-xs mb-1">Vue.js 3 / React</span>
+                                    <span class="inline-block px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-semibold text-xs mb-1">TypeScript</span>
+                                    <span class="inline-block px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-semibold text-xs">HTML5 Canvas &amp; SVG</span>
+                                </td>
+                                <td class="p-3.5 text-slate-700">
+                                    <strong>Erklärung:</strong> Das <em>Frontend</em> ist alles, was du im Browser siehst und anklickst. Mit <strong>TypeScript</strong> (einer typsicheren Erweiterung von JavaScript) vermeiden wir Programmierfehler bei der Berechnung von X/Y-Koordinaten auf dem Board. Die einzelnen Medienkarten werden als reaktive Komponenten gerendert, während die Verbindungspfeile über ein performantes <strong>SVG-Overlay</strong> (skalierbare Vektorgrafik) gezeichnet werden.
+                                </td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-bold text-ihk-900">2. Backend &amp; Echtzeit<br><span class="text-xs font-normal text-slate-500">(Serverlogik &amp; Schnittstellen)</span></td>
+                                <td class="p-3.5">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-semibold text-xs mb-1">ASP.NET Core 8 (C#)</span>
+                                    <span class="inline-block px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-semibold text-xs mb-1">REST-API</span>
+                                    <span class="inline-block px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-semibold text-xs">WebSockets / SignalR</span>
+                                </td>
+                                <td class="p-3.5 text-slate-700">
+                                    <strong>Erklärung:</strong> Das <em>Backend</em> läuft auf dem Server, prüft Berechtigungen und verarbeitet Daten. Über eine <strong>REST-API</strong> (standardisierte HTTP-Schnittstelle) lädt der Browser Boards und Dateien. Damit mehrere Teammitglieder gleichzeitig live sehen, wenn jemand eine Karte verschiebt, nutzen wir <strong>WebSockets</strong> (eine dauerhafte Zwei-Wege-Datenverbindung ohne ständiges Neuladen der Seite).
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-bold text-ihk-900">3. Datenbank<br><span class="text-xs font-normal text-slate-500">(Strukturierte Daten &amp; Positionen)</span></td>
+                                <td class="p-3.5">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold text-xs mb-1">PostgreSQL 16</span>
+                                    <span class="inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold text-xs">JSONB-Datentyp</span>
+                                </td>
+                                <td class="p-3.5 text-slate-700">
+                                    <strong>Erklärung:</strong> Benutzerkonten, Zugriffsrechte und Board-Namen liegen fest strukturiert in relationalen Tabellen. Da aber eine Audio-Karte ganz andere Eigenschaften hat als eine Farbpaletten-Karte, nutzen wir die <strong>JSONB-Spalte</strong> von PostgreSQL: Damit lassen sich flexible Metadaten (wie Farbwerte oder Audio-Dauer) blitzschnell und indiziert in derselben Datenbank speichern.
+                                </td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-bold text-ihk-900">4. Dateispeicher<br><span class="text-xs font-normal text-slate-500">(Große Binärdateien / Assets)</span></td>
+                                <td class="p-3.5">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold text-xs mb-1">MinIO (S3 Object Storage)</span>
+                                </td>
+                                <td class="p-3.5 text-slate-700">
+                                    <strong>Erklärung:</strong> Große Dateien wie hochauflösende Fotos, PDFs oder MP3s speichert man nicht direkt in einer SQL-Datenbank (das würde sie langsam machen). Stattdessen landen die Dateien in einem <strong>Object Storage</strong> (Objektspeicher wie <em>MinIO</em> oder <em>AWS S3</em>), und in der Datenbank wird nur der sichere Dateipfad (Link) gespeichert.
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-bold text-ihk-900">5. Infrastruktur &amp; Security<br><span class="text-xs font-normal text-slate-500">(Betrieb &amp; Absicherung)</span></td>
+                                <td class="p-3.5">
+                                    <span class="inline-block px-2 py-0.5 rounded bg-slate-200 text-slate-800 font-semibold text-xs mb-1">Docker Containers</span>
+                                    <span class="inline-block px-2 py-0.5 rounded bg-slate-200 text-slate-800 font-semibold text-xs">JWT &amp; Argon2id</span>
+                                </td>
+                                <td class="p-3.5 text-slate-700">
+                                    <strong>Erklärung:</strong> Mit <strong>Docker</strong> verpacken wir Frontend, Backend, Datenbank und Speicher in isolierte Container, sodass die App auf jedem Server sofort identisch läuft. <strong>JWT</strong> (JSON Web Tokens) weisen angemeldete Nutzer aus, und <strong>Argon2id</strong> verschlüsselt (hasht) Passwörter unumkehrbar.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         AUFGABE 2: BEGRIFFLICHKEITEN KLÄREN (BEDEUTUNG / SINN & ZWECK)
+         ===================================================================== -->
+        <section id="aufgabe-2" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 2 (Teilaufgaben 2a bis 2c)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">2. Begrifflichkeiten klären – Bedeutung sowie „Sinn und Zweck“</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Grundlagen Requirements Engineering</span>
+            </div>
+
+            <p class="text-sm sm:text-base text-slate-700">
+                Bevor du Anforderungen aufschreibst, musst du die zentralen Rollen und Dokumenttypen im Software-Engineering sauber auseinanderhalten. Diese drei Begriffspaare gehören zum absoluten Kernwissen jeder IHK-Abschlussprüfung:
+            </p>
+
+            <!-- 2a: Auftraggeber und Auftragnehmer -->
+            <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-5 space-y-3 avoid-break">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-base sm:text-lg font-extrabold text-ihk-900">2a. Auftraggeber (AG) und Auftragnehmer (AN)</h3>
+                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded bg-sky-100 text-sky-800">Projektrollen &amp; Vertragsrecht</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-700">
+                    <div class="bg-white p-4 rounded-lg border border-slate-200">
+                        <strong class="text-sky-800 block mb-1">🏢 Wer ist der Auftraggeber (Client / Customer)?</strong>
+                        Der Auftraggeber ist die Person, das Unternehmen oder die interne Fachabteilung, die ein Problem gelöst haben möchte, das Projekt in Auftrag gibt, das Budget bereitstellt und am Ende über die Abnahme entscheidet. <br>
+                        <em class="text-slate-500">Im Beispiel CanvasFlow:</em> Eine große Design- und Medienagentur („KreativWerk GmbH“), die ein eigenes, datenschutzkonformes Moodboard-Tool für ihre 120 Designer benötigt.
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-slate-200">
+                        <strong class="text-emerald-800 block mb-1">💻 Wer ist der Auftragnehmer (Contractor / Developer)?</strong>
+                        Der Auftragnehmer ist das Softwarehaus, das IT-Systemhaus oder die interne IT-Entwicklungsabteilung, die den Auftrag annimmt, technisch plant, programmiert, testet und ausliefert.<br>
+                        <em class="text-slate-500">Im Beispiel CanvasFlow:</em> Dein Ausbildungsbetrieb (ein IT-Entwicklungsstudio), in dem du als angehender FIAE arbeitest.
+                    </div>
+                </div>
+                <div class="bg-ihk-900 text-white p-3.5 rounded-lg text-xs sm:text-sm">
+                    <strong class="text-sky-300">🎯 Sinn und Zweck der Unterscheidung:</strong> Sie regelt eindeutig die <strong>Verantwortlichkeiten, Entscheidungsbefugnisse und Haftung</strong> (meist im Rahmen eines Werkvertrags nach § 631 BGB). Der Auftraggeber bestimmt das fachliche Ziel und bezahlt die Leistung; der Auftragnehmer schuldet das vereinbarte Arbeitsergebnis. Ohne diese Trennung wäre unklar, wer Zusatzwünsche (<em>Change Requests</em>) genehmigen und bezahlen muss.
+                </div>
+            </div>
+
+            <!-- 2b: Funktionale vs. Nicht-Funktionale Anforderungen -->
+            <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-5 space-y-3 avoid-break">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-base sm:text-lg font-extrabold text-ihk-900">2b. Funktionale Anforderungen (FA) und Nicht-Funktionale Anforderungen (NFA)</h3>
+                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded bg-indigo-100 text-indigo-800">Anforderungsarten (IREB / ISO 25010)</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-700">
+                    <div class="bg-white p-4 rounded-lg border border-slate-200">
+                        <strong class="text-sky-800 block mb-1">⚙️ Funktionale Anforderungen – „WAS soll das System tun?“</strong>
+                        Sie beschreiben die konkreten Funktionen, Abläufe, Berechnungen und Eingabe-/Ausgabe-Verhaltensweisen, die der Nutzer aktiv ausführen kann.<br>
+                        <em class="text-slate-500">Beispiel CanvasFlow:</em> „Der Benutzer kann eine PDF-Datei per Drag-and-Drop auf das Board ziehen, woraufhin automatisch eine Karte mit dem Titelblatt der PDF erzeugt wird.“
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-slate-200">
+                        <strong class="text-amber-700 block mb-1">🛡️ Nicht-Funktionale Anforderungen – „WIE GUT soll es funktionieren?“</strong>
+                        Sie definieren die Qualitätsmerkmale (nach <strong>ISO/IEC 25010</strong>) und Rahmenbedingungen wie Geschwindigkeit, Sicherheit, Bedienbarkeit, Zuverlässigkeit und Wartbarkeit.<br>
+                        <em class="text-slate-500">Beispiel CanvasFlow:</em> „Das Verschieben und Zoomen des Boards muss selbst bei 200 platzierten Elementen flüssig mit mindestens 60 Bildern pro Sekunde (FPS) ablaufen.“
+                    </div>
+                </div>
+                <div class="bg-ihk-900 text-white p-3.5 rounded-lg text-xs sm:text-sm">
+                    <strong class="text-sky-300">🎯 Sinn und Zweck der Unterscheidung:</strong> Funktionale Anforderungen bestimmen den <strong>Funktionsumfang (Features)</strong>, während nicht-funktionale Anforderungen maßgeblich über die <strong>Softwarearchitektur, Technologiewahl und Nutzerakzeptanz</strong> entscheiden. Eine App, die zwar alle Funktionen hat (FA erfüllt), aber bei 10 Nutzern abstürzt oder 20 Sekunden zum Laden braucht (NFA verfehlt), ist in der Praxis wertlos.
+                </div>
+            </div>
+
+            <!-- 2c: Lastenheft und Pflichtenheft -->
+            <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-5 space-y-4 avoid-break">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-base sm:text-lg font-extrabold text-ihk-900">2c. Lastenheft und Pflichtenheft (gemäß DIN 69901-5)</h3>
+                    <span class="text-xs font-semibold px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800">Planungsdokumente nach DIN-Norm</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-700">
+                    <div class="bg-white p-4 rounded-lg border border-slate-200">
+                        <strong class="text-sky-800 block mb-1">📋 Das Lastenheft (Anforderungsspezifikation des Kunden)</strong>
+                        Wird vom <strong>Auftraggeber</strong> verfasst. Nach DIN 69901-5 beschreibt es die <em>„Gesamtheit der Forderungen des Auftraggebers an die Lieferungen und Leistungen eines Auftragnehmers“</em>. Es beantwortet aus fachlicher Sicht die Frage: <strong>„WAS soll gelöst werden und WOFÜR?“</strong> (ohne bereits den Programmcode oder Datenbanktabellen vorzuschreiben).
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-slate-200">
+                        <strong class="text-emerald-800 block mb-1">🛠️ Das Pflichtenheft (Realisierungskonzept der Entwickler)</strong>
+                        Wird vom <strong>Auftragnehmer</strong> auf Basis des Lastenhefts ausgearbeitet. Nach DIN 69901-5 enthält es die <em>„vom Auftragnehmer erarbeiteten Realisierungsvorgaben“</em>. Es beantwortet detailliert die technische Frage: <strong>„WIE und WOMIT setzen wir die Forderungen konkret um?“</strong> (inkl. UI-Entwürfen, Datenmodell, Schnittstellen und Testkriterien).
+                    </div>
+                </div>
+                <div class="bg-ihk-900 text-white p-3.5 rounded-lg text-xs sm:text-sm">
+                    <strong class="text-sky-300">🎯 Sinn und Zweck beider Dokumente:</strong> Sie bilden die <strong>Kommunikations- und Vertragsbrücke</strong> zwischen Fachabteilung und IT. Das Lastenheft dient oft als Grundlage für Ausschreibungen und Angebote. Sobald der Auftraggeber das vom Auftragnehmer geschriebene Pflichtenheft prüft und freigibt, wird es zur <strong>verbindlichen Vertragsgrundlage</strong> für die Programmierung und die spätere Endabnahme.
+                </div>
+
+                <!-- SVG Prozessschaubild Lastenheft vs. Pflichtenheft -->
+                <figure class="bg-white border border-slate-200 rounded-xl p-4 mt-2">
+                    <svg role="img" viewBox="0 0 800 135" class="w-full h-auto block">
+                        <title>Zusammenspiel von Lastenheft und Pflichtenheft nach DIN 69901-5</title>
+                        <!-- Left Box: AG & Lastenheft -->
+                        <rect x="14" y="12" width="295" height="110" rx="8" fill="#eff6ff" stroke="#0284c7" stroke-width="2" />
+                        <text x="161" y="34" font-size="11.5" font-weight="bold" fill="#0f294a" text-anchor="middle">1. AUFTRAGGEBER (Kreativagentur)</text>
+                        <text x="161" y="54" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="middle">schreibt das LASTENHEFT</text>
+                        <text x="161" y="74" font-size="9.5" fill="#334155" text-anchor="middle">Leitfrage: „WAS &amp; WOFÜR?“ (Problemraum)</text>
+                        <text x="161" y="92" font-size="9" fill="#475569" text-anchor="middle">• Geschäftsziele, Nutzergruppen, Budget</text>
+                        <text x="161" y="107" font-size="9" fill="#475569" text-anchor="middle">• Fachliche Wunschfunktionen &amp; Abgrenzung</text>
+
+                        <!-- Arrows in Center -->
+                        <line x1="315" y1="46" x2="475" y2="46" stroke="#0f294a" stroke-width="2.5" />
+                        <polygon points="475,41 487,46 475,51" fill="#0f294a" />
+                        <text x="400" y="38" font-size="9" font-weight="bold" fill="#0f294a" text-anchor="middle">Übergabe &amp; Machbarkeitsprüfung</text>
+
+                        <line x1="485" y1="90" x2="325" y2="90" stroke="#16a34a" stroke-width="2.5" />
+                        <polygon points="325,85 313,90 325,95" fill="#16a34a" />
+                        <text x="400" y="106" font-size="9" font-weight="bold" fill="#166534" text-anchor="middle">Prüfung &amp; Freigabe (= Werkvertrag)</text>
+
+                        <!-- Right Box: AN & Pflichtenheft -->
+                        <rect x="491" y="12" width="295" height="110" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2" />
+                        <text x="638" y="34" font-size="11.5" font-weight="bold" fill="#14532d" text-anchor="middle">2. AUFTRAGNEHMER (Dein IT-Team)</text>
+                        <text x="638" y="54" font-size="10.5" font-weight="bold" fill="#166534" text-anchor="middle">erarbeitet das PFLICHTENHEFT</text>
+                        <text x="638" y="74" font-size="9.5" fill="#334155" text-anchor="middle">Leitfrage: „WIE &amp; WOMIT?“ (Lösungsraum)</text>
+                        <text x="638" y="92" font-size="9" fill="#475569" text-anchor="middle">• Techstack, Datenbankmodell (ERD), REST-API</text>
+                        <text x="638" y="107" font-size="9" fill="#475569" text-anchor="middle">• UI-Mockups, Algorithmen &amp; Abnahmetests</text>
+                    </svg>
+                    <figcaption class="text-xs text-slate-500 text-center mt-2">
+                        <strong>Abb. 3: Der Weg vom Problem zur technischen Lösung</strong> – Gegenüberstellung von Lastenheft und Pflichtenheft nach DIN 69901-5.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         AUFGABE 3: FIKTIVE ANFORDERUNGEN SAMMELN UND BESCHREIBEN (FA & NFA)
+         ===================================================================== -->
+        <section id="aufgabe-3" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 3 (Teilaufgaben 3a &amp; 3b)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">3. Fiktive Anforderungen sammeln &amp; beschreiben</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">FA &amp; NFA nach ISO/IEC 25010</span>
+            </div>
+
+            <!-- 3a: Funktionale Anforderungen -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-lg font-bold text-sky-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-extrabold">3a</span>
+                    Funktionale Anforderungen (Was soll „CanvasFlow“ konkret leisten?)
+                </h3>
+                <p class="text-sm sm:text-base text-slate-700">
+                    Hier formulieren wir vier zentrale funktionale Anforderungen (FA-01 bis FA-04). Zur Priorisierung nutzen wir die in der Softwarebranche übliche <strong>MoSCoW-Methode</strong> (<em>Must have</em> = zwingend erforderlich, <em>Should have</em> = wichtig, aber nicht kritisch für den ersten Start):
+                </p>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3.5 font-bold w-16">ID</th>
+                                <th class="p-3.5 font-bold w-1/4">Funktionstitel &amp; Akteur</th>
+                                <th class="p-3.5 font-bold">Beschreibung des gewünschten Systemverhaltens</th>
+                                <th class="p-3.5 font-bold w-28">Priorität</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-bold text-sky-800">FA-01</td>
+                                <td class="p-3.5 font-bold text-slate-900">Multiformat-Drag-&amp;-Drop-Upload<br><span class="text-xs font-normal text-slate-500">Akteur: Board-Bearbeiter</span></td>
+                                <td class="p-3.5 text-slate-700">
+                                    Zieht ein Nutzer eine oder mehrere Dateien aus seinem Betriebssystem-Explorer auf das geöffnete Board, muss das System den Dateityp (Bild, PDF, Audio, Markdown oder Code) automatisch erkennen, die Datei im Hintergrund in den S3-Speicher hochladen und exakt an der Mausposition eine passende interaktive Vorschaukarte (inkl. PDF-Blätterfunktion bzw. Audio-Wellenform-Player) erzeugen.
+                                </td>
+                                <td class="p-3.5"><span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-bold text-xs">Muss (Must)</span></td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-bold text-sky-800">FA-02</td>
+                                <td class="p-3.5 font-bold text-slate-900">Freie 2D-Positionierung &amp; Verbindungslinien<br><span class="text-xs font-normal text-slate-500">Akteur: Board-Bearbeiter</span></td>
+                                <td class="p-3.5 text-slate-700">
+                                    Nutzer müssen jede Karte auf dem Infinite Canvas frei per Maus verschieben, in der Größe skalieren und über Ankerpunkte mit gerichteten Pfeillinien (inkl. Beschriftungstext) verbinden können. Beim Verschieben einer Karte müssen sich alle angehängten Pfeillinien dynamisch in Echtzeit mitbewegen.
+                                </td>
+                                <td class="p-3.5"><span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-bold text-xs">Muss (Must)</span></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-bold text-sky-800">FA-03</td>
+                                <td class="p-3.5 font-bold text-slate-900">Verschachtelte Sub-Boards (Hierarchie)<br><span class="text-xs font-normal text-slate-500">Akteur: Projektleiter / Team</span></td>
+                                <td class="p-3.5 text-slate-700">
+                                    Das System muss einen Kartentyp „Sub-Board“ anbieten. Ein Doppelklick auf dieses Symbol öffnet eine neue, untergeordnete 2D-Arbeitsfläche. Eine Breadcrumb-Navigation (Pfadanzeige wie <code>Hauptprojekt &gt; Audio-Design &gt; Intro-Musik</code>) ermöglicht jederzeit den Rücksprung in höhere Ebenen.
+                                </td>
+                                <td class="p-3.5"><span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-bold text-xs">Muss (Must)</span></td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-bold text-sky-800">FA-04</td>
+                                <td class="p-3.5 font-bold text-slate-900">Visueller Moodboard-Export &amp; Gast-Link<br><span class="text-xs font-normal text-slate-500">Akteur: Alle Nutzer</span></td>
+                                <td class="p-3.5 text-slate-700">
+                                    Nutzer können den aktuell belegten Bereich eines Boards auf Knopfdruck als hochauflösende PDF-Datei oder PNG-Grafik herunterladen. Alternativ lässt sich ein schreibgeschützter „Kunden-Präsentationslink“ (Read-Only-Token) generieren, über den externe Kunden das Board ohne eigenen Account im Browser betrachten können.
+                                </td>
+                                <td class="p-3.5"><span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bold text-xs">Soll (Should)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3b: Nicht-Funktionale Anforderungen mit Bezug zu ISO/IEC 25010 -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-sky-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-extrabold">3b</span>
+                    Nicht-funktionale Anforderungen (NFA) mit Bezug zur Norm ISO/IEC 25010
+                </h3>
+                <p class="text-sm sm:text-base text-slate-700">
+                    Damit nicht-funktionale Anforderungen strukturiert erfasst werden, nutzt man international die Norm <strong>ISO/IEC 25010</strong> (früher ISO/IEC 9126). Dieser Standard teilt die Produktqualität von Software in <strong>acht Hauptmerkmale</strong> mit jeweiligen Teilmerkmalen ein. Schauen wir uns zunächst das komplette Modell in einer Übersicht an und leiten danach vier konkrete Qualitätsanforderungen für „CanvasFlow“ ab:
+                </p>
+
+                <!-- SVG: Alle 8 Säulen der ISO/IEC 25010 erklärt -->
+                <figure class="bg-slate-50 border border-slate-200 rounded-xl p-4 avoid-break">
+                    <svg role="img" viewBox="0 0 820 215" class="w-full h-auto block">
+                        <title>Die 8 Qualitätsmerkmale der Produktqualität nach ISO/IEC 25010</title>
+                        <!-- Top Banner -->
+                        <rect x="10" y="8" width="800" height="28" rx="6" fill="#0f294a" />
+                        <text x="410" y="26" font-size="11.5" font-weight="bold" fill="#ffffff" text-anchor="middle">PRODUKTQUALITÄTSMODELL NACH ISO/IEC 25010 (ALLE 8 HAUPTMERKMALE IM ÜBERBLICK)</text>
+
+                        <!-- Row 1 (4 Pillars) -->
+                        <!-- 1 -->
+                        <rect x="10" y="46" width="192" height="76" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" />
+                        <text x="106" y="64" font-size="10.5" font-weight="bold" fill="#0f294a" text-anchor="middle">1. Funktionale Eignung</text>
+                        <text x="106" y="77" font-size="8.5" fill="#0369a1" text-anchor="middle">(Functional Suitability)</text>
+                        <text x="106" y="93" font-size="8.2" fill="#475569" text-anchor="middle">• Funktionale Vollständigkeit</text>
+                        <text x="106" y="106" font-size="8.2" fill="#475569" text-anchor="middle">• Korrektheit &amp; Angemessenheit</text>
+
+                        <!-- 2 (Highlighted for NFA-01) -->
+                        <rect x="212" y="46" width="192" height="76" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2" />
+                        <text x="308" y="64" font-size="10.5" font-weight="bold" fill="#92400e" text-anchor="middle">2. Leistungseffizienz ★</text>
+                        <text x="308" y="77" font-size="8.5" fill="#b45309" text-anchor="middle">(Performance Efficiency → NFA-01)</text>
+                        <text x="308" y="93" font-size="8.2" fill="#78350f" text-anchor="middle">• Zeitverhalten (Antwortzeiten)</text>
+                        <text x="308" y="106" font-size="8.2" fill="#78350f" text-anchor="middle">• Ressourcenverbrauch &amp; Kapazität</text>
+
+                        <!-- 3 -->
+                        <rect x="414" y="46" width="192" height="76" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" />
+                        <text x="510" y="64" font-size="10.5" font-weight="bold" fill="#0f294a" text-anchor="middle">3. Kompatibilität</text>
+                        <text x="510" y="77" font-size="8.5" fill="#0369a1" text-anchor="middle">(Compatibility)</text>
+                        <text x="510" y="93" font-size="8.2" fill="#475569" text-anchor="middle">• Koexistenz mit anderer Software</text>
+                        <text x="510" y="106" font-size="8.2" fill="#475569" text-anchor="middle">• Interoperabilität (Austauschformate)</text>
+
+                        <!-- 4 (Highlighted for NFA-02) -->
+                        <rect x="616" y="46" width="194" height="76" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2" />
+                        <text x="713" y="64" font-size="10.5" font-weight="bold" fill="#92400e" text-anchor="middle">4. Benutzbarkeit ★</text>
+                        <text x="713" y="77" font-size="8.5" fill="#b45309" text-anchor="middle">(Usability / Interaction → NFA-02)</text>
+                        <text x="713" y="93" font-size="8.2" fill="#78350f" text-anchor="middle">• Erlernbarkeit &amp; Bedienbarkeit</text>
+                        <text x="713" y="106" font-size="8.2" fill="#78350f" text-anchor="middle">• Fehlertoleranz &amp; Barrierefreiheit</text>
+
+                        <!-- Row 2 (4 Pillars) -->
+                        <!-- 5 (Highlighted for NFA-04) -->
+                        <rect x="10" y="132" width="192" height="76" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2" />
+                        <text x="106" y="150" font-size="10.5" font-weight="bold" fill="#92400e" text-anchor="middle">5. Zuverlässigkeit ★</text>
+                        <text x="106" y="163" font-size="8.5" fill="#b45309" text-anchor="middle">(Reliability → NFA-04)</text>
+                        <text x="106" y="179" font-size="8.2" fill="#78350f" text-anchor="middle">• Verfügbarkeit &amp; Ausfallsicherheit</text>
+                        <text x="106" y="192" font-size="8.2" fill="#78350f" text-anchor="middle">• Wiederherstellbarkeit (Backups)</text>
+
+                        <!-- 6 (Highlighted for NFA-03) -->
+                        <rect x="212" y="132" width="192" height="76" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2" />
+                        <text x="308" y="150" font-size="10.5" font-weight="bold" fill="#92400e" text-anchor="middle">6. IT-Sicherheit ★</text>
+                        <text x="308" y="163" font-size="8.5" fill="#b45309" text-anchor="middle">(Security → NFA-03)</text>
+                        <text x="308" y="179" font-size="8.2" fill="#78350f" text-anchor="middle">• Vertraulichkeit &amp; Datenintegrität</text>
+                        <text x="308" y="192" font-size="8.2" fill="#78350f" text-anchor="middle">• Authentizität &amp; Nachweisbarkeit</text>
+
+                        <!-- 7 -->
+                        <rect x="414" y="132" width="192" height="76" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" />
+                        <text x="510" y="150" font-size="10.5" font-weight="bold" fill="#0f294a" text-anchor="middle">7. Wartbarkeit</text>
+                        <text x="510" y="163" font-size="8.5" fill="#0369a1" text-anchor="middle">(Maintainability)</text>
+                        <text x="510" y="179" font-size="8.2" fill="#475569" text-anchor="middle">• Modularität &amp; Wiederverwendbarkeit</text>
+                        <text x="510" y="192" font-size="8.2" fill="#475569" text-anchor="middle">• Analysierbarkeit &amp; Testbarkeit</text>
+
+                        <!-- 8 (Highlighted for NFA-05) -->
+                        <rect x="616" y="132" width="194" height="76" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2" />
+                        <text x="713" y="150" font-size="10.5" font-weight="bold" fill="#92400e" text-anchor="middle">8. Übertragbarkeit ★</text>
+                        <text x="713" y="163" font-size="8.5" fill="#b45309" text-anchor="middle">(Portability / Flexibility → NFA-05)</text>
+                        <text x="713" y="179" font-size="8.2" fill="#78350f" text-anchor="middle">• Anpassbarkeit (Browser/Geräte)</text>
+                        <text x="713" y="192" font-size="8.2" fill="#78350f" text-anchor="middle">• Installierbarkeit &amp; Austauschbarkeit</text>
+                    </svg>
+                    <figcaption class="text-xs text-slate-500 text-center mt-2">
+                        <strong>Abb. 4: Die 8 Säulen der ISO/IEC 25010</strong> – Die mit ★ hervorgehobenen Qualitätsmerkmale sind nachfolgend direkt in unseren nicht-funktionalen Anforderungen (NFA-01 bis NFA-05) für „CanvasFlow“ ausgearbeitet.
+                    </figcaption>
+                </figure>
+
+                <!-- Ausformulierte NFA Karten -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- NFA 01 -->
+                    <div class="rounded-xl border border-amber-200 bg-amber-50/40 p-4 avoid-break">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="font-mono font-extrabold text-sm text-ihk-900">NFA-01: Rendering- &amp; Lade-Performanz</span>
+                            <span class="px-2 py-0.5 rounded bg-amber-200/80 text-amber-900 font-bold text-[11px]">ISO 25010: Leistungseffizienz</span>
+                        </div>
+                        <p class="text-xs text-amber-900 font-semibold mb-1">Teilmerkmale: Zeitverhalten (Time Behaviour) &amp; Kapazität (Capacity)</p>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Das Öffnen eines Boards mit bis zu 150 platzierten Medienkarten darf über eine Standard-Breitbandverbindung (50 Mbit/s) maximal <strong>1,5 Sekunden</strong> dauern. Das freie Zoomen und Verschieben (Panning) des Canvas muss durch <em>Viewport-Culling</em> (nur aktuell sichtbare Karten werden neu gezeichnet) durchgehend eine Bildwiederholrate von mindestens <strong>60 FPS</strong> (Frames per Second) erreichen.
+                        </p>
+                    </div>
+
+                    <!-- NFA 02 -->
+                    <div class="rounded-xl border border-amber-200 bg-amber-50/40 p-4 avoid-break">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="font-mono font-extrabold text-sm text-ihk-900">NFA-02: Intuitive Bedienbarkeit</span>
+                            <span class="px-2 py-0.5 rounded bg-amber-200/80 text-amber-900 font-bold text-[11px]">ISO 25010: Benutzbarkeit</span>
+                        </div>
+                        <p class="text-xs text-amber-900 font-semibold mb-1">Teilmerkmale: Erlernbarkeit (Learnability) &amp; Bedienbarkeit (Operability)</p>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Ein neuer Benutzer muss ohne Handbuch in der Lage sein, innerhalb von <strong>3 Minuten</strong> nach dem ersten Login ein neues Board anzulegen, mindestens drei verschiedene Dateitypen per Drag-and-Drop abzulegen und miteinander zu verbinden. Zudem muss eine mehrstufige <em>Undo/Redo-Funktion</em> (`Strg+Z` / `Strg+Y`) die letzten 50 Bearbeitungsschritte fehlerfrei rückgängig machen können (Schutz vor Fehlbedienung).
+                        </p>
+                    </div>
+
+                    <!-- NFA 03 -->
+                    <div class="rounded-xl border border-amber-200 bg-amber-50/40 p-4 avoid-break">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="font-mono font-extrabold text-sm text-ihk-900">NFA-03: Zugriffsschutz &amp; Dateisicherheit</span>
+                            <span class="px-2 py-0.5 rounded bg-amber-200/80 text-amber-900 font-bold text-[11px]">ISO 25010: IT-Sicherheit</span>
+                        </div>
+                        <p class="text-xs text-amber-900 font-semibold mb-1">Teilmerkmale: Vertraulichkeit (Confidentiality) &amp; Integrität (Integrity)</p>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Sämtliche Netzwerkkommunikation (REST-API und WebSockets) muss zwingend über <strong>TLS 1.3 (HTTPS)</strong> verschlüsselt werden. Hochgeladene Dateien im S3-Speicher dürfen nicht über erratbare öffentliche URLs abrufbar sein, sondern ausschließlich über zeitlich begrenzte, kryptografisch signierte Links (<em>Presigned URLs</em> mit 15 Minuten Gültigkeit). Ausführbare Schadprogramme (`.exe`, `.bat`, `.sh`) müssen beim Upload serverseitig blockiert werden.
+                        </p>
+                    </div>
+
+                    <!-- NFA 04 -->
+                    <div class="rounded-xl border border-amber-200 bg-amber-50/40 p-4 avoid-break">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="font-mono font-extrabold text-sm text-ihk-900">NFA-04: Ausfallsicherheit &amp; Auto-Save</span>
+                            <span class="px-2 py-0.5 rounded bg-amber-200/80 text-amber-900 font-bold text-[11px]">ISO 25010: Zuverlässigkeit</span>
+                        </div>
+                        <p class="text-xs text-amber-900 font-semibold mb-1">Teilmerkmale: Verfügbarkeit (Availability) &amp; Wiederherstellbarkeit (Recoverability)</p>
+                        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                            Die Plattform muss eine monatliche Verfügbarkeit von mindestens <strong>99,5 %</strong> erreichen. Jede Änderung auf dem Canvas wird automatisch im Hintergrund gespeichert (<em>Auto-Save</em>). Bricht die Internetverbindung des Nutzers kurzzeitig ab, puffert der Browser die letzten Änderungen im lokalen Speicher (<em>IndexedDB</em>) und synchronisiert sie automatisch, sobald die Verbindung wiedersteht.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         AUFGABE 4: ANFORDERUNGEN KONKRETISIEREN (SMART-REGEL)
+         ===================================================================== -->
+        <section id="aufgabe-4" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 4 (Teilaufgabe 4a)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">4. Anforderungen konkretisieren nach der SMART-Regel</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Prüfbare Spezifikation</span>
+            </div>
+
+            <div class="space-y-4">
+                <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
+                    Wenn Kunden oder Fachabteilungen ihre Wünsche äußern, nutzen sie oft ungenaue Alltagsbegriffe wie <em>„Das Board soll schnell laden“</em>, <em>„Man soll viele Dateitypen hochladen können“</em> oder <em>„Die App muss sicher sein“</em>. Für dich als Anwendungsentwickler ist das gefährlich: Was für dich „schnell“ ist (z. B. 2 Sekunden), empfindet der Kunde bei der Abnahme vielleicht als „viel zu langsam“ (er dachte an 0,2 Sekunden).
+                </p>
+                <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
+                    Deshalb überprüfen und überarbeiten wir Anforderungen mit der <strong>SMART-Methode</strong> (ursprünglich 1981 von <em>George T. Doran</em> für das Projektmanagement entwickelt). Jede Anforderung muss alle fünf Kriterien erfüllen:
+                </p>
+
+                <!-- SMART 5-Spalten Übersicht -->
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 avoid-break">
+                    <div class="bg-ihk-900 text-white rounded-xl p-3.5 border-t-4 border-sky-400">
+                        <div class="text-2xl font-extrabold text-sky-400 mb-1">S</div>
+                        <div class="font-bold text-xs uppercase tracking-wider mb-1">Specific (Spezifisch)</div>
+                        <p class="text-[11px] text-slate-300">Präzise und eindeutig formuliert. Welcher Akteur, welches Modul und welche Aktion sind genau gemeint?</p>
+                    </div>
+                    <div class="bg-ihk-900 text-white rounded-xl p-3.5 border-t-4 border-sky-400">
+                        <div class="text-2xl font-extrabold text-sky-400 mb-1">M</div>
+                        <div class="font-bold text-xs uppercase tracking-wider mb-1">Measurable (Messbar)</div>
+                        <p class="text-[11px] text-slate-300">Enthält klare Zahlen, Formate oder Ja/Nein-Testkriterien (z. B. Millisekunden, Dateigröße in MB, FPS).</p>
+                    </div>
+                    <div class="bg-ihk-900 text-white rounded-xl p-3.5 border-t-4 border-sky-400">
+                        <div class="text-2xl font-extrabold text-sky-400 mb-1">A</div>
+                        <div class="font-bold text-xs uppercase tracking-wider mb-1">Achievable (Ausführbar)</div>
+                        <p class="text-[11px] text-slate-300">Technisch mit dem gewählten Techstack machbar und von beiden Seiten akzeptiert (Attraktiv/Akzeptiert).</p>
+                    </div>
+                    <div class="bg-ihk-900 text-white rounded-xl p-3.5 border-t-4 border-sky-400">
+                        <div class="text-2xl font-extrabold text-sky-400 mb-1">R</div>
+                        <div class="font-bold text-xs uppercase tracking-wider mb-1">Relevant (Realistisch)</div>
+                        <p class="text-[11px] text-slate-300">Zahlt direkt auf den Projektnutzen ein und ist mit dem vorhandenen Budget und Personal realistisch umsetzbar.</p>
+                    </div>
+                    <div class="bg-ihk-900 text-white rounded-xl p-3.5 border-t-4 border-sky-400">
+                        <div class="text-2xl font-extrabold text-sky-400 mb-1">T</div>
+                        <div class="font-bold text-xs uppercase tracking-wider mb-1">Time-bound (Terminiert)</div>
+                        <p class="text-[11px] text-slate-300">Besitzt einen klaren Fertigstellungstermin (z. B. Meilenstein/Release) und ggf. ein festes Zeitverhalten.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4a: Vorher-Nachher-Transformationstabelle -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-sky-800 flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-md bg-sky-100 text-sky-800 flex items-center justify-center text-sm font-extrabold">4a</span>
+                    Überarbeitung unserer Anforderungen nach den SMART-Kriterien (Vorher vs. Nachher)
+                </h3>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200 avoid-break">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3.5 font-bold w-16">ID</th>
+                                <th class="p-3.5 font-bold w-1/3">❌ Ursprüngliche, schwammige Formulierung (Nicht abnahmefähig)</th>
+                                <th class="p-3.5 font-bold">✅ Überarbeitete Anforderung nach SMART-Regel (Wasserdicht &amp; testbar)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-bold text-sky-800">FA-01</td>
+                                <td class="p-3.5 text-rose-800 bg-rose-50/40">
+                                    „Der Benutzer soll verschiedenste Dateien einfach auf das Board ziehen können und sie dort sofort sehen.“
+                                    <div class="text-[11px] text-slate-500 mt-1"><em>Problem:</em> Welche Dateiformate genau? Wie groß dürfen sie sein? Was heißt „sofort“?</div>
+                                </td>
+                                <td class="p-3.5 text-slate-800">
+                                    „<strong>Bis zum Meilenstein M2 (Beta-Release am 15.07.) [T]</strong> muss der Canvas-Editor für angemeldete Bearbeiter <strong>[S]</strong> den Drag-and-Drop-Upload der Dateiformate <code>.jpg, .png, .webp, .svg, .pdf, .mp3, .wav, .md</code> bis zu einer Einzeldateigröße von <strong>maximal 50 MB [M]</strong> unterstützen und innerhalb von <strong>≤ 1,0 Sekunde nach Upload-Abschluss [M, T]</strong> eine typgerechte Vorschaukarte an den exakten Mauskoordinaten (X/Y) darstellen <strong>[A, R]</strong>.“
+                                </td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-bold text-sky-800">FA-04</td>
+                                <td class="p-3.5 text-rose-800 bg-rose-50/40">
+                                    „Man soll ein fertiges Moodboard in guter Qualität für Kunden exportieren können.“
+                                    <div class="text-[11px] text-slate-500 mt-1"><em>Problem:</em> Welches Dateiformat? Welche Auflösung ist „gute Qualität“? Wie lange darf der Export dauern?</div>
+                                </td>
+                                <td class="p-3.5 text-slate-800">
+                                    „<strong>Bis zum Release Candidate (Meilenstein M3 am 15.08.) [T]</strong> muss das Export-Modul <strong>[S]</strong> jedes geöffnete Board mit bis zu 100 Elementen auf Knopfdruck wahlweise als <strong>PDF/A-1b-Dokument oder PNG-Grafik mit mindestens 150 DPI Auflösung [M]</strong> inkl. aller sichtbaren Text-, Bild- und Verbindungselemente in <strong>maximal 4,0 Sekunden [M, T]</strong> zum Download generieren <strong>[A, R]</strong>.“
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-bold text-amber-700">NFA-01</td>
+                                <td class="p-3.5 text-rose-800 bg-rose-50/40">
+                                    „Das Verschieben und Zoomen auf dem Board muss immer flüssig und ruckelfrei laufen.“
+                                    <div class="text-[11px] text-slate-500 mt-1"><em>Problem:</em> „Flüssig“ ist subjektiv. Auf welcher Hardware? Bei wie vielen Elementen auf dem Board?</div>
+                                </td>
+                                <td class="p-3.5 text-slate-800">
+                                    „<strong>Zum Abnahmetest (KW 35) [T]</strong> muss die 2D-Canvas-Engine im Browser (Chrome/Firefox/Edge aktuellste Version auf einem Standard-Office-PC mit 8 GB RAM) <strong>[S, A]</strong> bei einem belegten Board mit <strong>200 gleichzeitigen Karten und 100 SVG-Verbindungspfeilen [M]</strong> während des kontinuierlichen Zoomens (10 %–400 %) eine gemessene Bildrate von <strong>mindestens 55 bis 60 FPS (Frame-Time ≤ 18 ms) [M, R]</strong> einhalten.“
+                                </td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-bold text-amber-700">NFA-03</td>
+                                <td class="p-3.5 text-rose-800 bg-rose-50/40">
+                                    „Kundenboards und hochgeladene Dateien müssen vor unbefugtem Zugriff geschützt sein.“
+                                    <div class="text-[11px] text-slate-500 mt-1"><em>Problem:</em> Wie wird geschützt? Welche Verschlüsselung? Wie lange gelten Datei-Links?</div>
+                                </td>
+                                <td class="p-3.5 text-slate-800">
+                                    „<strong>Vor dem Go-Live am 01.09. (Meilenstein M4) [T]</strong> müssen alle S3-Dateizugriffe über <strong>kryptografisch signierte Presigned-URLs (HMAC-SHA256) mit einer Gültigkeitsdauer von exakt 15 Minuten [S, M]</strong> abgesichert sein. Ein unautorisierter Direktaufruf einer Datei-URL ohne gültiges JWT-Session-Token muss in <strong>100 % der Testfälle mit dem HTTP-Statuscode 403 (Forbidden) [M, A, R]</strong> abgewiesen werden.“
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Einzelkriterien-Nachweis Box -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 avoid-break">
+                    <h4 class="text-xs sm:text-sm font-extrabold text-emerald-950 mb-2">🔍 Warum ist diese Formulierung in der IHK-Prüfung (und im echten Berufsleben) Gold wert?</h4>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Schau dir <strong>NFA-03</strong> in der rechten Spalte an: Als Entwickler weißt du dadurch sofort, was du programmieren musst (HMAC-SHA256 Presigned URLs mit 15 Min. Ablaufzeit + HTTP-403-Check). Und der Qualitätsprüfer (Tester) kann einen automatisierten Test schreiben, der eine URL ohne Token aufruft und prüft, ob exakt <code>Status 403</code> zurückkommt. Es gibt <strong>null Streitpotenzial</strong> bei der Projektabnahme!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         AUFGABE 5: FIKTIVE DOKUMENTE ERSTELLEN (LASTENHEFT & PFLICHTENHEFT)
+         ===================================================================== -->
+        <section id="aufgabe-5" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 5 (Teilaufgaben 5a.i, 5a.ii &amp; 5b)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">5. Fiktive Planungsdokumente: Lastenheft &amp; Pflichtenheft</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Gliederung &amp; Beispielinhalte</span>
+            </div>
+
+            <p class="text-sm sm:text-base text-slate-700">
+                In dieser Aufgabe entwerfen wir das vollständige <strong>Inhaltsverzeichnis (Gliederung)</strong> für ein Lastenheft (Sicht des Auftraggebers) und ein Pflichtenheft (Sicht des Auftragnehmers) nach <strong>DIN 69901-5</strong>. Direkt unter jedem Gliederungspunkt findest du (gemäß <strong>Aufgabe 5b</strong>) konkrete, ausformulierte Beispielinhalte für unser Projekt <strong>„CanvasFlow“</strong>:
+            </p>
+
+            <!-- Direkte Gegenüberstellung Lastenheft (Links) vs. Pflichtenheft (Rechts) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- 5a.i LASTENHEFT -->
+                <div class="rounded-2xl border-2 border-sky-600 bg-sky-50/30 overflow-hidden flex flex-col avoid-break">
+                    <div class="bg-sky-700 text-white p-4">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-sky-200 block">Aufgabe 5a.i &amp; 5b • Aus Sicht des Auftraggebers (Kunde)</span>
+                        <h3 class="text-lg font-extrabold">📋 Lastenheft – Projekt „CanvasFlow“</h3>
+                        <p class="text-xs text-sky-100 mt-0.5">Autor: KreativWerk Agentur GmbH (Fachabteilung Design &amp; Konzeption)</p>
+                    </div>
+
+                    <div class="p-5 space-y-4 text-xs sm:text-sm text-slate-700 flex-1">
+                        <div class="bg-white p-3.5 rounded-xl border border-sky-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">1. Ausgangssituation &amp; Zielbestimmung (Warum?)</h4>
+                            <p><strong>Beispielinhalt:</strong> Unsere 120 Designer, Texter und Sound-Engineers nutzen derzeit vier getrennte Tools (Pinterest für Bilder, Google Drive für PDFs/Audio, Trello für Aufgaben). Ziel ist die Einführung einer zentralen Webplattform „CanvasFlow“ bis zum 01.09., um die Suchzeit nach Projektdateien um 40 % zu senken und Kundenpräsentationen direkt aus dem Board heraus durchzuführen.</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-sky-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">2. Produkteinsatz &amp; Zielgruppen (Wer nutzt es?)</h4>
+                            <p><strong>Beispielinhalt:</strong> Hauptnutzer sind 120 interne Kreativ-Mitarbeiter (Arbeit an 27-Zoll-Monitoren sowie iPads im Kundengespräch) und ca. 250 externe Kunden, die über schreibgeschützte Freigabelinks Entwürfe begutachten sollen.</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-sky-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">3. Funktionale Anforderungen (Grobspezifikation: Was?)</h4>
+                            <p><strong>Beispielinhalt:</strong> Freie 2D-Oberfläche zum Ablegen von Bildern, PDFs, Audiodateien, Farbpaletten und Notizen; Verbinden von Elementen mit Pfeilen; Unter-Boards für Teilprojekte; Export als PDF-Mappe; keine eigene Bildbearbeitungsfunktion nötig.</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-sky-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">4. Produktdaten &amp; Mengengerüst (Welche Daten?)</h4>
+                            <p><strong>Beispielinhalt:</strong> Speicherung von ca. 500 aktiven Projekt-Boards mit durchschnittlich je 80 bis 150 Mediendateien. Einzeldateien sind bis 50 MB groß; gesamtes Speichervolumen im ersten Jahr ca. 2 Terabyte.</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-sky-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">5. Nicht-funktionale Anforderungen (Qualitätswünsche)</h4>
+                            <p><strong>Beispielinhalt:</strong> Strenge Einhaltung der DSGVO (Serverstandort Deutschland/EU, da unveröffentlichte Kundenprototypen hochgeladen werden); flüssiges Arbeiten ohne Ruckeln; intuitive Bedienung ohne mehrtägige Schulung.</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-sky-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">6. Lieferumfang, Zeitplan &amp; Rahmenbedingungen</h4>
+                            <p><strong>Beispielinhalt:</strong> Festpreisbudget von 85.000 €; Bereitstellung einer ersten Testversion (Beta) bis Mitte Juli; Produktivstart (Go-Live) am 01.09. inklusive Administratorenhandbuch und Online-Kurzanleitung.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5a.ii PFLICHTENHEFT -->
+                <div class="rounded-2xl border-2 border-emerald-600 bg-emerald-50/30 overflow-hidden flex flex-col avoid-break">
+                    <div class="bg-emerald-700 text-white p-4">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-200 block">Aufgabe 5a.ii &amp; 5b • Aus Sicht des Auftragnehmers (Entwickler)</span>
+                        <h3 class="text-lg font-extrabold">🛠️ Pflichtenheft – Projekt „CanvasFlow“</h3>
+                        <p class="text-xs text-emerald-100 mt-0.5">Autor: DevSolutions IT GmbH (Auftragnehmer / Dein Ausbildungsbetrieb)</p>
+                    </div>
+
+                    <div class="p-5 space-y-4 text-xs sm:text-sm text-slate-700 flex-1">
+                        <div class="bg-white p-3.5 rounded-xl border border-emerald-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">1. Zielbestimmung &amp; Anforderungszuordnung</h4>
+                            <p><strong>Beispielinhalt:</strong> Technische Umsetzung als mandantenfähige Single-Page-Application (SPA). Verbindliche Zuordnung aller Kundenforderungen in <em>Muss-Kriterien</em> (FA-01 bis FA-03 für Release 1.0) und <em>Soll-/Wunschkriterien</em>.</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-emerald-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">2. Systemarchitektur &amp; Technische Systemumgebung</h4>
+                            <p><strong>Beispielinhalt:</strong> Bereitstellung als Docker-Compose-Stack auf einem deutschen Cloud-Server (Hetzner, ISO-27001-zertifiziert). Frontend: Vue.js 3 + TypeScript; Backend: ASP.NET Core 8 REST-API + SignalR WebSockets; DB: PostgreSQL 16; Storage: MinIO S3.</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-emerald-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">3. Feinspezifikation der Produktfunktionen &amp; API</h4>
+                            <p><strong>Beispielinhalt:</strong> Definition aller REST-Endpunkte (z. B. <code>POST /api/v1/boards/{id}/items</code>, <code>PATCH /api/v1/items/{itemId}/coordinates</code>). Algorithmus für Viewport-Culling (Berechnung der Bounding-Box im 2D-Koordinatensystem).</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-emerald-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">4. Datenmodell &amp; Datenbankschema (ERD)</h4>
+                            <p><strong>Beispielinhalt:</strong> Relationales Datenbankschema in 3. Normalform (3NF) mit den Kerntabellen <code>users</code>, <code>boards</code> (mit selbstreferenzierendem Fremdschlüssel <code>parent_board_id</code> für Unter-Boards), <code>canvas_items</code> (mit <code>pos_x</code>, <code>pos_y</code>, <code>z_index</code> und <code>payload_jsonb</code>) sowie <code>file_assets</code>.</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-emerald-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">5. Qualitätsmerkmale (ISO 25010) &amp; Sicherheitskonzept</h4>
+                            <p><strong>Beispielinhalt:</strong> Authentifizierung über kurzlebige JWT-Access-Tokens (15 Min.); Passwort-Hashing mit Argon2id; Serverseitige MIME-Type-Prüfung (Magic-Bytes-Check) beim Datei-Upload; S3-Zugriff ausschließlich via HMAC-SHA256 Presigned URLs.</p>
+                        </div>
+
+                        <div class="bg-white p-3.5 rounded-xl border border-emerald-200 shadow-sm">
+                            <h4 class="font-extrabold text-ihk-900 mb-1">6. GUI-Wireframes, Testfälle &amp; Abnahmematrix</h4>
+                            <p><strong>Beispielinhalt:</strong> Klickbare UI-Prototypen für Board und Werkzeugleiste; Testkatalog mit 45 automatisierten Unit-Tests (xUnit), 15 End-to-End-Browsertests (Playwright) und einem Lasttest-Szenario (k6) für die Endabnahme in KW 35.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technischer Auszug aus Kapitel 4 & 6 des Pflichtenhefts: Gantt-Meilensteinplan -->
+            <figure class="bg-slate-50 border border-slate-200 rounded-xl p-4 avoid-break">
+                <svg role="img" viewBox="0 0 800 135" class="w-full h-auto block">
+                    <title>Meilensteinplan (Gantt-Diagramm) aus dem Pflichtenheft für CanvasFlow</title>
+                    <!-- Header Timeline -->
+                    <line x1="30" y1="28" x2="770" y2="28" stroke="#94a3b8" stroke-width="2" />
+                    <text x="115" y="18" font-size="9.5" font-weight="bold" fill="#334155" text-anchor="middle">Monat 1 (Mai)</text>
+                    <text x="305" y="18" font-size="9.5" font-weight="bold" fill="#334155" text-anchor="middle">Monat 2 (Juni)</text>
+                    <text x="495" y="18" font-size="9.5" font-weight="bold" fill="#334155" text-anchor="middle">Monat 3 (Juli)</text>
+                    <text x="685" y="18" font-size="9.5" font-weight="bold" fill="#334155" text-anchor="middle">Monat 4 (August)</text>
+
+                    <!-- Phase 1 -->
+                    <rect x="30" y="38" width="145" height="20" rx="4" fill="#0284c7" />
+                    <text x="102" y="52" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle">Phase 1: Analyse &amp; Pflichtenheft</text>
+
+                    <!-- Phase 2 -->
+                    <rect x="180" y="62" width="235" height="20" rx="4" fill="#0369a1" />
+                    <text x="297" y="76" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle">Phase 2: 2D-Canvas-Engine, Backend &amp; S3-Upload</text>
+
+                    <!-- Phase 3 -->
+                    <rect x="420" y="86" width="175" height="20" rx="4" fill="#0f294a" />
+                    <text x="507" y="100" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle">Phase 3: Sub-Boards &amp; PDF-Export</text>
+
+                    <!-- Phase 4 -->
+                    <rect x="600" y="62" width="160" height="20" rx="4" fill="#16a34a" />
+                    <text x="680" y="76" font-size="9" font-weight="bold" fill="#ffffff" text-anchor="middle">Phase 4: Lasttest &amp; Go-Live</text>
+
+                    <!-- Milestones Diamonds -->
+                    <polygon points="175,21 182,28 175,35 168,28" fill="#d97706" />
+                    <text x="175" y="122" font-size="8.5" font-weight="bold" fill="#92400e" text-anchor="middle">◆ M1: Pflichtenheft-Abnahme (31.05.)</text>
+
+                    <polygon points="415,21 422,28 415,35 408,28" fill="#d97706" />
+                    <text x="415" y="122" font-size="8.5" font-weight="bold" fill="#92400e" text-anchor="middle">◆ M2: Beta-Version / MVP (15.07.)</text>
+
+                    <polygon points="595,21 602,28 595,35 588,28" fill="#d97706" />
+                    <text x="595" y="48" font-size="8.5" font-weight="bold" fill="#92400e" text-anchor="middle">◆ M3: Code-Freeze (15.08.)</text>
+
+                    <polygon points="760,21 767,28 760,35 753,28" fill="#16a34a" />
+                    <text x="715" y="122" font-size="8.5" font-weight="bold" fill="#166534" text-anchor="middle">◆ M4: Endabnahme &amp; Go-Live (01.09.)</text>
+                </svg>
+                <figcaption class="text-xs text-slate-500 text-center mt-2">
+                    <strong>Abb. 5: Projektzeitplan mit Meilensteinen (M1 bis M4)</strong> – Bestandteil der planenden Projektdokumentation zur Terminkontrolle.
+                </figcaption>
+            </figure>
+        </section>
+
+        <!-- =====================================================================
+         AUFGABE 6: SELBSTÜBERPRÜFUNG (VERSTÄNDNISFRAGEN 6a BIS 6f)
+         ===================================================================== -->
+        <section id="aufgabe-6" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Aufgabenblock 6 (Teilaufgaben 6a bis 6f)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">6. Selbstüberprüfung – Verständnisfragen in eigenen Worten</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Prüfungsvorbereitung FIAE</span>
+            </div>
+
+            <div class="space-y-4">
+                <!-- 6a -->
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">
+                        6a. Was unterscheidet konkret funktionale von nicht-funktionalen Anforderungen?
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Antwort:</strong> Funktionale Anforderungen legen fest, <strong>WAS</strong> eine Anwendung fachlich leistet – also welche konkreten Aktionen, Berechnungen und Arbeitsabläufe ein Nutzer ausführen kann (z. B. „Eine Audiodatei auf das Board ziehen und abspielen“). Nicht-funktionale Anforderungen bestimmen dagegen das <strong>WIE GUT</strong> – also die qualitativen Eigenschaften und Rahmenbedingungen, unter denen diese Funktionen ablaufen müssen (z. B. Ladezeiten unter 1,5 Sekunden, flüssige 60 FPS beim Zoomen, HTTPS-Verschlüsselung oder 99,5 % Server-Verfügbarkeit).
+                    </p>
+                </div>
+
+                <!-- 6b -->
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">
+                        6b. Welche Rolle spielt die SMART-Regel bei der Formulierung von Anforderungen?
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Antwort:</strong> Die SMART-Regel sorgt dafür, dass aus ungenauen, subjektiven Wünschen (wie „schnell“, „modern“ oder „einfach bedienbar“) <strong>eindeutige und objektiv messbare Abnahmekriterien</strong> werden. Indem jede Anforderung <strong>S</strong>pezifisch, <strong>M</strong>essbar, <strong>A</strong>usführbar/Akzeptiert, <strong>R</strong>ealistisch/Relevant und <strong>T</strong>erminiert formuliert wird, wissen Entwickler beim Programmieren exakt, welches Ziel erreicht werden muss, und Tester können bei der Projektabnahme zweifelsfrei nachweisen, ob die Anforderung erfüllt ist.
+                    </p>
+                </div>
+
+                <!-- 6c -->
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">
+                        6c. Was ist der zentrale Unterschied zwischen einem Lastenheft und einem Pflichtenheft?
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Antwort:</strong> Der Hauptunterschied liegt im <strong>Verfasser</strong> und in der <strong>Perspektive</strong>: Das <strong>Lastenheft</strong> wird vom <em>Auftraggeber (Kunden)</em> geschrieben und beschreibt aus fachlicher Sicht das Problem sowie die gewünschten Ergebnisse (<em>„Was soll gemacht werden und wofür?“</em>). Das <strong>Pflichtenheft</strong> wird daraufhin vom <em>Auftragnehmer (Entwicklerteam)</em> erstellt und beschreibt die detaillierte technische Lösung (<em>„Wie und womit setzen wir die Anforderungen konkret um?“</em> – inklusive Techstack, Datenbankmodell und Schnittstellen).
+                    </p>
+                </div>
+
+                <!-- 6d -->
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">
+                        6d. Welche Rolle hat in planenden Dokumenten ein Meilensteinplan?
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Antwort:</strong> Ein Meilensteinplan teilt ein langes, komplexes Softwareprojekt in überschaubare Etappenziele (Meilensteine) auf, die jeweils an ein festes Datum und ein überprüfbares Zwischenergebnis geknüpft sind (z. B. <em>M1: Pflichtenheft freigegeben</em>, <em>M2: Beta-Version lauffähig</em>). Er dient der Projektleitung als <strong>Frühwarnsystem</strong>: Wird ein Meilenstein verfehlt, erkennt man Verzögerungen sofort und kann gegensteuern, statt erst kurz vor dem geplanten Go-Live das Scheitern des Zeitplans zu bemerken. Oft sind an Meilensteine auch Teilzahlungen des Auftraggebers gekoppelt.
+                    </p>
+                </div>
+
+                <!-- 6e -->
+                <div class="rounded-xl border border-slate-200 p-4 sm:p-5 bg-slate-50/60 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">
+                        6e. Warum ist es wichtig, die Abgrenzungen (Out-of-Scope) einer Anwendung klar zu definieren?
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Antwort:</strong> Klare Abgrenzungen schützen das Projekt vor falschen Erwartungen des Auftraggebers und vor dem sogenannten <strong>Scope Creep</strong> (dem schleichenden Wachsen des Funktionsumfangs während der Entwicklung). Wenn im Vorfeld schriftlich festgehalten ist, was <em>nicht</em> Teil des Auftrags ist (bei CanvasFlow z. B. keine integrierte Bildbearbeitung wie Photoshop und kein Videoschnitt), kann der Kunde später nicht verlangen, dass diese aufwendigen Zusatzfunktionen kostenlos im vereinbarten Festpreis mitgeliefert werden.
+                    </p>
+                </div>
+
+                <!-- 6f -->
+                <div class="rounded-xl border-2 border-amber-400 p-4 sm:p-5 bg-amber-50/50 avoid-break">
+                    <h3 class="text-sm sm:text-base font-extrabold text-ihk-900 mb-2">
+                        6f. Welches Qualitätsmerkmal nach ISO 25010 könnte durch eine Anforderung wie „Die Anwendung muss auch bei 1.000 gleichzeitigen Zugriffen stabil laufen“ adressiert werden?
+                    </h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Antwort (Doppel-Einordnung für volle Punktzahl in der IHK-Prüfung):</strong><br>
+                        1. <strong>Primär – Leistungseffizienz (Performance Efficiency):</strong> Die Nennung einer konkreten Lastgrenze („bei 1.000 gleichzeitigen Zugriffen“) fällt direkt unter das Teilmerkmal <strong>Kapazität (Capacity)</strong> in Verbindung mit dem <strong>Zeitverhalten (Time Behaviour)</strong>, da das System diese Obergrenze an parallelen Benutzern verarbeiten muss.<br>
+                        2. <strong>Ergänzend – Zuverlässigkeit (Reliability):</strong> Die Formulierung „muss <em>stabil laufen</em>“ (also unter dieser hohen Last nicht abstürzen oder Fehlermeldungen werfen) adressiert gleichzeitig das Qualitätsmerkmal <strong>Zuverlässigkeit</strong> mit den Teilmerkmalen <strong>Reife (Maturity)</strong>, <strong>Fehlertoleranz (Fault Tolerance)</strong> und <strong>Verfügbarkeit (Availability)</strong>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         BONUS-SEKTION 1: ALLE ZITIERTEN NORMEN & STANDARDS ERKLÄRT
+         ===================================================================== -->
+        <section id="normen-standards" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Hintergrundwissen für deine IHK-Ausbildung</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">7. Die wichtigsten Normen &amp; Standards im Detail erklärt</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-bold">Prüfungswissen Normen</span>
+            </div>
+
+            <p class="text-sm sm:text-base text-slate-700">
+                In der Berufsschule und in IHK-Prüfungen tauchen immer wieder Abkürzungen wie <strong>DIN 69901</strong>, <strong>ISO/IEC 25010</strong> oder <strong>IREB</strong> auf. Hier erfährst du genau, wer hinter diesen Standards steckt und warum es sie gibt:
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Norm 1: ISO/IEC 25010 -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">ISO/IEC 25010</span>
+                        <span class="text-xs text-slate-500">Nachfolger der ISO/IEC 9126</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Internationaler Standard für Software-Qualität (SQuaRE)</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Wer gibt sie heraus?</strong> Gemeinsam entwickelt von der <em>ISO</em> (International Organization for Standardization) und der <em>IEC</em> (International Electrotechnical Commission).<br>
+                        <strong>Was regelt sie?</strong> Sie legt weltweit einheitlich fest, aus welchen Merkmalen sich „gute Softwarequalität“ zusammensetzt (die 8 Säulen aus Aufgabe 3b: Funktionale Eignung, Leistungseffizienz, Kompatibilität, Benutzbarkeit, Zuverlässigkeit, Sicherheit, Wartbarkeit, Übertragbarkeit). In der neuesten Überarbeitung (2023) wurde „Usability“ begrifflich in „Interaction Capability“ geschärft und „Safety“ (Betriebssicherheit) ergänzt – in deutschen IHK-Prüfungen werden aber weiterhin die klassischen 8 Begriffe abgefragt.
+                    </p>
+                </div>
+
+                <!-- Norm 2: DIN 69901-5 -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">DIN 69901-5</span>
+                        <span class="text-xs text-slate-500">Deutsches Institut für Normung e. V.</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Projektmanagement – Begriffe (Teil 5)</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Wer gibt sie heraus?</strong> Das <em>DIN (Deutsches Institut für Normung)</em> in Berlin.<br>
+                        <strong>Was regelt sie?</strong> Die Normenreihe DIN 69901 standardisiert das Projektmanagement in Deutschland. Speziell <strong>Teil 5 (Begriffe)</strong> liefert die offiziellen Definitionen für <strong>Lastenheft</strong>, <strong>Pflichtenheft</strong>, <strong>Meilenstein</strong>, <strong>Arbeitspaket</strong> und <strong>Projektstrukturplan (PSP)</strong>. Wenn du in deiner IHK-Projektdokumentation (Teil 2 der Abschlussprüfung) erklärst, warum du ein Pflichtenheft erstellt hast, beziehst du dich genau auf diese Norm.
+                    </p>
+                </div>
+
+                <!-- Norm 3: IREB & CPRE -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">IREB / CPRE</span>
+                        <span class="text-xs text-slate-500">International Requirements Engineering Board</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Standard für professionelle Anforderungsanalyse</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Wer steckt dahinter?</strong> Ein internationales Gremium führender Software-Wissenschaftler und Praktiker (u. a. Prof. Klaus Pohl und Chris Rupp) mit Sitz in Deutschland.<br>
+                        <strong>Was regelt es?</strong> Das IREB veröffentlicht den Lehrplan zum <em>Certified Professional for Requirements Engineering (CPRE)</em>. Fast alle Aufgaben in deutschen Berufsschulen zu Stakeholder-Analyse, Funktionalen/Nicht-funktionalen Anforderungen und Qualitätskriterien für Anforderungen stammen direkt aus dem IREB-Standard.
+                    </p>
+                </div>
+
+                <!-- Norm 4: IEEE 830 / ISO/IEC/IEEE 29148 -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">ISO/IEC/IEEE 29148</span>
+                        <span class="text-xs text-slate-500">Nachfolger von IEEE 830 (SRS)</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Internationale Norm für Anforderungsdokumente</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <strong>Was regelt sie?</strong> Während man im deutschsprachigen Raum zwischen Lastenheft und Pflichtenheft (DIN 69901-5) trennt, nutzt man in internationalen, englischsprachigen IT-Projekten die Norm <strong>ISO/IEC/IEEE 29148</strong>. Dort heißt das zentrale Anforderungsdokument <strong>SRS (Software Requirements Specification)</strong>. Sie definiert zudem Qualitätsregeln für einzelne Anforderungen (sie müssen eindeutig, konsistent, vollständig und verifizierbar sein – ganz ähnlich wie bei unserer SMART-Regel).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         BONUS-SEKTION 2: GROSSES FREMDWÖRTER-LEXIKON (GLOSSAR)
+         ===================================================================== -->
+        <section id="glossar" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Alle Fachbegriffe verständlich übersetzt</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">8. Großes Fremdwörter- &amp; Fachbegriffs-Lexikon (Glossar)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Azubi-Nachschlagewerk</span>
+            </div>
+
+            <!-- Interaktiver Suchfilter (Wird beim Drucken automatisch ausgeblendet) -->
+            <div class="no-print bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm text-slate-700 font-medium">
+                    🔎 <strong>Schnellfilter:</strong> Tippe einen Fachbegriff ein (z. B. <em>API</em>, <em>Scope</em>, <em>JSONB</em>, <em>MVP</em>), um das Lexikon live zu durchsuchen:
+                </div>
+                <input type="text" id="glossarySearch" oninput="filterGlossary()" placeholder="Begriff suchen..."
+                       class="w-full sm:w-72 px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+            </div>
+
+            <!-- Glossar Grid -->
+            <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <!-- Dynamically populated by glossarData.js -->
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         BONUS-SEKTION 3: QUELLEN- UND NACHSCHLAGEVERZEICHNIS
+         ===================================================================== -->
+        <section id="quellen" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Literatur, Normen &amp; Weiterführende Links</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">9. Quellen- und Nachschlageverzeichnis für deine Ausbildung</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">Quellenangaben</span>
+            </div>
+
+            <p class="text-sm sm:text-base text-slate-700">
+                Wenn du dich noch tiefer in das Thema Anforderungsanalyse (Requirements Engineering) einlesen möchtest oder offizielle Quellen für deine IHK-Projektdokumentation suchst, findest du hier die wichtigsten Standardwerke:
+            </p>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3.5 font-bold w-1/4">Quelle / Standard / Buch</th>
+                            <th class="p-3.5 font-bold w-1/4">Autor / Herausgeber</th>
+                            <th class="p-3.5 font-bold w-1/2">Nutzen für deine FIAE-Ausbildung &amp; Fundstelle</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">ISO/IEC 25010:2023 (bzw. 2011)<br><span class="text-xs font-normal text-slate-500">Systems and software Quality Requirements and Evaluation (SQuaRE)</span></td>
+                            <td class="p-3.5 text-slate-700">International Organization for Standardization (ISO), Genf</td>
+                            <td class="p-3.5 text-slate-700">Offizielle Referenz für nicht-funktionale Anforderungen und Softwarequalität. Eine hervorragende, kostenlose Übersicht bietet das Portal: <span class="font-mono text-xs text-sky-700">iso25000.com/index.php/en/iso-25000-standards/iso-25010</span></td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">DIN 69901-5:2009-01<br><span class="text-xs font-normal text-slate-500">Projektmanagement – Projektmanagementsysteme – Teil 5: Begriffe</span></td>
+                            <td class="p-3.5 text-slate-700">Deutsches Institut für Normung e. V. (DIN Media / Beuth Verlag)</td>
+                            <td class="p-3.5 text-slate-700">Maßgebliche deutsche Norm für die Begriffe <em>Lastenheft</em>, <em>Pflichtenheft</em>, <em>Meilenstein</em> und <em>Projektphasen</em>. Perfekt als Zitat in der betrieblichen IHK-Projektarbeit.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Basiswissen Requirements Engineering<br><span class="text-xs font-normal text-slate-500">(5. Auflage, ISBN 978-3-86490-814-9)</span></td>
+                            <td class="p-3.5 text-slate-700">Klaus Pohl, Chris Rupp (dpunkt.verlag)</td>
+                            <td class="p-3.5 text-slate-700">Das deutschsprachige Standardlehrbuch zum IREB-Lehrplan. Erklärt sehr anschaulich funktionale/nicht-funktionale Anforderungen, Satzschablonen und Prüfregeln. Kostenlose Lehrpläne unter: <span class="font-mono text-xs text-sky-700">ireb.org</span></td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">IT-Handbuch für Fachinformatiker<br><span class="text-xs font-normal text-slate-500">(11. Auflage, ISBN 978-3-8362-9746-2)</span></td>
+                            <td class="p-3.5 text-slate-700">Sascha Kersken (Rheinwerk Computing)</td>
+                            <td class="p-3.5 text-slate-700">Das umfassende Begleitbuch für alle vier Ausbildungsberufe der IT-Familie (inkl. Kapitel zu Software-Engineering, Architektur, Datenbanken und Projektmanagement).</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Doran, G. T. (1981): „There's a S.M.A.R.T. way to write management's goals and objectives“</td>
+                            <td class="p-3.5 text-slate-700">George T. Doran (Management Review, Vol. 70, Issue 11, S. 35–36)</td>
+                            <td class="p-3.5 text-slate-700">Die wissenschaftliche Originalquelle der SMART-Formel, die heute weltweit zur Konkretisierung von Zielen und Software-Anforderungen eingesetzt wird.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">Praxis-Inspiration: Milanote<br><span class="text-xs font-normal text-slate-500">Visuelle Boards für Kreativprojekte</span></td>
+                            <td class="p-3.5 text-slate-700">Milanote Pty Ltd, Melbourne</td>
+                            <td class="p-3.5 text-slate-700">Reales Vorbild für unser Beispielprojekt „CanvasFlow“. Zeigt exemplarisch, wie Bilder, PDFs, Audiodateien, Farbpaletten und Notizen auf einem freien 2D-Canvas kombiniert werden: <span class="font-mono text-xs text-sky-700">milanote.com</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-200">
+            <p class="font-semibold text-slate-700">Ausarbeitung zum IHK-Lernauftrag 02: Anforderungsanalyse &amp; Projektdokumentation (Fachinformatiker/-in Anwendungsentwicklung)</p>
+            <p class="mt-1">Beispielprojekt „CanvasFlow“ • Optimiert für Bildschirmansicht und vollständigen A4-Druck ohne Abschneiden (Strg+P / 🖨️ Button oben).</p>
+        </footer>
+
+    </main>
+
+    
+    <!-- ==================== JAVASCRIPT GLOBAL GLOSSAR ==================== -->
+    <script src="../assets/js/glossarData.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glossaryGrid = document.getElementById('glossaryGrid');
+            if (!glossaryGrid) return;
+            
+            // Initiales Rendern aller Begriffe
+            renderGlossary('');
+            
+            // Event Listener für die Suche
+            const searchInput = document.getElementById('glossarySearch');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    renderGlossary(e.target.value);
+                });
+            }
+        });
+
+        function renderGlossary(filterText) {
+            const grid = document.getElementById('glossaryGrid');
+            grid.innerHTML = ''; // Leeren
+            
+            const query = filterText.toLowerCase().trim();
+            
+            const filtered = globalesGlossar.filter(item => {
+                return item.titel.toLowerCase().includes(query) || 
+                       item.beschreibung.toLowerCase().includes(query);
+            });
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500">Keine passenden Begriffe gefunden.</div>';
+                return;
+            }
+            
+            filtered.forEach(item => {
+                // Farb-Mapping für die Badges
+                let badgeClass = "bg-slate-100 text-slate-700";
+                if(item.farbe === 'sky') badgeClass = "bg-sky-100 text-sky-800";
+                if(item.farbe === 'linux') badgeClass = "bg-linux-100 text-linux-800";
+                if(item.farbe === 'java') badgeClass = "bg-java-100 text-java-800";
+                
+                const cardHTML = `
+                    <div class="glossary-card rounded-xl border border-slate-200 p-4 bg-slate-50/60 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <h4 class="font-extrabold text-ihk-900 leading-tight">${item.titel}</h4>
+                        </div>
+                        <p class="text-slate-700 text-xs sm:text-sm flex-1">${item.beschreibung}</p>
+                        <div class="mt-3 pt-3 border-t border-slate-200">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                                ${item.modul}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+    </script>
+
+</body>
+</html>

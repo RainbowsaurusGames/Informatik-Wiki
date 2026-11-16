@@ -1,0 +1,90 @@
+/* Grundlegende Styles für optimale Lesbarkeit */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: auto !important;
+    overflow-x: hidden;
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+/* =======================================================
+   SCHRIFTGRÖSSEN-FIX (Vereinheitlichung für alle Dateien)
+   ======================================================= */
+p, li, td {
+    font-size: 0.875rem; /* Entspricht Tailwind text-sm */
+    line-height: 1.625;
+}
+@media (min-width: 640px) {
+    p, li, td {
+        font-size: 1rem; /* Entspricht Tailwind text-base auf Desktop */
+    }
+}
+
+/* Hintergrund-Muster */
+.canvas-dot-grid {
+    background-color: #f8fafc;
+    background-image: radial-gradient(#cbd5e1 1.35px, transparent 1.35px);
+    background-size: 20px 20px;
+}
+.pixel-grid {
+    background-color: #1e1e2f;
+    background-image: linear-gradient(#2a2a40 1px, transparent 1px), linear-gradient(90deg, #2a2a40 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* =======================================================
+   DRUCK-OPTIMIERUNG (Verhindert Abschneiden im PDF)
+   ======================================================= */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 14mm 12mm;
+    }
+    html, body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 9.5pt !important;
+        line-height: 1.4 !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+    /* Schriftgröße im Druck für Tabellen und Texte leicht verkleinern */
+    p, li, td { font-size: 9.5pt !important; line-height: 1.4 !important; }
+
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    main, section, article, div {
+        overflow: visible !important;
+        max-width: 100% !important;
+    }
+    .avoid-break, tr, blockquote, figure, .glossary-card, .terminal-box {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+    .print-page-start {
+        break-before: page;
+        page-break-before: always;
+    }
+    h1, h2, h3, h4 {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+    }
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        box-shadow: none !important;
+    }
+    .glossary-card { display: block !important; }
+    
+    /* One-Pager Sonderregel */
+    .one-pager-container {
+        height: 265mm !important;
+        overflow: hidden !important;
+        page-break-inside: avoid !important;
+    }
+}

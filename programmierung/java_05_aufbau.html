@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK-Lernauftrag 05: Aufbau von Java Programmen – Modul Programmierung</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Einheitliche Tailwind Config + Java-Theme (Orange) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ihk: { 50: '#f0f7ff', 100: '#e0effe', 200: '#bae0fd', 500: '#0284c7', 600: '#0369a1', 700: '#075985', 800: '#0c4a6e', 900: '#0f294a' },
+                        java: { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Einbindung der zentralen CSS-Datei -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    
+    <!-- Fallback-Styles für Standalone-Nutzung -->
+    <style>
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: auto !important; overflow-x: hidden; background-color: #f1f5f9; color: #0f172a; }
+        p, li, td { font-size: 0.875rem; line-height: 1.625; }
+        @media (min-width: 640px) { p, li, td { font-size: 1rem; } }
+        
+        @media print {
+            @page { size: A4 portrait; margin: 14mm 12mm; }
+            html, body { background-color: #ffffff !important; color: #000000 !important; font-size: 9.5pt !important; line-height: 1.4 !important; height: auto !important; overflow: visible !important; }
+            p, li, td { font-size: 9.5pt !important; line-height: 1.4 !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            main, section, article, div { overflow: visible !important; max-width: 100% !important; }
+            .avoid-break, tr, blockquote, figure, .glossary-card { break-inside: avoid !important; page-break-inside: avoid !important; }
+            .print-page-start { break-before: page; page-break-before: always; }
+            h1, h2, h3, h4 { break-after: avoid !important; page-break-after: avoid !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: none !important; }
+            .glossary-card { display: block !important; }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-java-500 selection:text-white">
+
+        <!-- ==================== WIKI-NAVIGATION (TOP BAR) ==================== -->
+    <div class="bg-slate-950 text-slate-400 text-xs py-2 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-slate-800 no-print">
+        <a href="../index.html" class="font-bold text-java-400 hover:text-white transition flex items-center gap-1">🏠 Dashboard</a>
+        <span class="text-slate-600">|</span>
+        <span class="font-bold text-java-400">Programmierung:</span>
+        <a href="java_04_eclipse_ide.html" class="hover:text-white transition">LA 04</a>
+        <a href="java_05_aufbau.html" class="hover:text-white transition text-white font-medium">LA 05</a>
+        <a href="java_06_grundlagen.html" class="hover:text-white transition">LA 06_1</a>
+        <a href="java_06_2_aufgaben.html" class="hover:text-white transition">LA 06_2</a>
+        <a href="java_07_kontrollstrukturen.html" class="hover:text-white transition">LA 07</a>
+    </div>
+
+    <!-- ==================== STICKY TOP NAVIGATION ==================== -->
+    <header class="no-print sticky top-0 z-50 bg-ihk-900/95 backdrop-blur-md text-white border-b border-java-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-4">
+
+                <!-- Branding -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-java-400 to-red-600 flex items-center justify-center font-extrabold text-lg shadow-inner font-mono">
+                        { }
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-java-500/20 text-java-300 border border-java-400/30">Modul: Programmierung</span>
+                            <span class="text-xs text-slate-300 hidden sm:inline">Lernauftrag 05</span>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base text-white leading-tight">Aufbau von Java Programmen &amp; Logik</p>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Links -->
+                <nav class="hidden xl:flex flex-1 justify-center items-center gap-1 text-xs font-medium whitespace-nowrap">
+                    <a href="#ausgangssituation" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1. Konzept</a>
+                    <a href="#theoriefragen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">2. Theoriefragen</a>
+                    <a href="#praxis" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">3. Praxis (Schaltjahr)</a>
+                    <a href="#normen-standards" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-amber-300">Normen</a>
+                    <a href="#glossar" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-emerald-300">Glossar</a>
+                    <a href="#quellen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">Quellen</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-java-500 hover:bg-java-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow-md cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-12 0h12v4H6v-4z" />
+                        </svg>
+                        <span>🖨️ Als PDF drucken / speichern</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile / Tablet Sub-Navbar -->
+            <div class="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-700/80 text-xs font-medium">
+                <a href="#ausgangssituation" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1. Konzept</a>
+                <a href="#theoriefragen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">2. Theoriefragen</a>
+                <a href="#praxis" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">3. Praxis (Schaltjahr)</a>
+                <a href="#normen-standards" class="shrink-0 px-2.5 py-1 rounded bg-amber-900/60 text-amber-200">Normen</a>
+                <a href="#glossar" class="shrink-0 px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-200">Glossar</a>
+                <a href="#quellen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">Quellen</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== HAUPTINHALT ==================== -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- HERO / DOKUMENTKOPF -->
+        <section class="bg-ihk-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl border-l-8 border-java-500 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-java-300 mb-3">
+                <span>IT-Berufe • Ausbildung zum Fachinformatiker Anwendungsentwicklung</span>
+                <span>Lernauftrag 05: Java-Programmierung</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                Aufbau von Java Programmen &amp; Basiselemente
+            </h1>
+            <p class="text-slate-200 leading-relaxed mb-6">
+                Wenn man Programmiersprachen (wie Java, C# oder Python) miteinander vergleicht, stellt man schnell fest, dass sie sich in ihren Grundkonzepten stark ähneln. Hat man einmal verstanden, was eine Variable, eine Bedingung (if/else) oder eine Schleife ist, ist das Erlernen einer neuen Sprache oft nur noch eine Frage der Syntax (Grammatik). In diesem Lernauftrag tauchen wir in die Bausteine von Java ein und lösen erste algorithmische Probleme wie die Berechnung von Schaltjahren.
+            </p>
+
+            <!-- Info-Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700/80 text-xs sm:text-sm">
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-java-300 block mb-1">🏗️ Programm-Architektur</span>
+                    Wir beleuchten den Grundaufbau von Java-Programmen: Von Packages über Klassen bis hin zur <code>main</code>-Methode.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-emerald-300 block mb-1">📐 Sauberer Code</span>
+                    Lerne, wie Bezeichner (Namen für Variablen) richtig gewählt werden und warum das Einrücken von Quellcode so essenziell ist.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-amber-300 block mb-1">⚙️ Praxis: Logik &amp; Mathe</span>
+                    Integrierter Code-Block zur Berechnung von Schaltjahren mit anschaulicher Erklärung des Modulo-Operators (<code>%</code>).
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 1: THEORIE (BEZEICHNER, EINRÜCKUNG, KLASSEN)
+             ===================================================================== -->
+        <section id="theoriefragen" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Theoretische Erarbeitung (Fragen 1 bis 5)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1. Sprachelemente &amp; Grundaufbau in Java</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Theorie</span>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Frage 1: Bezeichner -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F1</span>
+                        Was ist ein Bezeichner (Identifier) und welche Regeln gelten?
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed mb-3">
+                        Ein <strong>Bezeichner</strong> ist ein von dir (dem Programmierer) frei gewählter Name, um Dinge in deinem Code zu benennen – zum Beispiel eine Variable (<code>meinAlter</code>), eine Methode (<code>berechneSchaltjahr</code>) oder eine Klasse (<code>Auto</code>).
+                    </p>
+                    <strong class="text-sm text-slate-800 block mb-2">Harte Regeln (ansonsten wirft der Compiler einen Fehler):</strong>
+                    <ul class="list-disc pl-5 space-y-1.5 text-slate-700 text-sm mb-3">
+                        <li>Darf <strong>nicht</strong> mit einer Zahl beginnen (<code>123test</code> ist verboten).</li>
+                        <li>Darf <strong>keine Leerzeichen</strong> enthalten (nutze stattdessen <code>mein_name</code> oder <code>meinName</code>).</li>
+                        <li>Darf <strong>kein reserviertes Schlüsselwort</strong> sein (du darfst eine Variable nicht <code>public</code>, <code>int</code> oder <code>class</code> nennen).</li>
+                        <li>Erlaubte Zeichen sind Buchstaben (A-Z, a-z), Ziffern (0-9), der Unterstrich (<code>_</code>) und das Dollar-Zeichen (<code>$</code>).</li>
+                        <li>Java ist <strong>Case-Sensitive</strong> (Groß-/Kleinschreibung ist wichtig: <code>alter</code> und <code>Alter</code> sind zwei verschiedene Dinge!).</li>
+                    </ul>
+                </div>
+
+                <!-- Frage 2: Einrückung -->
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F2</span>
+                        Wie wird Quellcode eingerückt und welchen Vorteil bietet das?
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed">
+                        Unter <strong>Einrückung (Indentation)</strong> versteht man das Einrücken von Codezeilen nach rechts (meistens mit der <code>Tab</code>-Taste oder mit 4 Leerzeichen), sobald ein neuer Anweisungsblock (gekennzeichnet durch geschweifte Klammern <code>{ ... }</code>) beginnt.
+                        <br><br>
+                        <strong>Der Vorteil:</strong> Dem Java-Compiler ist die Einrückung völlig egal. Für den Programmierer ist sie jedoch überlebenswichtig. Sie macht die hierarchische Struktur sichtbar. Wenn du eine <code>if</code>-Bedingung oder eine Schleife schreibst, siehst du durch die Einrückung auf einen Blick, welcher Code <em>innerhalb</em> der Bedingung ausgeführt wird und welcher Code erst <em>danach</em> kommt. Fehlerhafte oder fehlende Klammern lassen sich so viel schneller finden.
+                    </p>
+                </div>
+
+                <!-- Frage 3 & 4: Package und Klasse -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 avoid-break">
+                    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                        <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F3</span>
+                            Was ist ein Package?
+                        </h3>
+                        <p class="text-slate-700 text-sm leading-relaxed">
+                            Ein <strong>Package (Paket)</strong> ist ein physischer Unterordner in deinem Projekt, der zusammengehörende Java-Dateien gruppiert (z. B. alle Design-Dateien ins Package <code>ui</code>, alle Speicher-Funktionen ins Package <code>database</code>). Es sorgt für Ordnung und verhindert Namenskonflikte, falls du aus Versehen zwei gleichnamige Dateien erstellst.
+                        </p>
+                    </div>
+                    <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                        <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                            <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F4</span>
+                            Was ist eine Klasse?
+                        </h3>
+                        <p class="text-slate-700 text-sm leading-relaxed">
+                            In der objektorientierten Programmierung (OOP) ist eine <strong>Klasse</strong> eine Art Bauplan oder Schablone. Die Klasse <code>Auto</code> beschreibt, welche Eigenschaften (Farbe, PS) und Funktionen (Fahren, Bremsen) ein Auto hat. In Java gilt der Grundsatz: <em>Absolut jeder Code muss innerhalb einer Klasse stehen!</em>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Frage 5: Grundaufbau -->
+                <div class="rounded-xl border-l-4 border-l-java-500 bg-java-50/30 p-5 avoid-break shadow-sm">
+                    <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded bg-java-100 flex items-center justify-center text-sm">F5</span>
+                        Grundaufbau eines Java-Programms
+                    </h3>
+                    <p class="text-slate-700 leading-relaxed mb-3">
+                        Ein klassisches Java-Programm ist streng von außen nach innen (wie eine Matroschka-Puppe) aufgebaut:
+                    </p>
+                    <ol class="list-decimal pl-5 space-y-2 text-sm text-slate-700 font-medium">
+                        <li><strong>Package-Deklaration:</strong> Ganz oben steht (optional), in welchem Ordner die Datei liegt (<code>package com.firma.projekt;</code>).</li>
+                        <li><strong>Imports:</strong> Darunter folgen Import-Befehle, um fremden Code oder Bibliotheken einzubinden (z. B. Scanner für Tastatureingaben).</li>
+                        <li><strong>Die Klasse:</strong> Die äußere Hülle des eigenen Codes (<code>public class MeinProgramm { ... }</code>).</li>
+                        <li><strong>Die Main-Methode:</strong> Innerhalb der Klasse braucht es einen fest definierten Einstiegspunkt (<code>public static void main(String[] args)</code>), an dem der Computer anfängt zu lesen.</li>
+                        <li><strong>Anweisungen (Statements):</strong> Innerhalb der Main-Methode folgen dann die eigentlichen Befehle (Variablen anlegen, Berechnungen, Konsolenausgaben), die jeweils mit einem Semikolon <code>;</code> enden.</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             AUFGABE 2: PRAKTISCHE ÜBUNGEN (SCHALTJAHR & MODULO)
+             ===================================================================== -->
+        <section id="praxis" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Praktische Aufgaben 1 &amp; 2</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">2. Programmierung in Eclipse</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">Code-Umsetzung</span>
+            </div>
+
+            <!-- Aufgabe 1: Altersumrechnung (Platzhalter) -->
+            <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                    <span class="text-lg leading-none">👨‍💻</span>
+                    Aufgabe 1: Programm „Altersumrechnung“ (FU-Unterlagen)
+                </h3>
+                <p class="text-slate-700 text-sm leading-relaxed">
+                    <em>Hinweis:</em> In dieser ersten Aufgabe sollst du gemäß der FU-Hagen-Skripte ein kleines Programm in Eclipse schreiben, das beispielsweise ein Alter in Tagen, Hunde-Jahren oder Monaten umrechnet. Hier übst du das Anlegen von Variablen (<code>int alter = 25;</code>) und einfache Grundrechenarten (<code>*</code>, <code>/</code>, <code>+</code>). Die Musterlösung dazu findest du in deinen direkten Kursunterlagen.
+                </p>
+            </div>
+
+            <!-- Aufgabe 2: Schaltjahr -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="text-lg leading-none">📅</span>
+                    Aufgabe 2: Schaltjahr-Prüfung programmieren
+                </h3>
+                <p class="text-slate-700 text-sm leading-relaxed mb-2">
+                    In dieser Aufgabe prüfen wir, ob das fiktiv gesetzte Jahr <strong>2026</strong> ein Schaltjahr ist. Dafür müssen wir eine Verschachtelung von <code>if-else</code>-Bedingungen nutzen.
+                </p>
+
+                <!-- NEU: Lokales Video zur Auflockerung -->
+                <div class="rounded-xl overflow-hidden shadow-md border border-slate-200 aspect-video w-full max-w-2xl mx-auto mb-2 mt-4 bg-slate-900">
+                    <video class="w-full h-full object-cover"
+                           controls
+                           preload="metadata">
+                        <source src="../assets/videos/was_machen_sachen.mp4" type="video/mp4">
+                        Dein Browser unterstützt leider kein HTML5-Video.
+                    </video>
+                </div>
+                <p class="text-[11px] text-center text-slate-500 mb-6 font-medium italic">
+                    Zur Auflockerung vorab: Ein absoluter TV Total-Klassiker zum Thema Schaltjahr! 😄
+                </p>
+                <!-- Ende NEU -->
+
+                <!-- Info-Box zum Modulo Operator -->
+                <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 mb-4">
+                    <strong class="text-sky-900 block mb-1 text-sm">💡 Wie funktioniert der Modulo-Operator (%)?</strong>
+                    <p class="text-sm text-slate-700">
+                        Der Modulo-Operator berechnet den <strong>Rest einer Division</strong>. <br>
+                        Beispiel: <code>10 % 3 = 1</code> (denn 10 geteilt durch 3 ist 3, Rest 1).<br>
+                        Wenn wir prüfen wollen, ob eine Zahl glatt durch 4 teilbar ist, rechnen wir <code>jahr % 4 == 0</code>. Kommt exakt Null heraus, wissen wir: Es gibt keinen Rest, die Zahl ist teilbar!
+                    </p>
+                </div>
+
+                <!-- Java Code Block -->
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>SchaltjahrPruefung.java</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Java</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-purple-400">package</span> java_grundlagen;
+
+<span class="text-purple-400">public class</span> <span class="text-amber-300">SchaltjahrPruefung</span> {
+
+                    <span class="text-purple-400">public static void</span> <span class="text-sky-300">main</span>(String[] args) {
+        
+                    <span class="text-slate-500">// 1. Variable anlegen (Wir prüfen das Jahr 2026)</span>
+                    <span class="text-purple-400">int</span> jahr = 2026;
+                    <span class="text-purple-400">boolean</span> istSchaltjahr = <span class="text-purple-400">false</span>;
+        
+                    <span class="text-slate-500">/* 
+         * 2. Logik-Prüfung (Die Reihenfolge ist wichtig!)
+         * Wir fangen mit der speziellsten "Ausnahme der Ausnahme" an.
+         */</span>
+                    <span class="text-purple-400">if</span> (jahr % 400 == 0) {
+                    <span class="text-slate-500">// Ausnahme der Ausnahme: Durch 400 teilbar -> JA</span>
+            istSchaltjahr = <span class="text-purple-400">true</span>;
+            
+        } <span class="text-purple-400">else if</span> (jahr % 100 == 0) {
+                    <span class="text-slate-500">// Ausnahme: Durch 100 teilbar -> NEIN (z.B. das Jahr 1900)</span>
+            istSchaltjahr = <span class="text-purple-400">false</span>;
+            
+        } <span class="text-purple-400">else if</span> (jahr % 4 == 0) {
+                    <span class="text-slate-500">// Grundregel: Durch 4 teilbar -> JA</span>
+            istSchaltjahr = <span class="text-purple-400">true</span>;
+            
+        } <span class="text-purple-400">else</span> {
+                    <span class="text-slate-500">// Alle anderen Jahre -> NEIN</span>
+            istSchaltjahr = <span class="text-purple-400">false</span>;
+        }
+
+                    <span class="text-slate-500">// 3. Ergebnis auf der Konsole ausgeben</span>
+                    <span class="text-purple-400">if</span> (istSchaltjahr) {
+            System.out.println(jahr + <span class="text-emerald-300">" ist ein Schaltjahr."</span>);
+        } <span class="text-purple-400">else</span> {
+            System.out.println(jahr + <span class="text-emerald-300">" ist KEIN Schaltjahr."</span>);
+        }
+    }
+}</code></pre>
+                </div>
+                <p class="text-sm text-slate-600 italic">Wenn du diesen Code in Eclipse startest, wird die Konsole ausgeben: <strong>"2026 ist KEIN Schaltjahr."</strong></p>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BONUS-SEKTION 1: NORMEN & STANDARDS (NAMING CONVENTIONS)
+             ===================================================================== -->
+        <section id="normen-standards" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Hintergrundwissen für deine IHK-Ausbildung</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">4. Standards: Die Java Naming Conventions</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-bold">Best Practices</span>
+            </div>
+
+            <p class="text-sm sm:text-base text-slate-700">
+                Wie in Aufgabe 1 (Bezeichner) besprochen, gibt es harte Regeln vom Compiler. Zusätzlich gibt es aber auch sogenannte <strong>Naming Conventions</strong> (Benennungskonventionen). Das sind ungeschriebene Gesetze der Entwickler-Community. Hältst du dich nicht daran, läuft dein Code zwar, aber andere Programmierer (und Prüfer) werden ihn als extrem unprofessionell einstufen:
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-2">Klassen in PascalCase</h3>
+                    <p class="text-sm text-slate-700 mb-2">Klassennamen fangen <strong>immer mit einem Großbuchstaben</strong> an. Besteht der Name aus mehreren Wörtern, wird jedes neue Wort wieder großgeschrieben (ohne Leer- oder Unterstriche).</p>
+                    <code class="block bg-white border border-slate-200 p-2 rounded text-emerald-700 font-bold text-xs">SchaltjahrPruefung, Auto, BankKonto</code>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-2">Variablen &amp; Methoden in camelCase</h3>
+                    <p class="text-sm text-slate-700 mb-2">Variablen und Methoden fangen <strong>immer klein</strong> an. Erst ab dem zweiten Wort wird der Anfangsbuchstabe großgeschrieben (sieht aus wie Höcker eines Kamels).</p>
+                    <code class="block bg-white border border-slate-200 p-2 rounded text-sky-700 font-bold text-xs">int meinAlter; public void berechneZinsen()</code>
+                </div>
+                
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-2">Konstanten in UPPER_SNAKE_CASE</h3>
+                    <p class="text-sm text-slate-700 mb-2">Werte, die sich während der Laufzeit nie wieder ändern dürfen (Konstanten, in Java mit <code>final</code> markiert), werden <strong>komplett großgeschrieben</strong> und mit Unterstrichen getrennt.</p>
+                    <code class="block bg-white border border-slate-200 p-2 rounded text-rose-700 font-bold text-xs">final double PI_WERT = 3.1415;</code>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-2">Packages komplett klein</h3>
+                    <p class="text-sm text-slate-700 mb-2">Paketnamen werden konsequent <strong>komplett kleingeschrieben</strong>, um sie von Klassen auf den ersten Blick unterscheiden zu können.</p>
+                    <code class="block bg-white border border-slate-200 p-2 rounded text-slate-600 font-bold text-xs">package de.firma.projekt;</code>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             BONUS-SEKTION 2: GLOSSAR
+             ===================================================================== -->
+        <section id="glossar" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Fachbegriffe der Programmierung übersetzt</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">5. Fremdwörter- &amp; Fachbegriffs-Lexikon</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Azubi-Nachschlagewerk</span>
+            </div>
+
+            <!-- Interaktiver Suchfilter -->
+            <div class="no-print bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm text-slate-700 font-medium">
+                    🔎 <strong>Schnellfilter:</strong> Tippe einen Fachbegriff ein (z. B. <em>Modulo</em>, <em>Variable</em>, <em>Quellcode</em>), um das Lexikon live zu durchsuchen:
+                </div>
+                <input type="text" id="glossarySearch" oninput="filterGlossary()" placeholder="Begriff suchen..."
+                       class="w-full sm:w-72 px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-java-500">
+            </div>
+
+            <!-- Glossar Grid -->
+            <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <!-- Dynamically populated by glossarData.js -->
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             QUELLENVERZEICHNIS
+             ===================================================================== -->
+        <section id="quellen" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Lernmaterialien &amp; Referenzen</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">6. Literatur- &amp; Quellenverzeichnis (Java)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">Quellenangaben</span>
+            </div>
+
+            <p class="text-sm sm:text-base text-slate-700">
+                Die Inhalte dieses Lernauftrags (Modul Programmierung) stützen sich auf die von der Diakonie vorgegebenen Materialien sowie auf die offizielle Java-Dokumentation:
+            </p>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3.5 font-bold w-1/4">Thema / Format</th>
+                            <th class="p-3.5 font-bold w-1/4">Literatur / Autor</th>
+                            <th class="p-3.5 font-bold w-1/2">Bezug zur Ausbildung</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="bg-java-500/10 border-l-4 border-java-500">
+                            <td class="p-3.5 font-bold text-ihk-900">🔗 IHK-Wiki: Java Setup</td>
+                            <td class="p-3.5 text-slate-700">Eigenes Dokument (Lernauftrag 04)</td>
+                            <td class="p-3.5 text-slate-700">Für die Ausführung der Schaltjahr-Abfrage greifen wir auf die <a href="java_04_eclipse_ide.html" class="text-java-700 font-bold hover:underline">Installation und Konfiguration von Eclipse (LA 04)</a> zurück.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Buch Rheinwerk</td>
+                            <td class="p-3.5 text-slate-700">Programmieren lernen mit Java<br><span class="text-xs text-slate-500">(Zudem: Openbook "Java ist auch eine Insel")</span></td>
+                            <td class="p-3.5 text-slate-700">Das Standard-Referenzwerk für Java im deutschsprachigen Raum. Erklärt Konzepte wie Bezeichner, Modulo und Kontrollstrukturen (if-else) im Detail.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">Skript FU-Hagen</td>
+                            <td class="p-3.5 text-slate-700">Java – Konzepte, Techniken, Programmierung</td>
+                            <td class="p-3.5 text-slate-700">Akademisches Basismaterial für ein tiefergehendes Verständnis der Syntax, Sprachelemente (Kapitel 2) und der Altersumrechnung.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Online-Tutorials</td>
+                            <td class="p-3.5 text-slate-700">Java Tutorial (Text &amp; YouTube)</td>
+                            <td class="p-3.5 text-slate-700">Hervorragende Ressource zur visuellen Erklärung von <code>if-else</code>-Verschachtelungen bei komplexen Abfragen wie Schaltjahren.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-200">
+        <p class="font-semibold text-slate-700">Ausarbeitung zum IHK-Lernauftrag 05 (Modul: Programmierung) • Fachinformatiker/-in Anwendungsentwicklung</p>
+        <p class="mt-1">Thema: Aufbau von Java Programmen • Optimiert für Bildschirmansicht und vollständigen A4-Druck (Strg+P / 🖨️ Button oben).</p>
+    </footer>
+
+    
+    <!-- ==================== JAVASCRIPT GLOBAL GLOSSAR ==================== -->
+    <script src="../assets/js/glossarData.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glossaryGrid = document.getElementById('glossaryGrid');
+            if (!glossaryGrid) return;
+            
+            // Initiales Rendern aller Begriffe
+            renderGlossary('');
+            
+            // Event Listener für die Suche
+            const searchInput = document.getElementById('glossarySearch');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    renderGlossary(e.target.value);
+                });
+            }
+        });
+
+        function renderGlossary(filterText) {
+            const grid = document.getElementById('glossaryGrid');
+            grid.innerHTML = ''; // Leeren
+            
+            const query = filterText.toLowerCase().trim();
+            
+            const filtered = globalesGlossar.filter(item => {
+                return item.titel.toLowerCase().includes(query) || 
+                       item.beschreibung.toLowerCase().includes(query);
+            });
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500">Keine passenden Begriffe gefunden.</div>';
+                return;
+            }
+            
+            filtered.forEach(item => {
+                // Farb-Mapping für die Badges
+                let badgeClass = "bg-slate-100 text-slate-700";
+                if(item.farbe === 'sky') badgeClass = "bg-sky-100 text-sky-800";
+                if(item.farbe === 'linux') badgeClass = "bg-linux-100 text-linux-800";
+                if(item.farbe === 'java') badgeClass = "bg-java-100 text-java-800";
+                
+                const cardHTML = `
+                    <div class="glossary-card rounded-xl border border-slate-200 p-4 bg-slate-50/60 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <h4 class="font-extrabold text-ihk-900 leading-tight">${item.titel}</h4>
+                        </div>
+                        <p class="text-slate-700 text-xs sm:text-sm flex-1">${item.beschreibung}</p>
+                        <div class="mt-3 pt-3 border-t border-slate-200">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                                ${item.modul}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IHK-Wiki | Java Grundlagen (LA_06_1)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        ihk: { 50: '#f0f7ff', 100: '#e0effe', 200: '#bae0fd', 500: '#0284c7', 600: '#0369a1', 700: '#075985', 800: '#0c4a6e', 900: '#0f294a' },
+                        java: { 50: '#fff7ed', 100: '#ffedd5', 200: '#fed7aa', 300: '#fdba74', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 800: '#9a3412', 900: '#7c2d12' }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-java-600 selection:text-white">
+
+    <!-- ==================== WIKI-NAVIGATION (TOP BAR) ==================== -->
+    <div class="bg-slate-950 text-slate-400 text-xs py-2 px-4 sm:px-6 lg:px-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-slate-800 no-print">
+        <a href="../index.html" class="font-bold text-java-400 hover:text-white transition flex items-center gap-1">🏠 Dashboard</a>
+        <span class="text-slate-600">|</span>
+        <span class="font-bold text-java-400">Programmierung:</span>
+        <a href="java_04_eclipse_ide.html" class="hover:text-white transition">LA 04</a>
+        <a href="java_05_aufbau.html" class="hover:text-white transition">LA 05</a>
+        <a href="java_06_grundlagen.html" class="hover:text-white transition text-white font-medium">LA 06_1</a>
+        <a href="java_06_2_aufgaben.html" class="hover:text-white transition">LA 06_2</a>
+        <a href="java_07_kontrollstrukturen.html" class="hover:text-white transition">LA 07</a>
+    </div>
+
+    <!-- ==================== STICKY TOP NAVIGATION ==================== -->
+    <header class="no-print sticky top-0 z-50 bg-ihk-900/95 backdrop-blur-md text-white border-b border-java-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap xl:flex-nowrap items-center justify-between py-3 gap-4">
+
+                <!-- Branding -->
+                <div class="flex items-center gap-3 shrink-0">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-java-400 to-red-600 flex items-center justify-center font-extrabold text-lg shadow-inner font-mono">
+                        { }
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-java-500/20 text-java-300 border border-java-400/30">Modul: Programmierung</span>
+                            <span class="text-xs text-slate-300 hidden sm:inline">Lernauftrag 06 (LA_06_1)</span>
+                        </div>
+                        <p class="font-bold text-sm sm:text-base text-white leading-tight">Java Variablen, Datentypen &amp; Operatoren</p>
+                    </div>
+                </div>
+
+                <!-- Quick Jump Links -->
+                <nav class="hidden xl:flex flex-1 justify-center items-center gap-1 text-xs font-medium whitespace-nowrap">
+                    <a href="#typisierung-datentypen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">1. Datentypen</a>
+                    <a href="#variablen-casting" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">2. Variablen &amp; Casting</a>
+                    <a href="#operatoren" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">3. Operatoren</a>
+                    <a href="#normen-standards" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-amber-300">Standards</a>
+                    <a href="#glossar" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition text-emerald-300">Glossar</a>
+                    <a href="#quellen" class="px-2.5 py-1.5 rounded-md hover:bg-white/10 transition">Quellen</a>
+                </nav>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-java-500 hover:bg-java-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow-md cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2m-12 0h12v4H6v-4z" />
+                        </svg>
+                        <span>🖨️ Als PDF drucken / speichern</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile / Tablet Sub-Navbar -->
+            <div class="flex xl:hidden overflow-x-auto py-2 gap-1.5 border-t border-slate-700/80 text-xs font-medium">
+                <a href="#typisierung-datentypen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">1. Datentypen</a>
+                <a href="#variablen-casting" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">2. Variablen &amp; Casting</a>
+                <a href="#operatoren" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">3. Operatoren</a>
+                <a href="#normen-standards" class="shrink-0 px-2.5 py-1 rounded bg-amber-900/60 text-amber-200">Standards</a>
+                <a href="#glossar" class="shrink-0 px-2.5 py-1 rounded bg-emerald-900/60 text-emerald-200">Glossar</a>
+                <a href="#quellen" class="shrink-0 px-2.5 py-1 rounded bg-slate-800 text-slate-200">Quellen</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 w-full">
+
+        <!-- HERO / DOKUMENTKOPF -->
+        <section class="bg-ihk-900 text-white rounded-2xl p-6 sm:p-10 shadow-xl border-l-8 border-java-500 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wider text-java-300 mb-3">
+                <span>IT-Berufe • Ausbildung zum Fachinformatiker Anwendungsentwicklung</span>
+                <span>Lernauftrag 06: Java-Programmierung</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                Grundlagen der Programmiersprache Java: Variablen, Datentypen &amp; Operatoren
+            </h1>
+            <p class="text-slate-200 leading-relaxed mb-6">
+                Variablen sind das Kurzzeitgedächtnis unseres Programms. In diesem Lernauftrag tauchen wir tief in das Speichermanagement von Java ein. Wir lernen, wie man Speicherplätze (Variablen) reserviert, warum Java so streng bei Datentypen ist (statische Typisierung) und wie man mit Operatoren Daten manipuliert.
+            </p>
+
+            <!-- Info-Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-700/80 text-xs sm:text-sm">
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-java-300 block mb-1">📦 Die 8 primitiven Datentypen</span>
+                    Von <code>byte</code> (8 Bit) bis <code>double</code> (64 Bit): Alle elementaren Datentypen aus Kapitel 2.2 &amp; 2.3 übersichtlich erklärt.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-emerald-300 block mb-1">🔄 Type Casting verstehen</span>
+                    Anschauliche Erklärung der impliziten und expliziten Typumwandlung inklusive Anwendung des Cast-Operators.
+                </div>
+                <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                    <span class="font-bold text-amber-300 block mb-1">🧮 Alle Operatoren &amp; Kurz-If</span>
+                    Arithmetische, relationale, logische/bitweise und Zuweisungsoperatoren sowie Modulo (<code>%</code>) und Ternärer Operator (<code>? :</code>).
+                </div>
+            </div>
+        </section>
+
+        <!-- Bildbrecher (Visualisierung von Code) -->
+        <div class="rounded-2xl overflow-hidden shadow-sm border border-slate-200">
+            <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=1200&h=300&q=80" alt="Code Matrix" class="w-full h-48 object-cover">
+        </div>
+
+        <!-- =====================================================================
+         SEKTION 1: TYPISIERUNG & DIE 8 ELEMENTAREN DATENTYPEN (FRAGEN 1 & 2)
+         ===================================================================== -->
+        <section id="typisierung-datentypen" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Kapitel 2.2 &amp; 2.3 (Fragen 1 &amp; 2)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">1. Typisierung &amp; die 8 elementaren Datentypen in Java</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Speicher &amp; Typen</span>
+            </div>
+
+            <!-- Frage 1: Statische vs. dynamische Typisierung -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-100 text-java-800 flex items-center justify-center text-sm">F1</span>
+                    Was bedeutet statische und dynamische Typisierung in Bezug auf Programmiersprachen?
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    Programmiersprachen unterscheiden sich grundlegend darin, <strong>wann und wie streng</strong> geprüft wird, welchen Datentyp eine Variable besitzt:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Statisch -->
+                    <div class="rounded-xl border border-java-200 bg-java-50/40 border-t-4 border-t-java-500 p-5 space-y-3">
+                        <strong class="text-java-900 text-base block">🛡️ Statische Typisierung (z. B. Java, C#, C++)</strong>
+                        <p class="text-slate-700 text-sm leading-relaxed">
+                            Bei statisch typisierten Sprachen muss der Programmierer beim Anlegen jeder Variablen <strong>vorab festlegen, welchen Datentyp sie hat</strong>. Eine Variable ist wie eine fest beschriftete Aufbewahrungsbox: Steht außen <code>int</code> (Ganzzahl) drauf, passt dort während der gesamten Programmlaufzeit niemals ein Text (<code>String</code>) hinein.
+                        </p>
+                        <ul class="list-disc pl-5 text-xs sm:text-sm text-slate-700 space-y-1">
+                            <li><strong>Zeitpunkt der Prüfung:</strong> Bereits zur <em>Kompilierzeit</em> (bevor das Programm überhaupt startet).</li>
+                            <li><strong>Vorteil:</strong> Sehr hohe Typsicherheit, bessere Performance und Eclipse zeigt Tipp- oder Denkfehler sofort rot unterstrichen an.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dynamisch -->
+                    <div class="rounded-xl border border-sky-200 bg-sky-50/40 border-t-4 border-t-sky-500 p-5 space-y-3">
+                        <strong class="text-sky-900 text-base block">🌊 Dynamische Typisierung (z. B. Python, JavaScript, Ruby)</strong>
+                        <p class="text-slate-700 text-sm leading-relaxed">
+                            Bei dynamisch typisierten Sprachen wird beim Erstellen einer Variablen <strong>kein Datentyp angegeben</strong>. Die Variable ist lediglich ein flexibles Namensschild (Referenz), das auf einen beliebigen Wert im Speicher zeigt. Sie kann in Zeile 1 eine Ganzzahl speichern und in Zeile 2 plötzlich einen Text.
+                        </p>
+                        <ul class="list-disc pl-5 text-xs sm:text-sm text-slate-700 space-y-1">
+                            <li><strong>Zeitpunkt der Prüfung:</strong> Erst zur <em>Laufzeit</em> (während das Programm bereits beim Nutzer läuft).</li>
+                            <li><strong>Vor-/Nachteil:</strong> Sehr schnelles Schreiben von kurzen Skripten, aber Typfehler führen oft erst mitten im Betrieb zum Programmabsturz.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Code-Gegenüberstellung -->
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg mt-4">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>Vergleich: Statisch (Java) vs. Dynamisch (Python)</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Code-Vergleich</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-slate-500">// 1. JAVA (Statisch typisiert): Der Typ 'int' ist für immer fest an 'anzahl' gebunden</span>
+<span class="text-purple-400">int</span> anzahl = <span class="text-sky-300">42</span>;
+anzahl = <span class="text-emerald-300">"Zweiundvierzig"</span>; <span class="text-rose-400">// ❌ COMPILER-FEHLER: Type mismatch: cannot convert from String to int</span>
+
+<span class="text-slate-500"># 2. PYTHON (Dynamisch typisiert): Die Variable wechselt ihren Typ zur Laufzeit problemlos</span>
+anzahl = <span class="text-sky-300">42</span>                <span class="text-slate-400"># Aktueller Typ im Hintergrund: int</span>
+anzahl = <span class="text-emerald-300">"Zweiundvierzig"</span>  <span class="text-slate-400"># ✅ Erlaubt! Aktueller Typ ist jetzt: str</span></code></pre>
+                </div>
+            </div>
+
+            <!-- NEU: Meme zur Auflockerung (Statisch vs. Dynamisch) -->
+            <div class="mt-6 rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-slate-50 p-4 avoid-break">
+                <div class="flex justify-center items-center w-full overflow-hidden rounded-lg">
+                    <img src="../assets/bilder/0_Ip60GFllWH7PcHy7.jpg"
+                         alt="Meme: Programmers talking about their favorite languages"
+                         class="w-full max-w-lg h-auto object-contain rounded shadow-sm border border-slate-300">
+                </div>
+                <p class="text-[11px] text-center text-slate-500 mt-3 font-medium italic">
+                    Der ewige Kampf der Programmiersprachen: Java vs. Python &amp; Co. – wer gewinnt bei dir? 😂
+                </p>
+            </div>
+            <!-- Ende NEU -->
+            <!-- Frage 2: Die 8 elementaren (primitiven) Datentypen -->
+            <div class="space-y-4 avoid-break mt-8">
+                <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-100 text-java-800 flex items-center justify-center text-sm">F2</span>
+                    Welche 8 elementaren (primitiven) Datentypen gibt es in Java?
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    Java besitzt exakt <strong>8 primitive (elementare) Datentypen</strong>. Sie heißen „primitiv“, weil sie keine komplexen Objekte sind, sondern ihren Wert direkt als rohe Bits im Arbeitsspeicher (Stack) ablegen. Man erkennt sie sofort daran, dass ihre Namen <strong>komplett kleingeschrieben</strong> werden. Sie teilen sich in vier Gruppen auf:
+                </p>
+
+                <!-- SVG Übersicht der 8 primitiven Datentypen -->
+                <figure class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <svg role="img" viewBox="0 0 800 165" class="w-full h-auto block">
+                        <title>Übersicht der 8 primitiven Datentypen nach Speichergröße</title>
+                        <rect x="10" y="8" width="780" height="26" rx="5" fill="#0f294a" />
+                        <text x="400" y="25" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">DIE 8 PRIMITIVEN DATENTYPEN IN JAVA (GRUPPIERT NACH EINSATZGEBIET &amp; BIT-BREITE)</text>
+
+                        <!-- Gruppe 1: Ganzzahlen -->
+                        <rect x="10" y="42" width="375" height="114" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5" />
+                        <text x="197" y="60" font-size="10.5" font-weight="bold" fill="#9a3412" text-anchor="middle">1. Ganze Zahlen (Integer-Typen)</text>
+                        <rect x="22" y="70" width="80" height="74" rx="4" fill="#ffffff" stroke="#fdba74" />
+                        <text x="62" y="92" font-size="12" font-weight="bold" font-family="monospace" fill="#ea580c" text-anchor="middle">byte</text>
+                        <text x="62" y="110" font-size="9" fill="#334155" text-anchor="middle">8 Bit (1 B)</text>
+                        <text x="62" y="126" font-size="8" fill="#64748b" text-anchor="middle">-128..127</text>
+
+                        <rect x="112" y="70" width="80" height="74" rx="4" fill="#ffffff" stroke="#fdba74" />
+                        <text x="152" y="92" font-size="12" font-weight="bold" font-family="monospace" fill="#ea580c" text-anchor="middle">short</text>
+                        <text x="152" y="110" font-size="9" fill="#334155" text-anchor="middle">16 Bit (2 B)</text>
+                        <text x="152" y="126" font-size="8" fill="#64748b" text-anchor="middle">±32.767</text>
+
+                        <rect x="202" y="70" width="80" height="74" rx="4" fill="#ffedd5" stroke="#ea580c" stroke-width="2" />
+                        <text x="242" y="92" font-size="12" font-weight="bold" font-family="monospace" fill="#9a3412" text-anchor="middle">int ★</text>
+                        <text x="242" y="110" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle">32 Bit (4 B)</text>
+                        <text x="242" y="126" font-size="8" fill="#64748b" text-anchor="middle">±2,14 Mrd.</text>
+
+                        <rect x="292" y="70" width="80" height="74" rx="4" fill="#ffffff" stroke="#fdba74" />
+                        <text x="332" y="92" font-size="12" font-weight="bold" font-family="monospace" fill="#ea580c" text-anchor="middle">long</text>
+                        <text x="332" y="110" font-size="9" fill="#334155" text-anchor="middle">64 Bit (8 B)</text>
+                        <text x="332" y="126" font-size="8" fill="#64748b" text-anchor="middle">±9 Trill.</text>
+
+                        <!-- Gruppe 2: Gleitkomma -->
+                        <rect x="395" y="42" width="190" height="114" rx="6" fill="#eff6ff" stroke="#0284c7" stroke-width="1.5" />
+                        <text x="490" y="60" font-size="10.5" font-weight="bold" fill="#075985" text-anchor="middle">2. Kommazahlen (Floating)</text>
+                        <rect x="407" y="70" width="80" height="74" rx="4" fill="#ffffff" stroke="#93c5fd" />
+                        <text x="447" y="92" font-size="12" font-weight="bold" font-family="monospace" fill="#0284c7" text-anchor="middle">float</text>
+                        <text x="447" y="110" font-size="9" fill="#334155" text-anchor="middle">32 Bit (4 B)</text>
+                        <text x="447" y="126" font-size="8" fill="#64748b" text-anchor="middle">~7 Stellen</text>
+
+                        <rect x="495" y="70" width="80" height="74" rx="4" fill="#e0f2fe" stroke="#0284c7" stroke-width="2" />
+                        <text x="535" y="92" font-size="12" font-weight="bold" font-family="monospace" fill="#075985" text-anchor="middle">double ★</text>
+                        <text x="535" y="110" font-size="9" font-weight="bold" fill="#334155" text-anchor="middle">64 Bit (8 B)</text>
+                        <text x="535" y="126" font-size="8" fill="#64748b" text-anchor="middle">~15 Stellen</text>
+
+                        <!-- Gruppe 3 & 4: Zeichen & Wahrheitswert -->
+                        <rect x="595" y="42" width="195" height="114" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="1.5" />
+                        <text x="692" y="60" font-size="10.5" font-weight="bold" fill="#065f46" text-anchor="middle">3. Zeichen &amp; 4. Logik</text>
+                        <rect x="607" y="70" width="80" height="74" rx="4" fill="#ffffff" stroke="#6ee7b7" />
+                        <text x="647" y="92" font-size="12" font-weight="bold" font-family="monospace" fill="#059669" text-anchor="middle">char</text>
+                        <text x="647" y="110" font-size="9" fill="#334155" text-anchor="middle">16 Bit (2 B)</text>
+                        <text x="647" y="126" font-size="8" fill="#64748b" text-anchor="middle">Unicode 'A'</text>
+
+                        <rect x="697" y="70" width="82" height="74" rx="4" fill="#ffffff" stroke="#6ee7b7" />
+                        <text x="738" y="92" font-size="12" font-weight="bold" font-family="monospace" fill="#059669" text-anchor="middle">boolean</text>
+                        <text x="738" y="110" font-size="9" fill="#334155" text-anchor="middle">1 Bit logisch</text>
+                        <text x="738" y="126" font-size="8" fill="#64748b" text-anchor="middle">true / false</text>
+                    </svg>
+                    <figcaption class="text-xs text-slate-500 text-center mt-2">
+                        <strong>Abb. 1: Die 8 primitiven Datentypen</strong> – Die mit ★ markierten Typen (<code>int</code> und <code>double</code>) sind die Standardtypen für Zahlen in Java.
+                    </figcaption>
+                </figure>
+
+                <!-- Detaillierte Tabelle aller 8 Datentypen -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm mt-4">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3.5 font-bold w-24">Datentyp</th>
+                                <th class="p-3.5 font-bold w-28">Speicherbedarf</th>
+                                <th class="p-3.5 font-bold w-1/4">Wertebereich / Inhalt</th>
+                                <th class="p-3.5 font-bold">Praktische Verwendung &amp; Code-Beispiel</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-bold text-java-700">byte</td>
+                                <td class="p-3.5">8 Bit (1 Byte)</td>
+                                <td class="p-3.5 font-mono text-xs">-128 bis +127</td>
+                                <td class="p-3.5 text-slate-700">Kleinste Ganzzahl. Wird genutzt, um Rohdatenströme (z. B. beim Einlesen von Bilddateien oder Netzwerkpaketen) speichersparend in Arrays zu verarbeiten. Beispiel: <code>byte level = 12;</code></td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-bold text-java-700">short</td>
+                                <td class="p-3.5">16 Bit (2 Byte)</td>
+                                <td class="p-3.5 font-mono text-xs">-32.768 bis +32.767</td>
+                                <td class="p-3.5 text-slate-700">Kleine Ganzzahl. Wurde früher zum Sparen von Arbeitsspeicher genutzt, ist auf modernen 64-Bit-Rechnern im Alltag aber fast vollständig durch <code>int</code> abgelöst. Beispiel: <code>short jahr = 2026;</code></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-bold text-java-700">int</td>
+                                <td class="p-3.5">32 Bit (4 Byte)</td>
+                                <td class="p-3.5 font-mono text-xs">-2.147.483.648 bis +2.147.483.647<br><span class="text-slate-500 font-sans">(ca. ± 2,14 Milliarden)</span></td>
+                                <td class="p-3.5 text-slate-700"><strong>Der Standard-Datentyp für ganze Zahlen.</strong> Wird für Schleifenzähler, Mengen, Punkte, IDs und alltägliche Berechnungen verwendet. Beispiel: <code>int einwohner = 84000000;</code></td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-bold text-java-700">long</td>
+                                <td class="p-3.5">64 Bit (8 Byte)</td>
+                                <td class="p-3.5 font-mono text-xs">± 9,22 Trillionen ($-2^{63}$ bis $2^{63}-1$)</td>
+                                <td class="p-3.5 text-slate-700">Für extrem große Ganzzahlen, die den Rahmen von <code>int</code> sprengen (z. B. Weltbevölkerung, Datenbank-Primärschlüssel oder Zeitstempel in Millisekunden). <strong>Wichtig:</strong> Zahlenwert muss mit einem <code>L</code> am Ende markiert werden: <code>long welt = 8100000000L;</code></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-bold text-sky-700">float</td>
+                                <td class="p-3.5">32 Bit (4 Byte)</td>
+                                <td class="p-3.5">Gleitkommazahl (einfache Genauigkeit, ca. 6–7 signifikante Stellen)</td>
+                                <td class="p-3.5 text-slate-700">Für Kommazahlen mit geringeren Genauigkeitsansprüchen (z. B. 3D-Koordinaten in Game-Engines). <strong>Wichtig:</strong> Muss zwingend ein <code>f</code> am Ende tragen: <code>float xPos = 14.5f;</code></td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-bold text-sky-700">double</td>
+                                <td class="p-3.5">64 Bit (8 Byte)</td>
+                                <td class="p-3.5">Gleitkommazahl (doppelte Genauigkeit, ca. 15 signifikante Stellen)</td>
+                                <td class="p-3.5 text-slate-700"><strong>Der Standard-Datentyp für Kommazahlen in Java.</strong> Jede Dezimalzahl mit Punkt (wie <code>3.14</code>) wird von Java automatisch als <code>double</code> behandelt. Beispiel: <code>double preis = 19.99;</code></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-bold text-emerald-700">char</td>
+                                <td class="p-3.5">16 Bit (2 Byte)</td>
+                                <td class="p-3.5">0 bis 65.535 (1 einzelnes Unicode-/UTF-16-Zeichen)</td>
+                                <td class="p-3.5 text-slate-700">Speichert exakt <strong>ein einzelnes Schriftzeichen</strong> (Buchstabe, Ziffer, Sonderzeichen). Steht immer in <em>einfachen</em> Hochkommata: <code>char note = 'A';</code></td>
+                            </tr>
+                            <tr class="bg-slate-50">
+                                <td class="p-3.5 font-mono font-bold text-emerald-700">boolean</td>
+                                <td class="p-3.5">1 Bit (logisch)<br><span class="text-xs text-slate-500">(intern meist 1 Byte)</span></td>
+                                <td class="p-3.5 font-mono text-xs">true oder false</td>
+                                <td class="p-3.5 text-slate-700">Speichert einen logischen Wahrheitswert (Ja/Nein). Unverzichtbar für <code>if</code>-Verzweigungen und <code>while</code>-Schleifen. Beispiel: <code>boolean istEingeloggt = true;</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Wichtige Prüfungsfalle: String ist KEIN primitiver Datentyp -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
+                    <strong class="text-amber-900 block mb-1 text-sm">⚠️ Beliebte IHK-Prüfungsfalle: Warum fehlt <code>String</code> in dieser Liste?</strong>
+                    <p class="text-xs sm:text-sm text-slate-700">
+                        <code>String</code> (für ganze Texte wie <code>"Hallo Welt"</code>) wird mit einem <strong>Großbuchstaben</strong> geschrieben und ist <strong>kein primitiver Datentyp</strong>, sondern eine komplexe <strong>Klasse (Referenztyp)</strong>! Ein String besteht intern aus einer Kette vieler einzelner <code>char</code>-Werte und bringt eigene Methoden (wie <code>.length()</code> oder <code>.toUpperCase()</code>) mit.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         SEKTION 2: DEKLARATION, INITIALISIERUNG & TYPE CASTING (FRAGEN 3 & 4)
+         ===================================================================== -->
+        <section id="variablen-casting" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgabenblock (Fragen 3 &amp; 4)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">2. Variablen-Lebenszyklus &amp; Typumwandlung (Casting)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-ihk-900 text-white text-xs font-bold">Variablen &amp; Casts</span>
+            </div>
+
+            <!-- Frage 3: Deklaration vs. Initialisierung -->
+            <div class="space-y-4 avoid-break">
+                <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F3</span>
+                    Was bedeutet Deklaration von Variablen und Initialisieren von Variablen?
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    Bevor du mit einer Variablen rechnen oder sie ausgeben kannst, durchläuft sie im Quellcode zwei Schritte (die man getrennt oder in einer einzigen Zeile kombiniert schreiben kann):
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="rounded-xl border border-slate-200 p-5 bg-slate-50">
+                        <strong class="text-ihk-900 text-base block mb-1.5">1. Deklaration (Bekanntmachung)</strong>
+                        <p class="text-sm text-slate-700 leading-relaxed mb-3">
+                            Bei der Deklaration teilst du dem Java-Compiler mit, dass eine neue Variable existieren soll. Du legst ihren <strong>Datentyp</strong> und ihren <strong>Bezeichner (Namen)</strong> fest. Der Computer reserviert daraufhin genau die passende Menge Platz im Arbeitsspeicher (bei <code>int</code> z. B. 32 Bit).
+                        </p>
+                        <code class="block bg-slate-900 text-slate-100 p-2.5 rounded-lg font-mono text-xs">int punktestand; // Nur deklariert (noch ohne Wert)</code>
+                    </div>
+
+                    <div class="rounded-xl border border-slate-200 p-5 bg-slate-50">
+                        <strong class="text-ihk-900 text-base block mb-1.5">2. Initialisierung (Erstbelegung)</strong>
+                        <p class="text-sm text-slate-700 leading-relaxed mb-3">
+                            Unter der Initialisierung versteht man das <strong>allererste Zuweisen eines konkreten Startwertes</strong> an eine deklarierte Variable mithilfe des Zuweisungsoperator (<code>=</code>). In Java dürfen lokale Variablen erst gelesen werden, nachdem sie initialisiert wurden!
+                        </p>
+                        <code class="block bg-slate-900 text-slate-100 p-2.5 rounded-lg font-mono text-xs">punktestand = 100; // Initialisierung<br>int leben = 3; &nbsp;&nbsp;&nbsp;&nbsp;// Deklaration + Initialisierung kombiniert!</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frage 4: Implizite und explizite Typumwandlung (Casting) -->
+            <div class="space-y-4 avoid-break mt-8">
+                <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F4</span>
+                    Implizite &amp; explizite Typumwandlung – Wie wird der Cast-Operator angewendet?
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    In der Praxis muss man häufig Werte eines Datentyps in einen anderen Datentyp überführen (z. B. wenn man eine Ganzzahl mit einer Kommazahl verrechnet oder eine Kommazahl auf einen glatten Pixelwert kürzen will). Diesen Vorgang nennt man <strong>Type Casting (Typumwandlung)</strong>.
+                </p>
+
+                <!-- SVG Schaubild Widening vs Narrowing -->
+                <figure class="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-4">
+                    <svg role="img" viewBox="0 0 800 130" class="w-full h-auto block">
+                        <title>Implizite (Widening) vs. Explizite (Narrowing) Typumwandlung in Java</title>
+                        <!-- Implizit Richtung -->
+                        <text x="20" y="24" font-size="10.5" font-weight="bold" fill="#047857">✅ IMPLIZITE UMWANDLUNG (Widening Cast): Automatisch von klein nach groß (kein Informationsverlust)</text>
+
+                        <rect x="20" y="38" width="85" height="36" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="2" />
+                        <text x="62" y="60" font-size="12" font-weight="bold" font-family="monospace" fill="#065f46" text-anchor="middle">byte (8)</text>
+                        <line x1="105" y1="56" x2="135" y2="56" stroke="#059669" stroke-width="2.5" />
+                        <polygon points="135,51 145,56 135,61" fill="#059669" />
+
+                        <rect x="147" y="38" width="90" height="36" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="2" />
+                        <text x="192" y="60" font-size="12" font-weight="bold" font-family="monospace" fill="#065f46" text-anchor="middle">short (16)</text>
+                        <line x1="237" y1="56" x2="267" y2="56" stroke="#059669" stroke-width="2.5" />
+                        <polygon points="267,51 277,56 267,61" fill="#059669" />
+
+                        <rect x="279" y="38" width="90" height="36" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="2" />
+                        <text x="324" y="60" font-size="12" font-weight="bold" font-family="monospace" fill="#065f46" text-anchor="middle">int (32)</text>
+                        <line x1="369" y1="56" x2="399" y2="56" stroke="#059669" stroke-width="2.5" />
+                        <polygon points="399,51 409,56 399,61" fill="#059669" />
+
+                        <rect x="411" y="38" width="90" height="36" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="2" />
+                        <text x="456" y="60" font-size="12" font-weight="bold" font-family="monospace" fill="#065f46" text-anchor="middle">long (64)</text>
+                        <line x1="501" y1="56" x2="531" y2="56" stroke="#059669" stroke-width="2.5" />
+                        <polygon points="531,51 541,56 531,61" fill="#059669" />
+
+                        <rect x="543" y="38" width="95" height="36" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="2" />
+                        <text x="590" y="60" font-size="12" font-weight="bold" font-family="monospace" fill="#065f46" text-anchor="middle">float (32)</text>
+                        <line x1="638" y1="56" x2="668" y2="56" stroke="#059669" stroke-width="2.5" />
+                        <polygon points="668,51 678,56 668,61" fill="#059669" />
+
+                        <rect x="680" y="38" width="100" height="36" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="2" />
+                        <text x="730" y="60" font-size="12" font-weight="bold" font-family="monospace" fill="#065f46" text-anchor="middle">double (64)</text>
+
+                        <!-- Explizit Gegenrichtung -->
+                        <line x1="750" y1="95" x2="50" y2="95" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="6,4" />
+                        <polygon points="50,90 38,95 50,100" fill="#dc2626" />
+                        <text x="400" y="116" font-size="10.5" font-weight="bold" fill="#991b1b" text-anchor="middle">✂️ EXPLIZITE UMWANDLUNG (Narrowing Cast): Von groß nach klein nur mit Cast-Operator (Zieltyp) – Datenverlust möglich!</text>
+                    </svg>
+                    <figcaption class="text-xs text-slate-500 text-center mt-1">
+                        <strong>Abb. 2: Die Typ-Hierarchie beim Casting</strong> – Nach rechts wandelt Java automatisch um; nach links musst du den Cast-Operator <code>(typ)</code> nutzen.
+                    </figcaption>
+                </figure>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
+                    <div class="rounded-xl bg-emerald-50/60 border border-emerald-200 p-5">
+                        <strong class="text-emerald-900 block mb-1.5">📥 1. Implizite Typumwandlung (Automatisch)</strong>
+                        <p class="text-sm text-slate-700 leading-relaxed">
+                            Speicherst du einen Wert aus einem „kleineren“ Datentyp (z. B. <code>int</code>) in einer Variablen eines „größeren“ Datentyps (z. B. <code>double</code>), übernimmt Java die Umwandlung <strong>vollautomatisch im Hintergrund</strong>. Da eine 32-Bit-Ganzzahl problemlos in einen 64-Bit-Gleitkommaspeicher passt, geht keinerlei Information verloren (aus <code>42</code> wird einfach <code>42.0</code>).
+                        </p>
+                    </div>
+                    <div class="rounded-xl bg-rose-50/60 border border-rose-200 p-5">
+                        <strong class="text-rose-900 block mb-1.5">✂️ 2. Explizite Typumwandlung (Mit Cast-Operator)</strong>
+                        <p class="text-sm text-slate-700 leading-relaxed">
+                            Willst du einen „größeren“ Datentyp (z. B. <code>double</code>) in einen „kleineren“ Typ (z. B. <code>int</code>) pressen, weigert sich der Compiler zunächst, weil Nachkommastellen verloren gehen. Du musst die Umwandlung ausdrücklich befehlen, indem du den gewünschten Zieltyp in <strong>runden Klammern</strong> vor den Wert schreibst: <code>(int) meinDouble</code>. <strong>Wichtig:</strong> Dabei wird nicht kaufmännisch gerundet, sondern alles hinter dem Komma radikal abgeschnitten!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Code-Block zum Type Casting -->
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg mt-4">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>TypumwandlungBeispiel.java</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Java</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-slate-500">// A) IMPLIZITE TYPUMWANDLUNG (int -> double): Funktioniert automatisch</span>
+<span class="text-purple-400">int</span> glatteZahl = <span class="text-sky-300">25</span>;
+<span class="text-purple-400">double</span> kommaZahl = glatteZahl; <span class="text-slate-400">// Java macht daraus automatisch 25.0</span>
+
+<span class="text-slate-500">// B) EXPLIZITE TYPUMWANDLUNG (double -> int): Erfordert den Cast-Operator (int)</span>
+<span class="text-purple-400">double</span> nettoPreis = <span class="text-sky-300">19.95</span>;
+<span class="text-purple-400">int</span> glatterEuro = (<span class="text-purple-400">int</span>) nettoPreis; <span class="text-slate-400">// Cast-Operator (int) schneidet .95 ab -> Ergebnis: 19</span>
+
+System.out.println(<span class="text-emerald-300">"Nach dem Cast: "</span> + glatterEuro); <span class="text-slate-400">// Gibt 19 aus!</span></code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         SEKTION 3: OPERATOREN IN JAVA (FRAGEN 5, 6 & 7)
+         ===================================================================== -->
+        <section id="operatoren" class="print-page-start bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-600">Aufgabenblock (Fragen 5, 6 &amp; 7)</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">3. Operatoren in Java (Arithmetisch, Relational, Logisch, Ternär)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-java-600 text-white text-xs font-bold">Berechnung &amp; Logik</span>
+            </div>
+
+            <!-- Frage 5: Die 4 Operatoren-Gruppen (Einzeln aufgeschlüsselt) -->
+            <div class="space-y-6">
+                <h3 class="text-base font-extrabold text-ihk-900 mb-2 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-slate-200 flex items-center justify-center text-sm">F5</span>
+                    Detaillierte Übersicht aller Operatoren-Familien in Java
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    <strong>Operatoren</strong> sind spezielle Symbole in Java, die einen, zwei oder drei Werte (sogenannte <em>Operanden</em>) verarbeiten und daraus ein neues Ergebnis berechnen. Je nachdem, wie viele Operanden ein Operator benötigt, spricht man von <strong>unären</strong> (1 Operand, z. B. <code>!aktiv</code> oder <code>i++</code>), <strong>binären</strong> (2 Operanden, z. B. <code>a + b</code>) oder <strong>ternären</strong> Operatoren (3 Operanden, <code>? :</code>). In der folgenden Tabelle ist jeder einzelne Operator detailliert aufgeschlüsselt:
+                </p>
+
+                <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-ihk-900 text-white">
+                                <th class="p-3.5 font-bold w-24 text-center">Operator</th>
+                                <th class="p-3.5 font-bold w-1/4">Bezeichnung</th>
+                                <th class="p-3.5 font-bold">Genaue Funktionsweise &amp; Besonderheiten</th>
+                                <th class="p-3.5 font-bold w-1/4">Code-Beispiel &amp; Ergebnis</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+
+                            <!-- KATEGORIE 1: ARITHMETISCHE OPERATOREN -->
+                            <tr class="bg-java-50/80 border-t-2 border-java-300">
+                                <td colspan="4" class="p-2.5 px-3.5 font-extrabold text-java-900 uppercase tracking-wider text-xs">
+                                    🧮 1. Arithmetische Operatoren (Mathematische Berechnungen)
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-java-700 text-center">+</td>
+                                <td class="p-3.5 font-bold text-slate-900">Addition<br><span class="text-xs font-normal text-slate-500">(bzw. String-Verkettung)</span></td>
+                                <td class="p-3.5 text-slate-700">Addiert zwei Zahlenwerte. <strong>Besonderheit:</strong> Ist mindestens einer der Operanden ein Text (<code>String</code>), klebt das <code>+</code> beide Teile zu einem neuen Text zusammen (<em>Konkatenation</em>).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>10 + 5</code> &rarr; <strong>15</strong><br><code>"Hi " + 5</code> &rarr; <strong>"Hi 5"</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-java-700 text-center">-</td>
+                                <td class="p-3.5 font-bold text-slate-900">Subtraktion<br><span class="text-xs font-normal text-slate-500">(bzw. negatives Vorzeichen)</span></td>
+                                <td class="p-3.5 text-slate-700">Zieht den rechten Operanden vom linken Operanden ab. Steht das Minus allein vor einer Zahl (z. B. <code>-x</code>), dreht es deren Vorzeichen um.</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>20 - 8</code> &rarr; <strong>12</strong><br><code>5 - 10</code> &rarr; <strong>-5</strong></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-java-700 text-center">*</td>
+                                <td class="p-3.5 font-bold text-slate-900">Multiplikation</td>
+                                <td class="p-3.5 text-slate-700">Multipliziert zwei Zahlen miteinander. Es gilt wie in der Mathematik die Punkt-vor-Strich-Rechnung (<code>*</code> bindet stärker als <code>+</code> und <code>-</code>).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>6 * 7</code> &rarr; <strong>42</strong><br><code>2.5 * 4</code> &rarr; <strong>10.0</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-java-700 text-center">/</td>
+                                <td class="p-3.5 font-bold text-slate-900">Division</td>
+                                <td class="p-3.5 text-slate-700">Teilt den linken Wert durch den rechten. <strong>⚠️ Wichtig:</strong> Sind beide Zahlen Ganzzahlen (z. B. <code>int</code>), führt Java eine <em>Ganzzahldivision</em> durch und schneidet Nachkommastellen ab!</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>7 / 2</code> &rarr; <strong>3</strong> (int!)<br><code>7.0 / 2</code> &rarr; <strong>3.5</strong> (double)</td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-java-700 text-center">%</td>
+                                <td class="p-3.5 font-bold text-slate-900">Modulo<br><span class="text-xs font-normal text-slate-500">(Restwert-Division)</span></td>
+                                <td class="p-3.5 text-slate-700">Liefert den <strong>Rest</strong>, der bei einer ganzzahligen Division übrig bleibt (siehe ausführliche Erklärung in <em>Aufgabe 6</em> unten).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>10 % 3</code> &rarr; <strong>1</strong><br><code>12 % 4</code> &rarr; <strong>0</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-java-700 text-center">++ / --</td>
+                                <td class="p-3.5 font-bold text-slate-900">Inkrement / Dekrement<br><span class="text-xs font-normal text-slate-500">(Ergänzung für Schleifen)</span></td>
+                                <td class="p-3.5 text-slate-700">Erhöht (<code>++</code>) oder verringert (<code>--</code>) den Wert einer Variablen direkt um exakt <code>1</code>. Wird ständig in Zählschleifen genutzt.</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>int i = 5;</code><br><code>i++;</code> &rarr; <code>i</code> ist jetzt <strong>6</strong></td>
+                            </tr>
+
+                            <!-- KATEGORIE 2: RELATIONALE OPERATOREN -->
+                            <tr class="bg-sky-50/90 border-t-2 border-sky-300">
+                                <td colspan="4" class="p-2.5 px-3.5 font-extrabold text-sky-900 uppercase tracking-wider text-xs">
+                                    ⚖️ 2. Relationale Operatoren (Vergleichsoperatoren – liefern immer <code>true</code> oder <code>false</code>)
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-sky-700 text-center">==</td>
+                                <td class="p-3.5 font-bold text-slate-900">Gleichheit<br><span class="text-xs font-normal text-slate-500">(Equal to)</span></td>
+                                <td class="p-3.5 text-slate-700">Prüft, ob zwei primitive Werte exakt gleich sind. <strong>⚠️ Häufigster Anfängerfehler:</strong> Niemals mit dem einfachen <code>=</code> (Zuweisung) verwechseln!</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>5 == 5</code> &rarr; <strong>true</strong><br><code>5 == 8</code> &rarr; <strong>false</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-sky-700 text-center">!=</td>
+                                <td class="p-3.5 font-bold text-slate-900">Ungleichheit<br><span class="text-xs font-normal text-slate-500">(Not equal to)</span></td>
+                                <td class="p-3.5 text-slate-700">Prüft, ob sich zwei Werte voneinander unterscheiden. Liefert <code>true</code>, wenn die Werte <em>nicht</em> identisch sind.</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>5 != 8</code> &rarr; <strong>true</strong><br><code>5 != 5</code> &rarr; <strong>false</strong></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-sky-700 text-center">&gt;</td>
+                                <td class="p-3.5 font-bold text-slate-900">Größer als</td>
+                                <td class="p-3.5 text-slate-700">Prüft, ob der linke Wert echt größer ist als der rechte Wert (sind beide gleich groß, ist das Ergebnis <code>false</code>).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>10 &gt; 3</code> &rarr; <strong>true</strong><br><code>10 &gt; 10</code> &rarr; <strong>false</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-sky-700 text-center">&lt;</td>
+                                <td class="p-3.5 font-bold text-slate-900">Kleiner als</td>
+                                <td class="p-3.5 text-slate-700">Prüft, ob der linke Wert echt kleiner ist als der rechte Wert.</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>3 &lt; 10</code> &rarr; <strong>true</strong><br><code>10 &lt; 3</code> &rarr; <strong>false</strong></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-sky-700 text-center">&gt;=</td>
+                                <td class="p-3.5 font-bold text-slate-900">Größer oder gleich</td>
+                                <td class="p-3.5 text-slate-700">Prüft, ob der linke Wert größer <em>oder</em> zumindest genauso groß wie der rechte Wert ist (Mindestwert-Prüfung, z. B. ab 18 Jahren).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>18 &gt;= 18</code> &rarr; <strong>true</strong><br><code>17 &gt;= 18</code> &rarr; <strong>false</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-sky-700 text-center">&lt;=</td>
+                                <td class="p-3.5 font-bold text-slate-900">Kleiner oder gleich</td>
+                                <td class="p-3.5 text-slate-700">Prüft, ob der linke Wert kleiner <em>oder</em> gleich dem rechten Wert ist (Höchstwert-Prüfung).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>50 &lt;= 50</code> &rarr; <strong>true</strong><br><code>51 &lt;= 50</code> &rarr; <strong>false</strong></td>
+                            </tr>
+
+                            <!-- KATEGORIE 3A: LOGISCHE OPERATOREN -->
+                            <tr class="bg-emerald-50/90 border-t-2 border-emerald-300">
+                                <td colspan="4" class="p-2.5 px-3.5 font-extrabold text-emerald-900 uppercase tracking-wider text-xs">
+                                    🔗 3a. Logische Operatoren (Verknüpfung von <code>boolean</code>-Bedingungen)
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-emerald-700 text-center">&amp;&amp;</td>
+                                <td class="p-3.5 font-bold text-slate-900">Logisches UND<br><span class="text-xs font-normal text-slate-500">(Short-Circuit AND)</span></td>
+                                <td class="p-3.5 text-slate-700">Liefert nur dann <code>true</code>, wenn <strong>beide Bedingungen gleichzeitig wahr</strong> sind. <em>Kurzschluss-Effekt:</em> Ist schon die linke Seite <code>false</code>, bricht Java sofort ab und prüft die rechte Seite gar nicht mehr!</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>true &amp;&amp; true</code> &rarr; <strong>true</strong><br><code>true &amp;&amp; false</code> &rarr; <strong>false</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-emerald-700 text-center">||</td>
+                                <td class="p-3.5 font-bold text-slate-900">Logisches ODER<br><span class="text-xs font-normal text-slate-500">(Short-Circuit OR)</span></td>
+                                <td class="p-3.5 text-slate-700">Liefert <code>true</code>, sobald <strong>mindestens eine der beiden Seiten wahr</strong> ist (oder beide). <em>Kurzschluss-Effekt:</em> Ist bereits die linke Seite <code>true</code>, wird die rechte Seite übersprungen.</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>false || true</code> &rarr; <strong>true</strong><br><code>false || false</code> &rarr; <strong>false</strong></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-emerald-700 text-center">!</td>
+                                <td class="p-3.5 font-bold text-slate-900">Logisches NICHT<br><span class="text-xs font-normal text-slate-500">(Negation / NOT)</span></td>
+                                <td class="p-3.5 text-slate-700">Ein unärer Operator: Er kehrt einen Wahrheitswert genau ins Gegenteil um. Aus <code>true</code> wird <code>false</code> und aus <code>false</code> wird <code>true</code>.</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>!true</code> &rarr; <strong>false</strong><br><code>!(5 &gt; 10)</code> &rarr; <strong>true</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-emerald-700 text-center">^</td>
+                                <td class="p-3.5 font-bold text-slate-900">Exklusives ODER<br><span class="text-xs font-normal text-slate-500">(XOR – „Entweder-Oder“)</span></td>
+                                <td class="p-3.5 text-slate-700">Liefert nur dann <code>true</code>, wenn die beiden Operanden <strong>unterschiedliche</strong> Wahrheitswerte haben (genau einer ist <code>true</code>, der andere <code>false</code>). Sind beide gleich, kommt <code>false</code> heraus!</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>true ^ false</code> &rarr; <strong>true</strong><br><code>true ^ true</code> &rarr; <strong>false</strong></td>
+                            </tr>
+
+                            <!-- KATEGORIE 3B: BITWEISE LOGISCHE OPERATOREN -->
+                            <tr class="bg-purple-50/90 border-t-2 border-purple-300">
+                                <td colspan="4" class="p-2.5 px-3.5 font-extrabold text-purple-900 uppercase tracking-wider text-xs">
+                                    🧬 3b. Bitweise logische Operatoren (<code>&amp;</code> und <code>|</code> einzeln geschrieben)
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-purple-700 text-center">&amp;</td>
+                                <td class="p-3.5 font-bold text-slate-900">Bitweises UND<br><span class="text-xs font-normal text-slate-500">(bzw. logisches UND ohne Kurzschluss)</span></td>
+                                <td class="p-3.5 text-slate-700">
+                                    <strong>1. Bei Booleans:</strong> Prüft wie <code>&amp;&amp;</code>, ob beide Seiten wahr sind, wertet aber <em>immer zwingend beide Seiten</em> aus (kein Abbruch nach links).<br>
+                                    <strong>2. Bei Ganzzahlen:</strong> Vergleicht die Binärdarstellung zweier Zahlen Bit für Bit (nur <code>1 &amp; 1</code> ergibt <code>1</code>).
+                                </td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50">Binär: <code>5 &amp; 3</code><br><code>0101 &amp; 0011</code><br>&rarr; <code>0001</code> (<strong>1</strong>)</td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-purple-700 text-center">|</td>
+                                <td class="p-3.5 font-bold text-slate-900">Bitweises ODER<br><span class="text-xs font-normal text-slate-500">(bzw. logisches ODER ohne Kurzschluss)</span></td>
+                                <td class="p-3.5 text-slate-700">
+                                    <strong>1. Bei Booleans:</strong> Prüft wie <code>||</code>, ob mindestens eine Seite wahr ist, führt aber ebenfalls <em>immer beide Seiten</em> aus.<br>
+                                    <strong>2. Bei Ganzzahlen:</strong> Setzt jedes Bit im Ergebnis auf <code>1</code>, sobald in einer der beiden Zahlen an dieser Stelle eine <code>1</code> steht.
+                                </td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50">Binär: <code>5 | 3</code><br><code>0101 | 0011</code><br>&rarr; <code>0111</code> (<strong>7</strong>)</td>
+                            </tr>
+
+                            <!-- KATEGORIE 4: ZUWEISUNGSOPERATOREN -->
+                            <tr class="bg-amber-50/90 border-t-2 border-amber-300">
+                                <td colspan="4" class="p-2.5 px-3.5 font-extrabold text-amber-900 uppercase tracking-wider text-xs">
+                                    📥 4. Zuweisungsoperatoren (Werte speichern &amp; direkt verrechnen)
+                                </td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-amber-700 text-center">=</td>
+                                <td class="p-3.5 font-bold text-slate-900">Einfache Zuweisung</td>
+                                <td class="p-3.5 text-slate-700">Berechnet zuerst den kompletten Ausdruck auf der <strong>rechten</strong> Seite und speichert das Ergebnis anschließend in der Variablen auf der <strong>linken</strong> Seite.</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>int x = 10;</code></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-amber-700 text-center">+=</td>
+                                <td class="p-3.5 font-bold text-slate-900">Additions-Zuweisung</td>
+                                <td class="p-3.5 text-slate-700">Addiert den rechten Wert zum bisherigen Wert der Variablen hinzu und speichert das neue Ergebnis sofort wieder in ihr ab (Kurzform für <code>x = x + y</code>).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>int x = 10;</code><br><code>x += 5;</code> &rarr; <strong>15</strong></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-amber-700 text-center">-=</td>
+                                <td class="p-3.5 font-bold text-slate-900">Subtraktions-Zuweisung</td>
+                                <td class="p-3.5 text-slate-700">Zieht den rechten Wert vom aktuellen Variablenwert ab und überschreibt die Variable mit dem Ergebnis (Kurzform für <code>x = x - y</code>).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>int x = 10;</code><br><code>x -= 3;</code> &rarr; <strong>7</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-amber-700 text-center">*=</td>
+                                <td class="p-3.5 font-bold text-slate-900">Multiplikations-Zuweisung</td>
+                                <td class="p-3.5 text-slate-700">Multipliziert den aktuellen Variablenwert mit dem rechten Wert und speichert das Ergebnis zurück in die Variable (Kurzform für <code>x = x * y</code>).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>int x = 10;</code><br><code>x *= 4;</code> &rarr; <strong>40</strong></td>
+                            </tr>
+                            <tr class="bg-white">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-amber-700 text-center">/=</td>
+                                <td class="p-3.5 font-bold text-slate-900">Divisions-Zuweisung</td>
+                                <td class="p-3.5 text-slate-700">Teilt den aktuellen Variablenwert durch den rechten Wert und speichert das Ergebnis zurück in die Variable (Kurzform für <code>x = x / y</code>).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>int x = 20;</code><br><code>x /= 5;</code> &rarr; <strong>4</strong></td>
+                            </tr>
+                            <tr class="bg-slate-50/60">
+                                <td class="p-3.5 font-mono font-extrabold text-base text-amber-700 text-center">%=</td>
+                                <td class="p-3.5 font-bold text-slate-900">Modulo-Zuweisung</td>
+                                <td class="p-3.5 text-slate-700">Berechnet den Divisionsrest von Variable und rechtem Wert und speichert diesen Rest in der Variablen (Kurzform für <code>x = x % y</code>).</td>
+                                <td class="p-3.5 font-mono text-xs bg-slate-50"><code>int x = 17;</code><br><code>x %= 5;</code> &rarr; <strong>2</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Kompakte Wahrheitstabelle für Logische Operatoren (Super für Klausuren!) -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 avoid-break">
+                    <h4 class="text-xs sm:text-sm font-extrabold text-ihk-900 uppercase tracking-wider mb-3">
+                        💡 Spickzettel für Klausuren: Wahrheitstabelle der logischen Operatoren
+                    </h4>
+                    <div class="overflow-x-auto rounded-lg border border-slate-200">
+                        <table class="w-full text-center border-collapse text-xs font-mono">
+                            <thead>
+                                <tr class="bg-slate-800 text-white">
+                                    <th class="p-2 border-r border-slate-700">Operand A</th>
+                                    <th class="p-2 border-r border-slate-700">Operand B</th>
+                                    <th class="p-2 border-r border-slate-700 text-emerald-300">A &amp;&amp; B (UND)</th>
+                                    <th class="p-2 border-r border-slate-700 text-sky-300">A || B (ODER)</th>
+                                    <th class="p-2 border-r border-slate-700 text-amber-300">A ^ B (XOR)</th>
+                                    <th class="p-2 text-rose-300">!A (NICHT A)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 bg-white">
+                                <tr>
+                                    <td class="p-2 border-r font-bold text-rose-600">false</td>
+                                    <td class="p-2 border-r font-bold text-rose-600">false</td>
+                                    <td class="p-2 border-r text-slate-500">false</td>
+                                    <td class="p-2 border-r text-slate-500">false</td>
+                                    <td class="p-2 border-r text-slate-500">false</td>
+                                    <td class="p-2 font-bold text-emerald-700 bg-emerald-50/50">true</td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2 border-r font-bold text-rose-600">false</td>
+                                    <td class="p-2 border-r font-bold text-emerald-600">true</td>
+                                    <td class="p-2 border-r text-slate-500">false</td>
+                                    <td class="p-2 border-r font-bold text-emerald-700 bg-emerald-50/50">true</td>
+                                    <td class="p-2 border-r font-bold text-emerald-700 bg-emerald-50/50">true</td>
+                                    <td class="p-2 font-bold text-emerald-700 bg-emerald-50/50">true</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 border-r font-bold text-emerald-600">true</td>
+                                    <td class="p-2 border-r font-bold text-rose-600">false</td>
+                                    <td class="p-2 border-r text-slate-500">false</td>
+                                    <td class="p-2 border-r font-bold text-emerald-700 bg-emerald-50/50">true</td>
+                                    <td class="p-2 border-r font-bold text-emerald-700 bg-emerald-50/50">true</td>
+                                    <td class="p-2 text-slate-500">false</td>
+                                </tr>
+                                <tr class="bg-slate-50/50">
+                                    <td class="p-2 border-r font-bold text-emerald-600">true</td>
+                                    <td class="p-2 border-r font-bold text-emerald-600">true</td>
+                                    <td class="p-2 border-r font-bold text-emerald-700 bg-emerald-50/50">true</td>
+                                    <td class="p-2 border-r font-bold text-emerald-700 bg-emerald-50/50">true</td>
+                                    <td class="p-2 border-r text-slate-500">false</td>
+                                    <td class="p-2 text-slate-500">false</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frage 6: Anwendung des Modulo-Operators -->
+            <div class="rounded-xl border-l-4 border-l-sky-500 bg-sky-50/40 p-5 space-y-4 avoid-break shadow-sm mt-8">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-sky-200 text-sky-900 flex items-center justify-center text-sm">F6</span>
+                    Erläuterung &amp; typische Anwendungsfälle des Modulo-Operators (<code>%</code>)
+                </h3>
+                <p class="text-slate-700 text-sm leading-relaxed">
+                    Der <strong>Modulo-Operator (<code>%</code>)</strong> teilt zwei Zahlen und gibt nicht das Ergebnis der Division zurück, sondern <strong>ausschließlich den ganzzahligen Rest</strong>, der bei der Division übrig bleibt (wie man es aus der Grundschule kennt: „17 geteilt durch 5 ist 3, <strong>Rest 2</strong>“ &rarr; <code>17 % 5</code> ergibt <code>2</code>). Geht eine Division glatt auf, ist das Modulo-Ergebnis immer <code>0</code>.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm text-slate-700 pt-1">
+                    <div class="bg-white p-3.5 rounded-lg border border-sky-200">
+                        <strong class="text-ihk-900 block mb-1">1. Gerade / Ungerade prüfen</strong>
+                        Ist <code>zahl % 2 == 0</code>, bleibt beim Teilen durch 2 kein Rest – die Zahl ist also garantiert <strong>gerade</strong>. Ergibt <code>zahl % 2</code> hingegen <code>1</code>, ist sie <strong>ungerade</strong>.
+                    </div>
+                    <div class="bg-white p-3.5 rounded-lg border border-sky-200">
+                        <strong class="text-ihk-900 block mb-1">2. Teilbarkeit (z. B. Schaltjahr)</strong>
+                        Wie in <a href="java_05_aufbau.html#praxis" class="text-java-600 font-bold hover:underline">Lernauftrag 05</a> gesehen, prüfen wir mit <code>jahr % 4 == 0</code> und <code>jahr % 100 != 0</code>, ob eine Jahreszahl ohne Rest durch 4 bzw. 100 teilbar ist.
+                    </div>
+                    <div class="bg-white p-3.5 rounded-lg border border-sky-200">
+                        <strong class="text-ihk-900 block mb-1">3. Zeit &amp; Einheiten umrechnen</strong>
+                        Rechnet man <code>135</code> Minuten in Stunden und Restminuten um: <code>135 / 60 = 2</code> volle Stunden und <code>135 % 60 = 15</code> verbleibende Restminuten!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Frage 7: Der Ternäre Operator -->
+            <div class="space-y-4 avoid-break mt-8">
+                <h3 class="text-base font-extrabold text-ihk-900 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded bg-java-100 text-java-800 flex items-center justify-center text-sm">F7</span>
+                    Verwendung des Ternären Operators (Konditionaloperator <code>? :</code>)
+                </h3>
+                <p class="text-slate-700 leading-relaxed">
+                    Der <strong>Ternäre Operator (<code>? :</code>)</strong> heißt „ternär“ (dreiteilig), weil er der einzige Operator in Java ist, der genau <strong>drei Operanden</strong> verarbeitet. Er dient als elegante, einzeilige Kurzform für eine klassische <code>if-else</code>-Verzweigung, wenn man einer Variablen (oder direkt einer <code>System.out.println()</code>-Ausgabe) abhängig von einer Bedingung einen von zwei Werten zuweisen möchte.
+                </p>
+
+                <!-- Syntax-Box -->
+                <div class="bg-java-50 border border-java-200 rounded-xl p-4 text-center mt-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-java-800 block mb-1">Allgemeines Aufbau-Schema des Ternären Operators</span>
+                    <code class="text-sm sm:text-base font-extrabold font-mono text-ihk-900">
+                        Variable = <span class="text-sky-700">(1. Bedingung)</span> ? <span class="text-emerald-700">2. WertWennTrue</span> : <span class="text-rose-700">3. WertWennFalse</span>;
+                    </code>
+                </div>
+
+                <!-- Code-Vergleich Ternärer Operator & Operatoren-Mix -->
+                <div class="rounded-xl overflow-hidden border border-slate-700 shadow-lg mt-4">
+                    <div class="bg-slate-800 text-slate-300 px-4 py-2 text-xs font-mono flex items-center justify-between border-b border-slate-700">
+                        <span>OperatorenUndTernaerDemo.java</span>
+                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-slate-700 text-java-300">Java</span>
+                    </div>
+                    <pre class="bg-slate-950 text-slate-100 p-4 font-mono text-xs sm:text-sm overflow-x-auto leading-relaxed"><code><span class="text-purple-400">public class</span> <span class="text-amber-300">OperatorenUndTernaerDemo</span> {
+                    <span class="text-purple-400">public static void</span> <span class="text-sky-300">main</span>(String[] args) {
+
+                    <span class="text-slate-500">// 1. Kombinierte Zuweisung &amp; Modulo in Aktion:</span>
+                    <span class="text-purple-400">int</span> gesamtSekunden = <span class="text-sky-300">125</span>;
+        gesamtSekunden += <span class="text-sky-300">10</span>;                 <span class="text-slate-400">// Erhöht auf 135 Sekunden</span>
+                    <span class="text-purple-400">int</span> minuten = gesamtSekunden / <span class="text-sky-300">60</span>;    <span class="text-slate-400">// Ganzzahldivision: 135 / 60 = 2 Minuten</span>
+                    <span class="text-purple-400">int</span> restSek = gesamtSekunden % <span class="text-sky-300">60</span>;    <span class="text-slate-400">// Modulo-Restwert:  135 % 60 = 15 Sekunden</span>
+
+                    <span class="text-slate-500">// 2. Ternärer Operator (? :) statt 8 Zeilen if-else:</span>
+                    <span class="text-purple-400">int</span> punkte = <span class="text-sky-300">65</span>;
+        String status = (punkte &gt;= <span class="text-sky-300">50</span>) ? <span class="text-emerald-300">"Bestanden!"</span> : <span class="text-emerald-300">"Durchgefallen."</span>;
+
+                    <span class="text-slate-500">// 3. Ternärer Operator kombiniert mit Modulo (Gerade/Ungerade):</span>
+        String paritaet = (punkte % <span class="text-sky-300">2</span> == <span class="text-sky-300">0</span>) ? <span class="text-emerald-300">"gerade Zahl"</span> : <span class="text-emerald-300">"ungerade Zahl"</span>;
+
+        System.out.println(<span class="text-emerald-300">"Dauer: "</span> + minuten + <span class="text-emerald-300">" Min. und "</span> + restSek + <span class="text-emerald-300">" Sek."</span>);
+        System.out.println(<span class="text-emerald-300">"Ergebnis: "</span> + status + <span class="text-emerald-300">" ("</span> + punkte + <span class="text-emerald-300">" ist eine "</span> + paritaet + <span class="text-emerald-300">")"</span>);
+    }
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         SEKTION 4: STANDARDS & BEST PRACTICES (WIE IN LA 05)
+         ===================================================================== -->
+        <section id="normen-standards" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-700">Hintergrundwissen für deine IHK-Ausbildung</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">4. Standards &amp; Typische Stolperfallen im Umgang mit Datentypen</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-amber-500 text-slate-950 text-xs font-bold">Best Practices</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">IEEE 754 Standard</span>
+                        <span class="text-xs text-slate-500">Gleitkomma-Arithmetik</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Warum <code>double</code> bei Geldbeträgen gefährlich sein kann</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <code>float</code> und <code>double</code> speichern Zahlen intern nach dem internationalen Standard <strong>IEEE 754</strong> als Binärbrüche. Manche Dezimalbrüche (wie <code>0.1</code>) lassen sich binär nicht exakt abbilden: Rechnet man in Java <code>0.1 + 0.2</code>, kommt oft <code>0.30000000000000004</code> heraus! In echter Finanz- oder Kassensoftware rechnet man deshalb entweder in glatten Cent-Beträgen (als <code>int</code>/<code>long</code>) oder nutzt die spezielle Java-Klasse <code>BigDecimal</code>.
+                    </p>
+                </div>
+
+                <div class="rounded-xl border border-slate-200 p-5 bg-slate-50 avoid-break">
+                    <div class="flex items-center justify-between gap-2 mb-2">
+                        <span class="px-2.5 py-1 rounded bg-ihk-900 text-white font-mono text-xs font-bold">Integer Overflow</span>
+                        <span class="text-xs text-slate-500">Wertebereichs-Überlauf</span>
+                    </div>
+                    <h3 class="font-extrabold text-ihk-900 text-base mb-1">Was passiert, wenn eine Zahl zu groß für ihren Datentyp wird?</h3>
+                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        Jeder primitive Datentyp hat eine feste Obergrenze. Addiert man zum maximalen <code>int</code>-Wert (<code>+2.147.483.647</code>) einfach <code>+ 1</code> hinzu, wirft Java keinen Fehler, sondern kippt durch das Zweierkomplement-System komplett ins Negative um (auf <code>-2.147.483.648</code>)! Diesen Effekt nennt man <strong>Integer Overflow (Überlauf)</strong> – ein Klassiker in IHK-Prüfungsfragen.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         SEKTION 5: GLOSSAR (MIT LIVE-SUCHE WIE IN LA 04 & LA 05)
+         ===================================================================== -->
+        <section id="glossar" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Fachbegriffe der Programmierung übersetzt</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">5. Fremdwörter- &amp; Fachbegriffs-Lexikon (Variablen &amp; Operatoren)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-emerald-700 text-white text-xs font-bold">Azubi-Nachschlagewerk</span>
+            </div>
+
+            <!-- Interaktiver Suchfilter -->
+            <div class="no-print bg-slate-100 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs sm:text-sm text-slate-700 font-medium">
+                    🔎 <strong>Schnellfilter:</strong> Tippe einen Fachbegriff ein (z. B. <em>Casting</em>, <em>Literal</em>, <em>Operand</em>, <em>Bit</em>), um das Lexikon live zu durchsuchen:
+                </div>
+                <input type="text" id="glossarySearch" oninput="filterGlossary()" placeholder="Begriff suchen..."
+                       class="w-full sm:w-72 px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-java-500">
+            </div>
+
+            <!-- Glossar Grid -->
+            <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <!-- Dynamically populated by glossarData.js -->
+            </div>
+        </section>
+
+        <!-- =====================================================================
+         SEKTION 6: QUELLENVERZEICHNIS (EINHEITLICH MIT LA 04 & LA 05)
+         ===================================================================== -->
+        <section id="quellen" class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-8 space-y-6 avoid-break">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ihk-900 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-700">Lernmaterialien &amp; Referenzen</span>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-ihk-900">6. Literatur- &amp; Quellenverzeichnis (Java)</h2>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-800 text-white text-xs font-bold">Quellenangaben</span>
+            </div>
+
+            <p class="text-sm sm:text-base text-slate-700">
+                Die Inhalte dieses Lernauftrags (LA_06_1) stützen sich auf die Kursunterlagen sowie auf die offiziellen Java-Tutorials:
+            </p>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                    <thead>
+                        <tr class="bg-ihk-900 text-white">
+                            <th class="p-3.5 font-bold w-1/4">Thema / Format</th>
+                            <th class="p-3.5 font-bold w-1/4">Literatur / Autor</th>
+                            <th class="p-3.5 font-bold w-1/2">Bezug zur Ausbildung</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr class="bg-java-500/10 border-l-4 border-java-500">
+                            <td class="p-3.5 font-bold text-ihk-900">🔗 IHK-Wiki: Java Aufbau</td>
+                            <td class="p-3.5 text-slate-700">Eigenes Dokument (Lernauftrag 05)</td>
+                            <td class="p-3.5 text-slate-700">Die hier erklärten Datentypen, Variablen-Regeln und der Modulo-Operator bauen direkt auf <a href="java_05_aufbau.html" class="text-java-700 font-bold hover:underline">LA 05 (Aufbau von Java Programmen &amp; Schaltjahr-Prüfung)</a> auf.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Kursunterlagen Kapitel 2</td>
+                            <td class="p-3.5 text-slate-700">Unterkapitel 2.2 &amp; 2.3 (Elementare Datentypen 1 &amp; 2, bis Seite 11)</td>
+                            <td class="p-3.5 text-slate-700">Grundlagen der 8 primitiven Datentypen, Wertebereiche, Variablendeklaration und Typumwandlung.</td>
+                        </tr>
+                        <tr class="bg-slate-50">
+                            <td class="p-3.5 font-bold text-ihk-900">Java Tutorial (Online)</td>
+                            <td class="p-3.5 text-slate-700">Kapitel: Java Variables, Java Data Types, Java Type Casting, Java Operators</td>
+                            <td class="p-3.5 text-slate-700">Praxisnahe Codebeispiele zum impliziten/expliziten Casting sowie zu allen Operatoren-Gruppen und dem Ternären Operator.</td>
+                        </tr>
+                        <tr class="bg-white">
+                            <td class="p-3.5 font-bold text-ihk-900">Buch Rheinwerk</td>
+                            <td class="p-3.5 text-slate-700">Programmieren lernen mit Java &amp; Openbook „Java ist auch eine Insel“</td>
+                            <td class="p-3.5 text-slate-700">Vertiefendes Nachschlagewerk zu IEEE-754-Gleitkommazahlen, Bit-Operatoren und Typsicherheit in Java.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-500 py-6 border-t border-slate-200 mt-12">
+        <p class="font-semibold text-slate-700">Ausarbeitung zum IHK-Lernauftrag 06 / LA_06_1 (Modul: Programmierung) • Fachinformatiker/-in Anwendungsentwicklung</p>
+        <p class="mt-1">Thema: Java Variablen, Datentypen &amp; Operatoren • Optimiert für Bildschirmansicht und vollständigen A4-Druck (Strg+P / 🖨️ Button oben).</p>
+    </footer>
+
+    
+    <!-- ==================== JAVASCRIPT GLOBAL GLOSSAR ==================== -->
+    <script src="../assets/js/glossarData.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const glossaryGrid = document.getElementById('glossaryGrid');
+            if (!glossaryGrid) return;
+            
+            // Initiales Rendern aller Begriffe
+            renderGlossary('');
+            
+            // Event Listener für die Suche
+            const searchInput = document.getElementById('glossarySearch');
+            if(searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    renderGlossary(e.target.value);
+                });
+            }
+        });
+
+        function renderGlossary(filterText) {
+            const grid = document.getElementById('glossaryGrid');
+            grid.innerHTML = ''; // Leeren
+            
+            const query = filterText.toLowerCase().trim();
+            
+            const filtered = globalesGlossar.filter(item => {
+                return item.titel.toLowerCase().includes(query) || 
+                       item.beschreibung.toLowerCase().includes(query);
+            });
+            
+            if(filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-8 text-slate-500">Keine passenden Begriffe gefunden.</div>';
+                return;
+            }
+            
+            filtered.forEach(item => {
+                // Farb-Mapping für die Badges
+                let badgeClass = "bg-slate-100 text-slate-700";
+                if(item.farbe === 'sky') badgeClass = "bg-sky-100 text-sky-800";
+                if(item.farbe === 'linux') badgeClass = "bg-linux-100 text-linux-800";
+                if(item.farbe === 'java') badgeClass = "bg-java-100 text-java-800";
+                
+                const cardHTML = `
+                    <div class="glossary-card rounded-xl border border-slate-200 p-4 bg-slate-50/60 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-2 gap-2">
+                            <h4 class="font-extrabold text-ihk-900 leading-tight">${item.titel}</h4>
+                        </div>
+                        <p class="text-slate-700 text-xs sm:text-sm flex-1">${item.beschreibung}</p>
+                        <div class="mt-3 pt-3 border-t border-slate-200">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${badgeClass}">
+                                ${item.modul}
+                            </span>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        }
+    </script>
+
+</body>
+</html>
